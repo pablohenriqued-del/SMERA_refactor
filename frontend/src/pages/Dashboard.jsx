@@ -123,7 +123,7 @@ const Dashboard = () => {
                   data-testid={`activity-item-${activity.id}`}
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-xl gradient-sony-red flex items-center justify-center">
                       {activity.type === 'License In' ? (
                         <FileInput className="h-6 w-6 text-white" />
                       ) : (
