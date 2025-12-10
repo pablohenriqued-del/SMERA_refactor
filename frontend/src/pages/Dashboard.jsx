@@ -219,6 +219,244 @@ const Dashboard = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Modal de Estatísticas */}
+      <Dialog open={selectedStat !== null} onOpenChange={() => setSelectedStat(null)}>
+        <DialogContent className="bg-gray-950 border-gray-800 text-white max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-white flex items-center gap-3">
+              {selectedStat && (
+                <>
+                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${selectedStat.color} flex items-center justify-center`}>
+                    {React.createElement(selectedStat.icon, { className: "h-6 w-6 text-white" })}
+                  </div>
+                  {selectedStat.title}
+                </>
+              )}
+            </DialogTitle>
+            <DialogDescription className="text-gray-400">
+              Detalhes e análise completa
+            </DialogDescription>
+          </DialogHeader>
+          {selectedStat && (
+            <div className="space-y-6 mt-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-gray-900 p-4 rounded-lg">
+                  <p className="text-sm text-gray-400 mb-1">Total Atual</p>
+                  <p className="text-3xl font-bold text-white">{selectedStat.value}</p>
+                  <div className="flex items-center gap-1 mt-2">
+                    {React.createElement(selectedStat.trend === 'up' ? TrendingUp : TrendingDown, {
+                      className: `h-4 w-4 ${selectedStat.trend === 'up' ? 'text-green-500' : 'text-red-500'}`
+                    })}
+                    <span className={`text-sm font-medium ${selectedStat.trend === 'up' ? 'text-green-500' : 'text-red-500'}`}>
+                      {selectedStat.change}
+                    </span>
+                  </div>
+                </div>
+                <div className="bg-gray-900 p-4 rounded-lg">
+                  <p className="text-sm text-gray-400 mb-1">Mês Anterior</p>
+                  <p className="text-3xl font-bold text-white">
+                    {selectedStat.index === 0 ? '221' : selectedStat.index === 1 ? '19' : selectedStat.index === 2 ? '131' : '102'}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-2">Novembro 2024</p>
+                </div>
+              </div>
+
+              <div className="bg-gray-900 p-4 rounded-lg space-y-3">
+                <h4 className="font-semibold text-white flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-red-500" />
+                  Últimos 6 Meses
+                </h4>
+                <div className="space-y-2">
+                  {['Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro'].map((month, i) => (
+                    <div key={i} className="flex items-center justify-between">
+                      <span className="text-sm text-gray-400">{month}</span>
+                      <span className="text-sm font-medium text-white">
+                        {Math.floor(parseInt(selectedStat.value) * (0.85 + Math.random() * 0.15))}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-gray-900 p-4 rounded-lg space-y-2">
+                <h4 className="font-semibold text-white flex items-center gap-2">
+                  <DollarSign className="h-4 w-4 text-green-500" />
+                  Valor Estimado
+                </h4>
+                <p className="text-2xl font-bold text-green-500">
+                  R$ {(parseInt(selectedStat.value) * 1250).toLocaleString('pt-BR')}
+                </p>
+                <p className="text-xs text-gray-400">Receita estimada total</p>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de Atividade */}
+      <Dialog open={selectedActivity !== null} onOpenChange={() => setSelectedActivity(null)}>
+        <DialogContent className="bg-gray-950 border-gray-800 text-white max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-white">
+              {selectedActivity?.project}
+            </DialogTitle>
+            <DialogDescription className="text-gray-400">
+              Detalhes da atividade de licenciamento
+            </DialogDescription>
+          </DialogHeader>
+          {selectedActivity && (
+            <div className="space-y-4 mt-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-gray-900 p-4 rounded-lg">
+                  <p className="text-sm text-gray-400 mb-2">Artista</p>
+                  <p className="text-lg font-semibold text-white">{selectedActivity.artist}</p>
+                </div>
+                <div className="bg-gray-900 p-4 rounded-lg">
+                  <p className="text-sm text-gray-400 mb-2">Status</p>
+                  <Badge className={
+                    selectedActivity.status === 'Finalizado' 
+                      ? 'bg-green-100 text-green-700 hover:bg-green-100' 
+                      : selectedActivity.status === 'Pendente'
+                      ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-100'
+                      : 'bg-blue-100 text-blue-700 hover:bg-blue-100'
+                  }>
+                    {selectedActivity.status}
+                  </Badge>
+                </div>
+              </div>
+
+              <div className="bg-gray-900 p-4 rounded-lg space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-400">Tipo de Licença</span>
+                  <span className="text-sm font-medium text-white">{selectedActivity.type}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-400">Data de Solicitação</span>
+                  <span className="text-sm font-medium text-white">{selectedActivity.date}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-400">Território</span>
+                  <span className="text-sm font-medium text-white">Brasil e Mundo</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-400">Formato</span>
+                  <span className="text-sm font-medium text-white">Participação Especial</span>
+                </div>
+              </div>
+
+              <div className="bg-gray-900 p-4 rounded-lg space-y-2">
+                <h4 className="font-semibold text-white mb-3">Informações Adicionais</h4>
+                <div className="space-y-2 text-sm">
+                  <p className="text-gray-400">
+                    <strong className="text-white">Gravadora:</strong> Sony Music Entertainment
+                  </p>
+                  <p className="text-gray-400">
+                    <strong className="text-white">Produtor:</strong> {['Carlos Silva', 'Ana Santos', 'João Oliveira', 'Maria Costa'][Math.floor(Math.random() * 4)]}
+                  </p>
+                  <p className="text-gray-400">
+                    <strong className="text-white">Selo:</strong> {['Columbia Records', 'RCA Records', 'Epic Records'][Math.floor(Math.random() * 3)]}
+                  </p>
+                  <p className="text-gray-400">
+                    <strong className="text-white">Código do Projeto:</strong> {`PRJ-${Math.floor(Math.random() * 9000) + 1000}`}
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-gray-900 p-4 rounded-lg">
+                <h4 className="font-semibold text-white mb-2 flex items-center gap-2">
+                  <DollarSign className="h-4 w-4 text-green-500" />
+                  Valor Estimado
+                </h4>
+                <p className="text-2xl font-bold text-green-500">
+                  R$ {(Math.floor(Math.random() * 150000) + 50000).toLocaleString('pt-BR')}
+                </p>
+                <p className="text-xs text-gray-400 mt-1">Receita estimada do projeto</p>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de Território */}
+      <Dialog open={selectedTerritory !== null} onOpenChange={() => setSelectedTerritory(null)}>
+        <DialogContent className="bg-gray-950 border-gray-800 text-white max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-white flex items-center gap-2">
+              <MapPin className="h-6 w-6 text-red-500" />
+              {selectedTerritory?.name}
+            </DialogTitle>
+            <DialogDescription className="text-gray-400">
+              Análise detalhada por território
+            </DialogDescription>
+          </DialogHeader>
+          {selectedTerritory && (
+            <div className="space-y-4 mt-4">
+              <div className="grid grid-cols-3 gap-4">
+                <div className="bg-gray-900 p-4 rounded-lg">
+                  <p className="text-sm text-gray-400 mb-1">Total de Licenças</p>
+                  <p className="text-3xl font-bold text-white">{selectedTerritory.count}</p>
+                </div>
+                <div className="bg-gray-900 p-4 rounded-lg">
+                  <p className="text-sm text-gray-400 mb-1">Percentual</p>
+                  <p className="text-3xl font-bold text-white">{selectedTerritory.percentage}%</p>
+                </div>
+                <div className="bg-gray-900 p-4 rounded-lg">
+                  <p className="text-sm text-gray-400 mb-1">Ativas</p>
+                  <p className="text-3xl font-bold text-green-500">{Math.floor(selectedTerritory.count * 0.85)}</p>
+                </div>
+              </div>
+
+              <div className="bg-gray-900 p-4 rounded-lg space-y-3">
+                <h4 className="font-semibold text-white mb-3">Distribuição por Tipo</h4>
+                <div className="space-y-3">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm text-gray-400">License In</span>
+                      <span className="text-sm font-medium text-white">{Math.floor(selectedTerritory.count * 0.6)}</span>
+                    </div>
+                    <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
+                      <div className="h-full gradient-sony-red" style={{ width: '60%' }} />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm text-gray-400">License Out</span>
+                      <span className="text-sm font-medium text-white">{Math.floor(selectedTerritory.count * 0.4)}</span>
+                    </div>
+                    <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
+                      <div className="h-full bg-blue-600" style={{ width: '40%' }} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-gray-900 p-4 rounded-lg space-y-3">
+                <h4 className="font-semibold text-white mb-3">Top 5 Artistas nesta Região</h4>
+                <div className="space-y-2">
+                  {['Pabllo Vittar', 'Pedro Sampaio', 'Anitta', 'MC Hariel', 'Ludmilla'].slice(0, 5).map((artist, i) => (
+                    <div key={i} className="flex items-center justify-between py-2 border-b border-gray-800 last:border-0">
+                      <span className="text-sm text-gray-300">{artist}</span>
+                      <span className="text-sm font-medium text-white">{Math.floor(Math.random() * 20) + 5} licenças</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-gray-900 p-4 rounded-lg">
+                <h4 className="font-semibold text-white mb-2 flex items-center gap-2">
+                  <DollarSign className="h-4 w-4 text-green-500" />
+                  Receita Total - {selectedTerritory.name}
+                </h4>
+                <p className="text-2xl font-bold text-green-500">
+                  R$ {(selectedTerritory.count * 45000).toLocaleString('pt-BR')}
+                </p>
+                <p className="text-xs text-gray-400 mt-1">Receita acumulada nos últimos 12 meses</p>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
