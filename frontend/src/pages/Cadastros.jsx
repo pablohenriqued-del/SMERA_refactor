@@ -28,10 +28,12 @@ const Cadastros = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const artistas = [
-    { id: 1, nome: 'EMCIDA', gravadora: 'Sony Music', genero: 'Hip Hop', pais: 'Brasil', status: 'Ativo', email: 'emcida@sony.com', telefone: '+55 11 99999-0001' },
-    { id: 2, nome: 'THAIS', gravadora: 'Sony Music', genero: 'Pop', pais: 'Brasil', status: 'Ativo', email: 'thais@sony.com', telefone: '+55 11 99999-0002' },
-    { id: 3, nome: 'luisa', gravadora: 'Sony Music', genero: 'MPB', pais: 'Brasil', status: 'Ativo', email: 'luisa@sony.com', telefone: '+55 11 99999-0003' },
-    { id: 4, nome: 'ARTISTA', gravadora: 'Sony Music', genero: 'Rock', pais: 'Brasil', status: 'Inativo', email: 'artista@sony.com', telefone: '+55 11 99999-0004' },
+    { id: 1, nome: 'Pabllo Vittar', gravadora: 'Sony Music', genero: 'Pop/Funk', pais: 'Brasil', status: 'Ativo', email: 'pabllo.vittar@sony.com', telefone: '+55 11 98765-0001' },
+    { id: 2, nome: 'Pedro Sampaio', gravadora: 'Sony Music', genero: 'Funk', pais: 'Brasil', status: 'Ativo', email: 'pedro.sampaio@sony.com', telefone: '+55 11 98765-0002' },
+    { id: 3, nome: 'Anitta', gravadora: 'Sony Music', genero: 'Pop/Funk', pais: 'Brasil', status: 'Ativo', email: 'anitta@sony.com', telefone: '+55 11 98765-0003' },
+    { id: 4, nome: 'Marília Mendonça', gravadora: 'Sony Music', genero: 'Sertanejo', pais: 'Brasil', status: 'Ativo', email: 'marilia@sony.com', telefone: '+55 11 98765-0004' },
+    { id: 5, nome: 'MC Hariel', gravadora: 'Sony Music', genero: 'Funk', pais: 'Brasil', status: 'Ativo', email: 'hariel@sony.com', telefone: '+55 11 98765-0005' },
+    { id: 6, nome: 'Ludmilla', gravadora: 'Sony Music', genero: 'Funk/Pop', pais: 'Brasil', status: 'Ativo', email: 'ludmilla@sony.com', telefone: '+55 11 98765-0006' },
   ];
 
   const gravadoras = [
