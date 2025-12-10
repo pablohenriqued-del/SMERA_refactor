@@ -178,7 +178,7 @@ const Layout = () => {
                     <p className="text-sm font-medium text-white">Olá, Pablo Duartel</p>
                     <p className="text-xs text-gray-400">Sony Music Entertainment</p>
                   </div>
-                  <ChevronDown className="h-4 w-4 text-gray-500" />
+                  <ChevronDown className="h-4 w-4 text-gray-400" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
