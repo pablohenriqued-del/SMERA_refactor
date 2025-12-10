@@ -57,16 +57,97 @@ const Layout = () => {
             
             <div className="flex items-center gap-3">
               {/* Sony Music Logo */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <div className="h-10 flex items-center">
-                  <svg viewBox="0 0 120 40" className="h-10 w-auto" xmlns="http://www.w3.org/2000/svg">
-                    {/* Sony Music Logo */}
-                    <rect x="0" y="0" width="40" height="40" fill="#E2001A" rx="4"/>
-                    <text x="20" y="28" fontSize="24" fontWeight="bold" fill="white" textAnchor="middle" fontFamily="Arial, sans-serif">SM</text>
+                  <svg viewBox="0 0 80 80" className="h-10 w-auto" xmlns="http://www.w3.org/2000/svg">
+                    {/* Sony Music Dot Pattern Logo */}
+                    <g fill="#E2001A">
+                      {/* Top 3 dots */}
+                      <circle cx="28" cy="12" r="2.5"/>
+                      <circle cx="40" cy="12" r="2.5"/>
+                      <circle cx="52" cy="12" r="2.5"/>
+                      
+                      {/* Second row - 7 dots */}
+                      <circle cx="16" cy="20" r="2.5"/>
+                      <circle cx="24" cy="20" r="2.5"/>
+                      <circle cx="32" cy="20" r="2.5"/>
+                      <circle cx="40" cy="20" r="2.5"/>
+                      <circle cx="48" cy="20" r="2.5"/>
+                      <circle cx="56" cy="20" r="2.5"/>
+                      <circle cx="64" cy="20" r="2.5"/>
+                      
+                      {/* Third row - 9 dots */}
+                      <circle cx="12" cy="28" r="2.5"/>
+                      <circle cx="20" cy="28" r="2.5"/>
+                      <circle cx="28" cy="28" r="2.5"/>
+                      <circle cx="36" cy="28" r="2.5"/>
+                      <circle cx="44" cy="28" r="2.5"/>
+                      <circle cx="52" cy="28" r="2.5"/>
+                      <circle cx="60" cy="28" r="2.5"/>
+                      <circle cx="68" cy="28" r="2.5"/>
+                      
+                      {/* Fourth row - 9 dots */}
+                      <circle cx="12" cy="36" r="2.5"/>
+                      <circle cx="20" cy="36" r="2.5"/>
+                      <circle cx="28" cy="36" r="2.5"/>
+                      <circle cx="36" cy="36" r="2.5"/>
+                      <circle cx="44" cy="36" r="2.5"/>
+                      <circle cx="52" cy="36" r="2.5"/>
+                      <circle cx="60" cy="36" r="2.5"/>
+                      <circle cx="68" cy="36" r="2.5"/>
+                      
+                      {/* Fifth row - 11 dots */}
+                      <circle cx="8" cy="44" r="2.5"/>
+                      <circle cx="16" cy="44" r="2.5"/>
+                      <circle cx="24" cy="44" r="2.5"/>
+                      <circle cx="32" cy="44" r="2.5"/>
+                      <circle cx="40" cy="44" r="2.5"/>
+                      <circle cx="48" cy="44" r="2.5"/>
+                      <circle cx="56" cy="44" r="2.5"/>
+                      <circle cx="64" cy="44" r="2.5"/>
+                      <circle cx="72" cy="44" r="2.5"/>
+                      
+                      {/* Sixth row - 11 dots */}
+                      <circle cx="8" cy="52" r="2.5"/>
+                      <circle cx="16" cy="52" r="2.5"/>
+                      <circle cx="24" cy="52" r="2.5"/>
+                      <circle cx="32" cy="52" r="2.5"/>
+                      <circle cx="40" cy="52" r="2.5"/>
+                      <circle cx="48" cy="52" r="2.5"/>
+                      <circle cx="56" cy="52" r="2.5"/>
+                      <circle cx="64" cy="52" r="2.5"/>
+                      <circle cx="72" cy="52" r="2.5"/>
+                      
+                      {/* Seventh row - 9 dots */}
+                      <circle cx="12" cy="60" r="2.5"/>
+                      <circle cx="20" cy="60" r="2.5"/>
+                      <circle cx="28" cy="60" r="2.5"/>
+                      <circle cx="36" cy="60" r="2.5"/>
+                      <circle cx="44" cy="60" r="2.5"/>
+                      <circle cx="52" cy="60" r="2.5"/>
+                      <circle cx="60" cy="60" r="2.5"/>
+                      <circle cx="68" cy="60" r="2.5"/>
+                      
+                      {/* Eighth row - 7 dots */}
+                      <circle cx="16" cy="68" r="2.5"/>
+                      <circle cx="24" cy="68" r="2.5"/>
+                      <circle cx="32" cy="68" r="2.5"/>
+                      <circle cx="40" cy="68" r="2.5"/>
+                      <circle cx="48" cy="68" r="2.5"/>
+                      <circle cx="56" cy="68" r="2.5"/>
+                      <circle cx="64" cy="68" r="2.5"/>
+                      
+                      {/* Bottom 3 dots */}
+                      <circle cx="28" cy="76" r="2.5"/>
+                      <circle cx="40" cy="76" r="2.5"/>
+                      <circle cx="52" cy="76" r="2.5"/>
+                    </g>
                   </svg>
                 </div>
-                <div className="border-l border-gray-300 h-8 mx-2"></div>
-                <h1 className="text-xl font-bold text-gray-900" data-testid="app-title">SMERA</h1>
+                <div className="flex flex-col">
+                  <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Sony Music</span>
+                  <h1 className="text-xl font-bold text-gray-900 -mt-1" data-testid="app-title">SMERA</h1>
+                </div>
               </div>
             </div>
           </div>
