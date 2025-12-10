@@ -199,14 +199,14 @@ const RLM = () => {
                 {filteredDireitos.map((direito) => (
                   <TableRow 
                     key={direito.id} 
-                    className="hover:bg-purple-50/30 transition-colors"
+                    className="hover:bg-red-50/30 transition-colors"
                     data-testid={`right-row-${direito.id}`}
                   >
                     <TableCell className="font-mono text-sm font-medium">{direito.codigo}</TableCell>
                     <TableCell className="font-medium">{direito.obra}</TableCell>
                     <TableCell>{direito.titular}</TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+                      <Badge variant="outline" className="bg-red-50 text-red-700 border-purple-200">
                         {direito.tipo}
                       </Badge>
                     </TableCell>
@@ -231,7 +231,7 @@ const RLM = () => {
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          className="h-8 w-8 text-purple-600 hover:bg-purple-50"
+                          className="h-8 w-8 text-red-600 hover:bg-red-50"
                           data-testid={`edit-right-${direito.id}`}
                         >
                           <Edit className="h-4 w-4" />

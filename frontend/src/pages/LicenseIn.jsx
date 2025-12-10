@@ -175,7 +175,7 @@ const LicenseIn = () => {
                 {filteredLicenses.map((license) => (
                   <TableRow 
                     key={license.id} 
-                    className="hover:bg-purple-50/30 transition-colors"
+                    className="hover:bg-red-50/30 transition-colors"
                     data-testid={`license-row-${license.id}`}
                   >
                     <TableCell className="font-medium">{license.projeto}</TableCell>
@@ -207,7 +207,7 @@ const LicenseIn = () => {
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          className="h-8 w-8 text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+                          className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
                           data-testid={`edit-license-${license.id}`}
                         >
                           <Edit className="h-4 w-4" />

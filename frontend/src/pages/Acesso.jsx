@@ -97,7 +97,7 @@ const Acesso = () => {
   const getPerfilColor = (perfil) => {
     switch (perfil) {
       case 'Administrador':
-        return 'bg-purple-100 text-purple-700 border-purple-200';
+        return 'bg-red-100 text-red-700 border-purple-200';
       case 'Gestor':
         return 'bg-blue-100 text-blue-700 border-blue-200';
       case 'Usuário':
@@ -194,7 +194,7 @@ const Acesso = () => {
                 {filteredUsuarios.map((usuario) => (
                   <TableRow 
                     key={usuario.id} 
-                    className="hover:bg-purple-50/30 transition-colors"
+                    className="hover:bg-red-50/30 transition-colors"
                     data-testid={`user-row-${usuario.id}`}
                   >
                     <TableCell>
@@ -243,7 +243,7 @@ const Acesso = () => {
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          className="h-8 w-8 text-purple-600 hover:bg-purple-50"
+                          className="h-8 w-8 text-red-600 hover:bg-red-50"
                           data-testid={`edit-user-${usuario.id}`}
                         >
                           <Edit className="h-4 w-4" />

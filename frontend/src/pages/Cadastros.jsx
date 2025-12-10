@@ -136,11 +136,11 @@ const Cadastros = () => {
                   </TableHeader>
                   <TableBody>
                     {artistas.map((artista) => (
-                      <TableRow key={artista.id} className="hover:bg-purple-50/30" data-testid={`artist-row-${artista.id}`}>
+                      <TableRow key={artista.id} className="hover:bg-red-50/30" data-testid={`artist-row-${artista.id}`}>
                         <TableCell className="font-medium">{artista.nome}</TableCell>
                         <TableCell>{artista.gravadora}</TableCell>
                         <TableCell>
-                          <Badge variant="outline" className="bg-purple-50 text-purple-700">
+                          <Badge variant="outline" className="bg-red-50 text-red-700">
                             {artista.genero}
                           </Badge>
                         </TableCell>
@@ -170,7 +170,7 @@ const Cadastros = () => {
                             <Button 
                               variant="ghost" 
                               size="icon" 
-                              className="h-8 w-8 text-purple-600 hover:bg-purple-50"
+                              className="h-8 w-8 text-red-600 hover:bg-red-50"
                               data-testid={`edit-artist-${artista.id}`}
                             >
                               <Edit className="h-4 w-4" />

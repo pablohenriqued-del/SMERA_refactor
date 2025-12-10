@@ -172,7 +172,7 @@ const LicenseOut = () => {
                     <TableCell>{license.artistaSony}</TableCell>
                     <TableCell>{license.solicitante}</TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+                      <Badge variant="outline" className="bg-red-50 text-red-700 border-purple-200">
                         {license.tipo}
                       </Badge>
                     </TableCell>
@@ -197,7 +197,7 @@ const LicenseOut = () => {
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          className="h-8 w-8 text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+                          className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
                           data-testid={`edit-license-out-${license.id}`}
                         >
                           <Edit className="h-4 w-4" />

@@ -118,7 +118,7 @@ const SonySony = () => {
       case 'Mixagem':
         return 'bg-orange-100 text-orange-700 hover:bg-orange-100';
       case 'Aprovação Final':
-        return 'bg-purple-100 text-purple-700 hover:bg-purple-100';
+        return 'bg-red-100 text-red-700 hover:bg-red-100';
       case 'Em Produção':
         return 'bg-green-100 text-green-700 hover:bg-green-100';
       case 'Lançado':
@@ -220,7 +220,7 @@ const SonySony = () => {
                 {filteredProjetos.map((projeto) => (
                   <TableRow 
                     key={projeto.id} 
-                    className="hover:bg-purple-50/30 transition-colors"
+                    className="hover:bg-red-50/30 transition-colors"
                     data-testid={`sony-project-row-${projeto.id}`}
                   >
                     <TableCell className="font-mono text-sm font-medium">{projeto.codigo}</TableCell>
@@ -233,7 +233,7 @@ const SonySony = () => {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+                      <Badge variant="outline" className="bg-red-50 text-red-700 border-purple-200">
                         {projeto.tipo}
                       </Badge>
                     </TableCell>
@@ -258,7 +258,7 @@ const SonySony = () => {
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          className="h-8 w-8 text-purple-600 hover:bg-purple-50"
+                          className="h-8 w-8 text-red-600 hover:bg-red-50"
                           data-testid={`edit-sony-project-${projeto.id}`}
                         >
                           <Edit className="h-4 w-4" />
