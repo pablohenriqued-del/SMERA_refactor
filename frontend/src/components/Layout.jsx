@@ -34,10 +34,10 @@ const Layout = () => {
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { name: 'License In', path: '/license-in', icon: FileInput },
     { name: 'License Out', path: '/license-out', icon: FileOutput },
+    { name: 'Sony/Sony', path: '/sony-sony', icon: Music },
     { name: 'Cadastros', path: '/cadastros', icon: FolderPlus },
     { name: 'RLM', path: '/rlm', icon: Shield },
     { name: 'Acesso', path: '/acesso', icon: Users },
-    { name: 'Sony/Sony', path: '/sony-sony', icon: Music },
   ];
 
   return (
