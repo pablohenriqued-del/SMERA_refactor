@@ -41,9 +41,9 @@ const Layout = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50" data-testid="main-layout">
+    <div className="min-h-screen bg-black" data-testid="main-layout">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 z-50" data-testid="header">
+      <header className="fixed top-0 left-0 right-0 h-16 bg-black border-b border-gray-800 z-50" data-testid="header">
         <div className="flex items-center justify-between h-full px-4">
           <div className="flex items-center gap-4">
             <Button
