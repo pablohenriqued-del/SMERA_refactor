@@ -30,7 +30,7 @@ const SonySony = () => {
 
   const stats = [
     { title: 'Projetos Internos', value: '142', icon: Music, color: 'gradient-sony-red' },
-    { title: 'Artistas Sony', value: '86', icon: Users, color: 'from-blue-500 to-cyan-600' },
+    { title: 'Artistas Sony', value: '86', icon: Users, color: 'gradient-sony-black-red' },
     { title: 'Valor Total', value: 'R$ 2.4M', icon: DollarSign, color: 'from-green-500 to-emerald-600' },
     { title: 'Este Mês', value: '+18', icon: TrendingUp, color: 'from-orange-500 to-pink-600' },
   ];
