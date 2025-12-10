@@ -178,9 +178,9 @@ const Dashboard = () => {
               ))}
             </div>
 
-            <div className="mt-6 p-4 rounded-lg bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-100">
+            <div className="mt-6 p-4 rounded-lg bg-red-50 border border-red-100">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg gradient-purple-pink flex items-center justify-center">
+                <div className="w-10 h-10 rounded-lg gradient-sony-red flex items-center justify-center">
                   <Users className="h-5 w-5 text-white" />
                 </div>
                 <div>
