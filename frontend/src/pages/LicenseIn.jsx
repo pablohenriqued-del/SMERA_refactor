@@ -236,7 +236,7 @@ const LicenseIn = () => {
             </p>
             <div className="flex gap-2">
               <Button variant="outline" size="sm">Anterior</Button>
-              <Button variant="outline" size="sm" className="gradient-purple-pink text-white border-0">1</Button>
+              <Button variant="outline" size="sm" className="bg-sony-red text-white border-0 hover:bg-sony-red/90">1</Button>
               <Button variant="outline" size="sm">2</Button>
               <Button variant="outline" size="sm">3</Button>
               <Button variant="outline" size="sm">Próximo</Button>
