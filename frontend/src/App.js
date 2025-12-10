@@ -22,6 +22,7 @@ function App() {
           <Route path="license-out" element={<LicenseOut />} />
           <Route path="cadastros" element={<Cadastros />} />
           <Route path="rlm" element={<RLM />} />
+          <Route path="rlm/:id" element={<RLMDetail />} />
           <Route path="acesso" element={<Acesso />} />
           <Route path="sony-sony" element={<SonySony />} />
         </Route>
