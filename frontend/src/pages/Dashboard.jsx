@@ -49,11 +49,11 @@ const Dashboard = () => {
   ];
 
   const recentActivity = [
-    { id: 1, project: 'NOVO PROJETO', artist: 'ARTISTA', status: 'Pendente', date: '12/11/2025', type: 'License In' },
-    { id: 2, project: 'Album Release', artist: 'EMCIDA', status: 'Finalizado', date: '12/11/2025', type: 'License Out' },
-    { id: 3, project: 'TITULO PROVISORIO', artist: 'EMCIDA', status: 'Pendente', date: '11/08/2025', type: 'License In' },
-    { id: 4, project: 'Single Launch', artist: 'THAIS', status: 'Finalizado', date: '11/08/2025', type: 'License Out' },
-    { id: 5, project: 'Tour Rights', artist: 'luisa', status: 'Pendente', date: '10/11/2025', type: 'License In' },
+    { id: 1, project: 'JETSKI', artist: 'Pedro Sampaio', status: 'Pendente', date: '18/12/2025', type: 'License In' },
+    { id: 2, project: 'Batidão Tropical 2', artist: 'Pabllo Vittar', status: 'Finalizado', date: '15/12/2025', type: 'License In' },
+    { id: 3, project: 'Noite Perfeita', artist: 'Anitta', status: 'Em Análise', date: '15/01/2026', type: 'License In' },
+    { id: 4, project: 'Sertanejo Top', artist: 'Marília Mendonça', status: 'Finalizado', date: '10/03/2026', type: 'License In' },
+    { id: 5, project: 'Funk Remix', artist: 'MC Hariel', status: 'Pendente', date: '20/02/2026', type: 'License In' },
   ];
 
   const territories = [
