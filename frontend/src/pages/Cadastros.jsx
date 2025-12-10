@@ -101,7 +101,7 @@ const Cadastros = () => {
                   <CardTitle>Artistas</CardTitle>
                   <CardDescription>Gerencie o cadastro de artistas</CardDescription>
                 </div>
-                <Button className="gradient-purple-pink" data-testid="add-artist-btn">
+                <Button className="bg-sony-red hover:bg-sony-red/90 text-white" data-testid="add-artist-btn">
                   <Plus className="h-4 w-4 mr-2" />
                   Novo Artista
                 </Button>
