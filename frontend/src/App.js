@@ -6,6 +6,7 @@ import LicenseIn from './pages/LicenseIn';
 import LicenseOut from './pages/LicenseOut';
 import Cadastros from './pages/Cadastros';
 import RLM from './pages/RLM';
+import RLMDetail from './pages/RLMDetail';
 import Acesso from './pages/Acesso';
 import SonySony from './pages/SonySony';
 import './App.css';
