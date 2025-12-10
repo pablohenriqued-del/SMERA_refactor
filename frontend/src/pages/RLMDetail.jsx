@@ -61,29 +61,52 @@ const RLMDetail = () => {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-7 bg-gray-900 p-1">
-          <TabsTrigger value="detalhes" className="data-[state=active]:bg-sony-red">
-            DETALHES
-          </TabsTrigger>
-          <TabsTrigger value="vendors" className="data-[state=active]:bg-sony-red">
-            ACCOUNT VENDORS
-          </TabsTrigger>
-          <TabsTrigger value="recording" className="data-[state=active]:bg-sony-red">
-            RECORDING DESCRIPTION
-          </TabsTrigger>
-          <TabsTrigger value="project" className="data-[state=active]:bg-sony-red">
-            PROJECT PROFIT CENTER
-          </TabsTrigger>
-          <TabsTrigger value="general" className="data-[state=active]:bg-sony-red text-xs">
-            GENERAL UNIT DEDUCTIONS
-          </TabsTrigger>
-          <TabsTrigger value="limited" className="data-[state=active]:bg-sony-red text-xs">
-            LIMITED UNIT DEDUCTIONS
-          </TabsTrigger>
-          <TabsTrigger value="rates" className="data-[state=active]:bg-sony-red">
-            RATES
-          </TabsTrigger>
-        </TabsList>
+        <div className="bg-gray-900 rounded-lg p-2 overflow-x-auto">
+          <TabsList className="inline-flex w-full md:w-auto gap-2 bg-transparent">
+            <TabsTrigger 
+              value="detalhes" 
+              className="px-6 py-3 rounded-md text-sm font-semibold transition-all data-[state=active]:bg-sony-red data-[state=active]:text-white data-[state=inactive]:text-gray-400 data-[state=inactive]:hover:bg-gray-800 data-[state=inactive]:hover:text-white whitespace-nowrap"
+            >
+              Detalhes
+            </TabsTrigger>
+            <TabsTrigger 
+              value="vendors" 
+              className="px-6 py-3 rounded-md text-sm font-semibold transition-all data-[state=active]:bg-sony-red data-[state=active]:text-white data-[state=inactive]:text-gray-400 data-[state=inactive]:hover:bg-gray-800 data-[state=inactive]:hover:text-white whitespace-nowrap"
+            >
+              Account Vendors
+            </TabsTrigger>
+            <TabsTrigger 
+              value="recording" 
+              className="px-6 py-3 rounded-md text-sm font-semibold transition-all data-[state=active]:bg-sony-red data-[state=active]:text-white data-[state=inactive]:text-gray-400 data-[state=inactive]:hover:bg-gray-800 data-[state=inactive]:hover:text-white whitespace-nowrap"
+            >
+              Recording Description
+            </TabsTrigger>
+            <TabsTrigger 
+              value="project" 
+              className="px-6 py-3 rounded-md text-sm font-semibold transition-all data-[state=active]:bg-sony-red data-[state=active]:text-white data-[state=inactive]:text-gray-400 data-[state=inactive]:hover:bg-gray-800 data-[state=inactive]:hover:text-white whitespace-nowrap"
+            >
+              Project Profit Center
+            </TabsTrigger>
+            <TabsTrigger 
+              value="general" 
+              className="px-6 py-3 rounded-md text-sm font-semibold transition-all data-[state=active]:bg-sony-red data-[state=active]:text-white data-[state=inactive]:text-gray-400 data-[state=inactive]:hover:bg-gray-800 data-[state=inactive]:hover:text-white whitespace-nowrap"
+            >
+              General Unit Deductions
+            </TabsTrigger>
+            <TabsTrigger 
+              value="limited" 
+              className="px-6 py-3 rounded-md text-sm font-semibold transition-all data-[state=active]:bg-sony-red data-[state=active]:text-white data-[state=inactive]:text-gray-400 data-[state=inactive]:hover:bg-gray-800 data-[state=inactive]:hover:text-white whitespace-nowrap"
+            >
+              Limited Unit Deductions
+            </TabsTrigger>
+            <TabsTrigger 
+              value="rates" 
+              className="px-6 py-3 rounded-md text-sm font-semibold transition-all data-[state=active]:bg-sony-red data-[state=active]:text-white data-[state=inactive]:text-gray-400 data-[state=inactive]:hover:bg-gray-800 data-[state=inactive]:hover:text-white whitespace-nowrap"
+            >
+              Rates
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
         {/* DETALHES Tab */}
         <TabsContent value="detalhes" className="space-y-6">
