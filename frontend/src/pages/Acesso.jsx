@@ -29,7 +29,7 @@ const Acesso = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const stats = [
-    { title: 'Total de Usuários', value: '86', icon: Users, color: 'from-purple-500 to-pink-600' },
+    { title: 'Total de Usuários', value: '86', icon: Users, color: 'gradient-sony-red' },
     { title: 'Administradores', value: '12', icon: Shield, color: 'from-blue-500 to-cyan-600' },
     { title: 'Usuários Ativos', value: '78', icon: CheckCircle, color: 'from-green-500 to-emerald-600' },
     { title: 'Inativos', value: '8', icon: XCircle, color: 'from-gray-400 to-gray-600' },

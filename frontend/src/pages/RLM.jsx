@@ -28,7 +28,7 @@ const RLM = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const stats = [
-    { title: 'Total de Direitos', value: '1.248', icon: Shield, color: 'from-purple-500 to-pink-600' },
+    { title: 'Total de Direitos', value: '1.248', icon: Shield, color: 'gradient-sony-red' },
     { title: 'Ativos', value: '1.102', icon: CheckCircle, color: 'from-green-500 to-emerald-600' },
     { title: 'Em Renovação', value: '98', icon: Clock, color: 'from-yellow-500 to-orange-600' },
     { title: 'Próximos a Vencer', value: '48', icon: AlertTriangle, color: 'from-red-500 to-pink-600' },

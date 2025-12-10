@@ -49,7 +49,7 @@ const Cadastros = () => {
   ];
 
   const stats = [
-    { title: 'Total de Artistas', value: '248', icon: Music, color: 'from-purple-500 to-pink-600' },
+    { title: 'Total de Artistas', value: '248', icon: Music, color: 'gradient-sony-red' },
     { title: 'Gravadoras', value: '42', icon: Building2, color: 'from-blue-500 to-cyan-600' },
     { title: 'Empresas Parceiras', value: '86', icon: Building2, color: 'from-green-500 to-emerald-600' },
   ];
