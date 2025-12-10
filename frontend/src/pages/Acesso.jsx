@@ -225,7 +225,7 @@ const Acesso = () => {
                     <TableCell>
                       <Badge className={usuario.status === 'Ativo' 
                         ? 'bg-green-100 text-green-700 hover:bg-green-100' 
-                        : 'bg-gray-100 text-gray-300 hover:bg-gray-100'
+                        : 'bg-gray-100 text-gray-300 hover:bg-gray-800'
                       }>
                         {usuario.status}
                       </Badge>

@@ -102,7 +102,7 @@ const LicenseIn = () => {
       case 'Em Análise':
         return 'bg-blue-100 text-blue-700 hover:bg-blue-100';
       default:
-        return 'bg-gray-100 text-gray-300 hover:bg-gray-100';
+        return 'bg-gray-100 text-gray-300 hover:bg-gray-800';
     }
   };
 

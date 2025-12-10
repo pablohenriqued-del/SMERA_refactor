@@ -92,7 +92,7 @@ const LicenseOut = () => {
       case 'Rejeitado':
         return 'bg-red-100 text-red-700 hover:bg-red-100';
       default:
-        return 'bg-gray-100 text-gray-300 hover:bg-gray-100';
+        return 'bg-gray-100 text-gray-300 hover:bg-gray-800';
     }
   };
 

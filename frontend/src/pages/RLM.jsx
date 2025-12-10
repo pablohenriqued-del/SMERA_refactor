@@ -107,7 +107,7 @@ const RLM = () => {
       case 'Próximo a Vencer':
         return 'bg-red-100 text-red-700 hover:bg-red-100';
       case 'Vencido':
-        return 'bg-gray-100 text-gray-300 hover:bg-gray-100';
+        return 'bg-gray-100 text-gray-300 hover:bg-gray-800';
       default:
         return 'bg-blue-100 text-blue-700 hover:bg-blue-100';
     }
