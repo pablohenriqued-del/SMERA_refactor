@@ -94,7 +94,12 @@ const Dashboard = () => {
           const TrendIcon = stat.trend === 'up' ? TrendingUp : TrendingDown;
           
           return (
-            <Card key={index} className="overflow-hidden border-0 shadow-lg hover:shadow-xl transition-shadow duration-300" data-testid={`stat-card-${index}`}>
+            <Card 
+              key={index} 
+              className="overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105" 
+              data-testid={`stat-card-${index}`}
+              onClick={() => setSelectedStat({...stat, index})}
+            >
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
