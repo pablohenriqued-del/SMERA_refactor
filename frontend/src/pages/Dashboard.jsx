@@ -25,6 +25,10 @@ import {
 } from '../components/ui/dialog';
 
 const Dashboard = () => {
+  const [selectedStat, setSelectedStat] = useState(null);
+  const [selectedActivity, setSelectedActivity] = useState(null);
+  const [selectedTerritory, setSelectedTerritory] = useState(null);
+
   const stats = [
     {
       title: 'Licenças Ativas',
