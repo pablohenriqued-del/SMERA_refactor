@@ -36,7 +36,7 @@ const Dashboard = () => {
       change: '+8%',
       trend: 'up',
       icon: FileInput,
-      color: 'from-blue-500 to-cyan-600'
+      color: 'gradient-sony-red-black'
     },
     {
       title: 'License Out',
@@ -44,7 +44,7 @@ const Dashboard = () => {
       change: '+4%',
       trend: 'up',
       icon: FileOutput,
-      color: 'from-purple-500 to-pink-600'
+      color: 'gradient-sony-black-red'
     },
   ];
 
