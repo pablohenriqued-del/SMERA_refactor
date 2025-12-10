@@ -224,6 +224,7 @@ const RLM = () => {
                           variant="ghost" 
                           size="icon" 
                           className="h-8 w-8 text-blue-600 hover:bg-blue-50"
+                          onClick={() => window.location.href = `/rlm/${direito.id}`}
                           data-testid={`view-right-${direito.id}`}
                         >
                           <Eye className="h-4 w-4" />
