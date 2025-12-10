@@ -184,7 +184,12 @@ const Dashboard = () => {
           <CardContent>
             <div className="space-y-4">
               {territories.map((territory, index) => (
-                <div key={index} className="space-y-2" data-testid={`territory-item-${index}`}>
+                <div 
+                  key={index} 
+                  className="space-y-2 cursor-pointer hover:bg-gray-800/50 p-2 rounded-lg transition-all" 
+                  data-testid={`territory-item-${index}`}
+                  onClick={() => setSelectedTerritory(territory)}
+                >
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-gray-300">{territory.name}</span>
                     <span className="text-sm font-bold text-white">{territory.count}</span>
