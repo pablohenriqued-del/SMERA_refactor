@@ -196,7 +196,7 @@ const Layout = () => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed left-0 top-16 bottom-0 w-64 bg-white border-r border-gray-200 transition-transform duration-300 z-40 ${
+        className={`fixed left-0 top-16 bottom-0 w-64 bg-black border-r border-gray-800 transition-transform duration-300 z-40 ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
         data-testid="sidebar"
@@ -213,8 +213,8 @@ const Layout = () => {
                 data-testid={`nav-link-${item.name.toLowerCase().replace(/\s+/g, '-')}`}
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                   isActive
-                    ? 'bg-sony-red text-white shadow-lg'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    ? 'bg-sony-red text-white shadow-lg shadow-red-900/50'
+                    : 'text-gray-400 hover:bg-gray-900 hover:text-white'
                 }`}
               >
                 <Icon className="h-5 w-5" />
