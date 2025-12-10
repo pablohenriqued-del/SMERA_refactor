@@ -268,7 +268,7 @@ const Cadastros = () => {
                   <CardTitle>Empresas Parceiras</CardTitle>
                   <CardDescription>Gerencie o cadastro de empresas licenciadas</CardDescription>
                 </div>
-                <Button className="gradient-pink-purple" data-testid="add-company-btn">
+                <Button className="bg-sony-red hover:bg-sony-red/90 text-white" data-testid="add-company-btn">
                   <Plus className="h-4 w-4 mr-2" />
                   Nova Empresa
                 </Button>
