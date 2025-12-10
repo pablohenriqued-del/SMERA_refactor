@@ -175,8 +175,8 @@ const Layout = () => {
                     </AvatarFallback>
                   </Avatar>
                   <div className="hidden md:block text-left">
-                    <p className="text-sm font-medium">Olá, Pablo Duartel</p>
-                    <p className="text-xs text-gray-500">Sony Music Entertainment</p>
+                    <p className="text-sm font-medium text-white">Olá, Pablo Duartel</p>
+                    <p className="text-xs text-gray-400">Sony Music Entertainment</p>
                   </div>
                   <ChevronDown className="h-4 w-4 text-gray-500" />
                 </Button>
