@@ -140,8 +140,9 @@ const Dashboard = () => {
               {recentActivity.map((activity) => (
                 <div
                   key={activity.id}
-                  className="flex items-center justify-between p-4 rounded-lg border border-gray-800 hover:border-purple-200 hover:bg-red-50/30 transition-all duration-200"
+                  className="flex items-center justify-between p-4 rounded-lg border border-gray-800 hover:border-purple-200 hover:bg-red-50/30 transition-all duration-200 cursor-pointer"
                   data-testid={`activity-item-${activity.id}`}
+                  onClick={() => setSelectedActivity(activity)}
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-xl gradient-sony-red flex items-center justify-center">
