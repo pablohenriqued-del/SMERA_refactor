@@ -67,8 +67,8 @@ const Dashboard = () => {
     <div className="space-y-6" data-testid="dashboard-page">
       {/* Page Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900" data-testid="dashboard-title">Dashboard</h1>
-        <p className="text-gray-500 mt-1">Visão geral do sistema de licenciamento</p>
+        <h1 className="text-3xl font-bold text-white" data-testid="dashboard-title">Dashboard</h1>
+        <p className="text-gray-400 mt-1">Visão geral do sistema de licenciamento</p>
       </div>
 
       {/* Stats Grid */}
@@ -82,8 +82,8 @@ const Dashboard = () => {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
-                    <p className="text-sm font-medium text-gray-500">{stat.title}</p>
-                    <h3 className="text-3xl font-bold text-gray-900">{stat.value}</h3>
+                    <p className="text-sm font-medium text-gray-400">{stat.title}</p>
+                    <h3 className="text-3xl font-bold text-white">{stat.value}</h3>
                     <div className="flex items-center gap-1">
                       <TrendIcon className={`h-4 w-4 ${
                         stat.trend === 'up' ? 'text-green-500' : 'text-red-500'
@@ -93,7 +93,7 @@ const Dashboard = () => {
                       }`}>
                         {stat.change}
                       </span>
-                      <span className="text-sm text-gray-500">vs mês anterior</span>
+                      <span className="text-sm text-gray-400">vs mês anterior</span>
                     </div>
                   </div>
                   <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
@@ -131,8 +131,8 @@ const Dashboard = () => {
                       )}
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900">{activity.project}</h4>
-                      <p className="text-sm text-gray-500">{activity.artist}</p>
+                      <h4 className="font-semibold text-white">{activity.project}</h4>
+                      <p className="text-sm text-gray-400">{activity.artist}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
@@ -145,7 +145,7 @@ const Dashboard = () => {
                     >
                       {activity.status}
                     </Badge>
-                    <span className="text-sm text-gray-500">{activity.date}</span>
+                    <span className="text-sm text-gray-400">{activity.date}</span>
                   </div>
                 </div>
               ))}
@@ -164,8 +164,8 @@ const Dashboard = () => {
               {territories.map((territory, index) => (
                 <div key={index} className="space-y-2" data-testid={`territory-item-${index}`}>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-700">{territory.name}</span>
-                    <span className="text-sm font-bold text-gray-900">{territory.count}</span>
+                    <span className="text-sm font-medium text-gray-300">{territory.name}</span>
+                    <span className="text-sm font-bold text-white">{territory.count}</span>
                   </div>
                   <div className="relative h-2 bg-gray-100 rounded-full overflow-hidden">
                     <div
@@ -173,7 +173,7 @@ const Dashboard = () => {
                       style={{ width: `${territory.percentage}%` }}
                     />
                   </div>
-                  <span className="text-xs text-gray-500">{territory.percentage}% do total</span>
+                  <span className="text-xs text-gray-400">{territory.percentage}% do total</span>
                 </div>
               ))}
             </div>
@@ -184,8 +184,8 @@ const Dashboard = () => {
                   <Users className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-700">Total de Licenças</p>
-                  <p className="text-2xl font-bold text-gray-900">187</p>
+                  <p className="text-sm font-medium text-gray-300">Total de Licenças</p>
+                  <p className="text-2xl font-bold text-white">187</p>
                 </div>
               </div>
             </div>

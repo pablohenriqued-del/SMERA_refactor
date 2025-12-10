@@ -58,8 +58,8 @@ const Cadastros = () => {
     <div className="space-y-6" data-testid="cadastros-page">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900" data-testid="cadastros-title">Cadastros</h1>
-        <p className="text-gray-500 mt-1">Gerencie artistas, gravadoras e empresas</p>
+        <h1 className="text-3xl font-bold text-white" data-testid="cadastros-title">Cadastros</h1>
+        <p className="text-gray-400 mt-1">Gerencie artistas, gravadoras e empresas</p>
       </div>
 
       {/* Stats */}
@@ -71,8 +71,8 @@ const Cadastros = () => {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-500">{stat.title}</p>
-                    <h3 className="text-3xl font-bold text-gray-900 mt-1">{stat.value}</h3>
+                    <p className="text-sm font-medium text-gray-400">{stat.title}</p>
+                    <h3 className="text-3xl font-bold text-white mt-1">{stat.value}</h3>
                   </div>
                   <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
                     <Icon className="h-7 w-7 text-white" />
@@ -160,7 +160,7 @@ const Cadastros = () => {
                         <TableCell>
                           <Badge className={artista.status === 'Ativo' 
                             ? 'bg-green-100 text-green-700 hover:bg-green-100' 
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-100'
+                            : 'bg-gray-100 text-gray-300 hover:bg-gray-100'
                           }>
                             {artista.status}
                           </Badge>

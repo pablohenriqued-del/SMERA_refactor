@@ -92,7 +92,7 @@ const LicenseOut = () => {
       case 'Rejeitado':
         return 'bg-red-100 text-red-700 hover:bg-red-100';
       default:
-        return 'bg-gray-100 text-gray-700 hover:bg-gray-100';
+        return 'bg-gray-100 text-gray-300 hover:bg-gray-100';
     }
   };
 
@@ -101,8 +101,8 @@ const LicenseOut = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900" data-testid="license-out-title">License Out</h1>
-          <p className="text-gray-500 mt-1">Gerencie licenças de saída</p>
+          <h1 className="text-3xl font-bold text-white" data-testid="license-out-title">License Out</h1>
+          <p className="text-gray-400 mt-1">Gerencie licenças de saída</p>
         </div>
         <Button className="bg-sony-black hover:bg-sony-black/90 text-white hover:opacity-90 transition-opacity" data-testid="new-license-out-btn">
           <Plus className="h-4 w-4 mr-2" />
@@ -220,7 +220,7 @@ const LicenseOut = () => {
 
           {/* Pagination */}
           <div className="flex items-center justify-between mt-4">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-400">
               Mostrando <span className="font-medium">{filteredLicenses.length}</span> de{' '}
               <span className="font-medium">{licenses.length}</span> resultados
             </p>

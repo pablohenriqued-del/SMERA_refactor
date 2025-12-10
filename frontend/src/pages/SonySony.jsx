@@ -124,7 +124,7 @@ const SonySony = () => {
       case 'Lançado':
         return 'bg-cyan-100 text-cyan-700 hover:bg-cyan-100';
       default:
-        return 'bg-gray-100 text-gray-700 hover:bg-gray-100';
+        return 'bg-gray-100 text-gray-300 hover:bg-gray-100';
     }
   };
 
@@ -133,8 +133,8 @@ const SonySony = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900" data-testid="sony-sony-title">Sony/Sony</h1>
-          <p className="text-gray-500 mt-1">Projetos e colaborações entre artistas Sony Music</p>
+          <h1 className="text-3xl font-bold text-white" data-testid="sony-sony-title">Sony/Sony</h1>
+          <p className="text-gray-400 mt-1">Projetos e colaborações entre artistas Sony Music</p>
         </div>
         <Button className="bg-sony-red hover:bg-sony-red/90 text-white hover:opacity-90 transition-opacity" data-testid="new-sony-project-btn">
           <Plus className="h-4 w-4 mr-2" />
@@ -151,8 +151,8 @@ const SonySony = () => {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-500">{stat.title}</p>
-                    <h3 className="text-3xl font-bold text-gray-900 mt-1">{stat.value}</h3>
+                    <p className="text-sm font-medium text-gray-400">{stat.title}</p>
+                    <h3 className="text-3xl font-bold text-white mt-1">{stat.value}</h3>
                   </div>
                   <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
                     <Icon className="h-7 w-7 text-white" />
@@ -281,7 +281,7 @@ const SonySony = () => {
 
           {/* Pagination */}
           <div className="flex items-center justify-between mt-4">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-400">
               Mostrando <span className="font-medium">{filteredProjetos.length}</span> de{' '}
               <span className="font-medium">{projetos.length}</span> resultados
             </p>
