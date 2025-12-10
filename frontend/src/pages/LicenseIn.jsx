@@ -114,7 +114,7 @@ const LicenseIn = () => {
           <h1 className="text-3xl font-bold text-gray-900" data-testid="license-in-title">License In</h1>
           <p className="text-gray-500 mt-1">Gerencie licenças de entrada</p>
         </div>
-        <Button className="gradient-purple-pink hover:opacity-90 transition-opacity" data-testid="new-license-btn">
+        <Button className="bg-sony-red hover:bg-sony-red/90 text-white transition-opacity" data-testid="new-license-btn">
           <Plus className="h-4 w-4 mr-2" />
           Novo Pedido
         </Button>
