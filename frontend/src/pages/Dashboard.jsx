@@ -169,7 +169,7 @@ const Dashboard = () => {
                   </div>
                   <div className="relative h-2 bg-gray-100 rounded-full overflow-hidden">
                     <div
-                      className="absolute top-0 left-0 h-full gradient-purple-pink rounded-full transition-all duration-500"
+                      className="absolute top-0 left-0 h-full gradient-sony-red rounded-full transition-all duration-500"
                       style={{ width: `${territory.percentage}%` }}
                     />
                   </div>
