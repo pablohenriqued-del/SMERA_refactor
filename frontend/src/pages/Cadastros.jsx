@@ -121,10 +121,10 @@ const Cadastros = () => {
                 </div>
               </div>
               
-              <div className="rounded-lg border border-gray-200 overflow-hidden">
+              <div className="rounded-lg border border-gray-700 overflow-hidden">
                 <Table>
                   <TableHeader>
-                    <TableRow className="bg-gray-50">
+                    <TableRow className="bg-gray-900">
                       <TableHead className="font-semibold">Nome</TableHead>
                       <TableHead className="font-semibold">Gravadora</TableHead>
                       <TableHead className="font-semibold">Gênero</TableHead>
@@ -210,10 +210,10 @@ const Cadastros = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="rounded-lg border border-gray-200 overflow-hidden">
+              <div className="rounded-lg border border-gray-700 overflow-hidden">
                 <Table>
                   <TableHeader>
-                    <TableRow className="bg-gray-50">
+                    <TableRow className="bg-gray-900">
                       <TableHead className="font-semibold">Nome</TableHead>
                       <TableHead className="font-semibold">País</TableHead>
                       <TableHead className="font-semibold">Tipo</TableHead>
@@ -275,10 +275,10 @@ const Cadastros = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="rounded-lg border border-gray-200 overflow-hidden">
+              <div className="rounded-lg border border-gray-700 overflow-hidden">
                 <Table>
                   <TableHeader>
-                    <TableRow className="bg-gray-50">
+                    <TableRow className="bg-gray-900">
                       <TableHead className="font-semibold">Nome</TableHead>
                       <TableHead className="font-semibold">Segmento</TableHead>
                       <TableHead className="font-semibold">País</TableHead>

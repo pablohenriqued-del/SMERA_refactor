@@ -180,10 +180,10 @@ const RLM = () => {
           <CardDescription>Gerencie os direitos musicais e licenciamento</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="rounded-lg border border-gray-200 overflow-hidden">
+          <div className="rounded-lg border border-gray-700 overflow-hidden">
             <Table>
               <TableHeader>
-                <TableRow className="bg-gray-50">
+                <TableRow className="bg-gray-900">
                   <TableHead className="font-semibold">Código</TableHead>
                   <TableHead className="font-semibold">Obra</TableHead>
                   <TableHead className="font-semibold">Titular</TableHead>

@@ -199,10 +199,10 @@ const SonySony = () => {
           <CardDescription>Colaborações e projetos internos Sony Music</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="rounded-lg border border-gray-200 overflow-hidden">
+          <div className="rounded-lg border border-gray-700 overflow-hidden">
             <Table>
               <TableHeader>
-                <TableRow className="bg-gray-50">
+                <TableRow className="bg-gray-900">
                   <TableHead className="font-semibold">Código</TableHead>
                   <TableHead className="font-semibold">Projeto</TableHead>
                   <TableHead className="font-semibold">Artista Principal</TableHead>

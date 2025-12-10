@@ -101,9 +101,9 @@ const Acesso = () => {
       case 'Gestor':
         return 'bg-blue-100 text-blue-700 border-blue-200';
       case 'Usuário':
-        return 'bg-gray-100 text-gray-300 border-gray-200';
+        return 'bg-gray-100 text-gray-300 border-gray-700';
       default:
-        return 'bg-gray-100 text-gray-300 border-gray-200';
+        return 'bg-gray-100 text-gray-300 border-gray-700';
     }
   };
 
@@ -177,10 +177,10 @@ const Acesso = () => {
           <CardDescription>Gerencie os usuários e suas permissões de acesso</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="rounded-lg border border-gray-200 overflow-hidden">
+          <div className="rounded-lg border border-gray-700 overflow-hidden">
             <Table>
               <TableHeader>
-                <TableRow className="bg-gray-50">
+                <TableRow className="bg-gray-900">
                   <TableHead className="font-semibold">Usuário</TableHead>
                   <TableHead className="font-semibold">Cargo</TableHead>
                   <TableHead className="font-semibold">Perfil</TableHead>

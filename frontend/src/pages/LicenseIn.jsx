@@ -154,10 +154,10 @@ const LicenseIn = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="rounded-lg border border-gray-200 overflow-hidden">
+          <div className="rounded-lg border border-gray-700 overflow-hidden">
             <Table>
               <TableHeader>
-                <TableRow className="bg-gray-50">
+                <TableRow className="bg-gray-900">
                   <TableHead className="font-semibold">Projeto</TableHead>
                   <TableHead className="font-semibold">Título da Faixa</TableHead>
                   <TableHead className="font-semibold">Artista Sony</TableHead>

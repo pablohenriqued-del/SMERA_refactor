@@ -119,7 +119,7 @@ const Dashboard = () => {
               {recentActivity.map((activity) => (
                 <div
                   key={activity.id}
-                  className="flex items-center justify-between p-4 rounded-lg border border-gray-100 hover:border-purple-200 hover:bg-red-50/30 transition-all duration-200"
+                  className="flex items-center justify-between p-4 rounded-lg border border-gray-800 hover:border-purple-200 hover:bg-red-50/30 transition-all duration-200"
                   data-testid={`activity-item-${activity.id}`}
                 >
                   <div className="flex items-center gap-4">
