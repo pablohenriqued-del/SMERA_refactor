@@ -145,8 +145,8 @@ const Layout = () => {
                   </svg>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Sony Music</span>
-                  <h1 className="text-xl font-bold text-gray-900 -mt-1" data-testid="app-title">SMERA</h1>
+                  <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Sony Music</span>
+                  <h1 className="text-xl font-bold text-white -mt-1" data-testid="app-title">SMERA</h1>
                 </div>
               </div>
             </div>
