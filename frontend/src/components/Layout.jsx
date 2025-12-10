@@ -56,10 +56,18 @@ const Layout = () => {
             </Button>
             
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center">
-                <Music className="h-6 w-6 text-white" />
+              {/* Sony Music Logo */}
+              <div className="flex items-center gap-2">
+                <div className="h-10 flex items-center">
+                  <svg viewBox="0 0 120 40" className="h-10 w-auto" xmlns="http://www.w3.org/2000/svg">
+                    {/* Sony Music Logo */}
+                    <rect x="0" y="0" width="40" height="40" fill="#E2001A" rx="4"/>
+                    <text x="20" y="28" fontSize="24" fontWeight="bold" fill="white" textAnchor="middle" fontFamily="Arial, sans-serif">SM</text>
+                  </svg>
+                </div>
+                <div className="border-l border-gray-300 h-8 mx-2"></div>
+                <h1 className="text-xl font-bold text-gray-900" data-testid="app-title">SMERA</h1>
               </div>
-              <h1 className="text-xl font-bold text-gradient" data-testid="app-title">SMERA</h1>
             </div>
           </div>
 
@@ -81,7 +89,7 @@ const Layout = () => {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="flex items-center gap-2" data-testid="user-menu-trigger">
                   <Avatar className="h-8 w-8">
-                    <AvatarFallback className="gradient-purple-pink text-white text-sm font-semibold">
+                    <AvatarFallback className="bg-sony-red text-white text-sm font-semibold">
                       PD
                     </AvatarFallback>
                   </Avatar>
@@ -124,7 +132,7 @@ const Layout = () => {
                 data-testid={`nav-link-${item.name.toLowerCase().replace(/\s+/g, '-')}`}
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                   isActive
-                    ? 'gradient-purple-pink text-white shadow-lg shadow-purple-500/30'
+                    ? 'bg-sony-red text-white shadow-lg'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >

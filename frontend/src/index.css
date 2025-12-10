@@ -21,52 +21,54 @@ code {
 @layer base {
     :root {
         --background: 0 0% 100%;
-        --foreground: 222.2 84% 4.9%;
+        --foreground: 0 0% 0%;
         --card: 0 0% 100%;
-        --card-foreground: 222.2 84% 4.9%;
+        --card-foreground: 0 0% 0%;
         --popover: 0 0% 100%;
-        --popover-foreground: 222.2 84% 4.9%;
-        --primary: 262 83% 58%;
-        --primary-foreground: 210 40% 98%;
-        --secondary: 210 40% 96.1%;
-        --secondary-foreground: 222.2 47.4% 11.2%;
-        --muted: 210 40% 96.1%;
-        --muted-foreground: 215.4 16.3% 46.9%;
-        --accent: 210 40% 96.1%;
-        --accent-foreground: 222.2 47.4% 11.2%;
+        --popover-foreground: 0 0% 0%;
+        --primary: 351 100% 44%;
+        --primary-foreground: 0 0% 100%;
+        --secondary: 0 0% 96.1%;
+        --secondary-foreground: 0 0% 0%;
+        --muted: 0 0% 96.1%;
+        --muted-foreground: 0 0% 45.1%;
+        --accent: 0 0% 96.1%;
+        --accent-foreground: 0 0% 0%;
         --destructive: 0 84.2% 60.2%;
-        --destructive-foreground: 210 40% 98%;
-        --border: 214.3 31.8% 91.4%;
-        --input: 214.3 31.8% 91.4%;
-        --ring: 262 83% 58%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 0 0% 89.8%;
+        --input: 0 0% 89.8%;
+        --ring: 351 100% 44%;
         --radius: 0.5rem;
         
-        /* Custom Gradient Colors */
-        --gradient-purple: 262 83% 58%;
-        --gradient-pink: 340 82% 62%;
-        --gradient-blue: 210 100% 56%;
+        /* Sony Music Brand Colors */
+        --sony-red: 351 100% 44%;
+        --sony-red-dark: 351 100% 35%;
+        --sony-black: 0 0% 0%;
+        --sony-gray: 0 0% 20%;
+        --sony-gray-light: 0 0% 40%;
     }
     
     .dark {
-        --background: 222.2 84% 4.9%;
-        --foreground: 210 40% 98%;
-        --card: 222.2 84% 4.9%;
-        --card-foreground: 210 40% 98%;
-        --popover: 222.2 84% 4.9%;
-        --popover-foreground: 210 40% 98%;
-        --primary: 262 83% 58%;
-        --primary-foreground: 222.2 47.4% 11.2%;
-        --secondary: 217.2 32.6% 17.5%;
-        --secondary-foreground: 210 40% 98%;
-        --muted: 217.2 32.6% 17.5%;
-        --muted-foreground: 215 20.2% 65.1%;
-        --accent: 217.2 32.6% 17.5%;
-        --accent-foreground: 210 40% 98%;
+        --background: 0 0% 3.9%;
+        --foreground: 0 0% 98%;
+        --card: 0 0% 3.9%;
+        --card-foreground: 0 0% 98%;
+        --popover: 0 0% 3.9%;
+        --popover-foreground: 0 0% 98%;
+        --primary: 351 100% 44%;
+        --primary-foreground: 0 0% 100%;
+        --secondary: 0 0% 14.9%;
+        --secondary-foreground: 0 0% 98%;
+        --muted: 0 0% 14.9%;
+        --muted-foreground: 0 0% 63.9%;
+        --accent: 0 0% 14.9%;
+        --accent-foreground: 0 0% 98%;
         --destructive: 0 62.8% 30.6%;
-        --destructive-foreground: 210 40% 98%;
-        --border: 217.2 32.6% 17.5%;
-        --input: 217.2 32.6% 17.5%;
-        --ring: 262 83% 58%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 0 0% 14.9%;
+        --input: 0 0% 14.9%;
+        --ring: 351 100% 44%;
     }
 }
 
@@ -79,24 +81,40 @@ code {
     }
 }
 
-/* Custom Gradient Classes */
-.gradient-purple-pink {
-    background: linear-gradient(135deg, hsl(var(--gradient-purple)) 0%, hsl(var(--gradient-pink)) 100%);
+/* Sony Music Gradient Classes */
+.gradient-sony-red {
+    background: linear-gradient(135deg, hsl(var(--sony-red)) 0%, hsl(var(--sony-red-dark)) 100%);
 }
 
-.gradient-blue-purple {
-    background: linear-gradient(135deg, hsl(var(--gradient-blue)) 0%, hsl(var(--gradient-purple)) 100%);
+.gradient-sony-red-black {
+    background: linear-gradient(135deg, hsl(var(--sony-red)) 0%, hsl(var(--sony-black)) 100%);
 }
 
-.gradient-pink-purple {
-    background: linear-gradient(135deg, hsl(var(--gradient-pink)) 0%, hsl(var(--gradient-purple)) 100%);
+.gradient-sony-black-red {
+    background: linear-gradient(135deg, hsl(var(--sony-black)) 0%, hsl(var(--sony-red)) 100%);
 }
 
-.text-gradient {
-    background: linear-gradient(135deg, hsl(var(--gradient-purple)) 0%, hsl(var(--gradient-pink)) 100%);
+.gradient-sony-gray-red {
+    background: linear-gradient(135deg, hsl(var(--sony-gray)) 0%, hsl(var(--sony-red)) 100%);
+}
+
+.text-gradient-sony {
+    background: linear-gradient(135deg, hsl(var(--sony-red)) 0%, hsl(var(--sony-black)) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+}
+
+.bg-sony-red {
+    background: hsl(var(--sony-red));
+}
+
+.bg-sony-black {
+    background: hsl(var(--sony-black));
+}
+
+.text-sony-red {
+    color: hsl(var(--sony-red));
 }
 
 /* Animations */
@@ -139,5 +157,5 @@ code {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--muted-foreground) / 0.5);
+    background: hsl(var(--sony-red) / 0.5);
 }
