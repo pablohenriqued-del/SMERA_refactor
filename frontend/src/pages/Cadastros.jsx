@@ -203,7 +203,7 @@ const Cadastros = () => {
                   <CardTitle>Gravadoras</CardTitle>
                   <CardDescription>Gerencie o cadastro de gravadoras</CardDescription>
                 </div>
-                <Button className="gradient-blue-purple" data-testid="add-label-btn">
+                <Button className="bg-sony-black hover:bg-sony-black/90 text-white" data-testid="add-label-btn">
                   <Plus className="h-4 w-4 mr-2" />
                   Nova Gravadora
                 </Button>

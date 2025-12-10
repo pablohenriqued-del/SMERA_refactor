@@ -104,7 +104,7 @@ const LicenseOut = () => {
           <h1 className="text-3xl font-bold text-gray-900" data-testid="license-out-title">License Out</h1>
           <p className="text-gray-500 mt-1">Gerencie licenças de saída</p>
         </div>
-        <Button className="gradient-blue-purple hover:opacity-90 transition-opacity" data-testid="new-license-out-btn">
+        <Button className="bg-sony-black hover:bg-sony-black/90 text-white hover:opacity-90 transition-opacity" data-testid="new-license-out-btn">
           <Plus className="h-4 w-4 mr-2" />
           Nova Solicitação
         </Button>
@@ -226,7 +226,7 @@ const LicenseOut = () => {
             </p>
             <div className="flex gap-2">
               <Button variant="outline" size="sm">Anterior</Button>
-              <Button variant="outline" size="sm" className="gradient-blue-purple text-white border-0">1</Button>
+              <Button variant="outline" size="sm" className="bg-sony-black hover:bg-sony-black/90 text-white text-white border-0">1</Button>
               <Button variant="outline" size="sm">2</Button>
               <Button variant="outline" size="sm">Próximo</Button>
             </div>
