@@ -40,9 +40,8 @@ const LicenseIn = () => {
       artista: 'Pabllo Vittar',
       artistasConvidados: 'Will Love',
       proRata: 'Não',
-      previsao: '-',
+      previsao: '15/11/2024',
       formato: 'Participação Especial',
-      territorios: 'Brasil e Mundo',
       meios: 'Físico e Digital',
       status: 'Finalizado'
     },
@@ -53,9 +52,8 @@ const LicenseIn = () => {
       artista: 'Pabllo Vittar',
       artistasConvidados: 'EPX',
       proRata: 'Não',
-      previsao: '-',
+      previsao: '20/11/2024',
       formato: 'Participação Especial',
-      territorios: 'Brasil e Mundo',
       meios: 'Físico e Digital',
       status: 'Finalizado'
     },
@@ -68,7 +66,6 @@ const LicenseIn = () => {
       proRata: 'Não',
       previsao: '18/12/2025',
       formato: 'Participação Especial',
-      territorios: 'Brasil e Mundo',
       meios: 'Físico e Digital',
       status: 'Pendente'
     },
@@ -81,7 +78,6 @@ const LicenseIn = () => {
       proRata: 'Sim',
       previsao: '15/01/2026',
       formato: 'Participação Especial',
-      territorios: 'Brasil e Mundo',
       meios: 'Físico e Digital',
       status: 'Em Análise'
     },
@@ -92,9 +88,8 @@ const LicenseIn = () => {
       artista: 'MC Hariel',
       artistasConvidados: 'Kevin O Chris',
       proRata: 'Não',
-      previsao: '20/02/2026',
+      previsao: '20/12/2024',
       formato: 'Participação Especial',
-      territorios: 'Brasil',
       meios: 'Digital',
       status: 'Pendente'
     },
@@ -105,9 +100,8 @@ const LicenseIn = () => {
       artista: 'Marília Mendonça',
       artistasConvidados: 'Henrique & Juliano',
       proRata: 'Sim',
-      previsao: '10/03/2026',
+      previsao: '10/12/2024',
       formato: 'Participação Especial',
-      territorios: 'Brasil e América Latina',
       meios: 'Físico e Digital',
       status: 'Finalizado'
     },
@@ -118,6 +112,23 @@ const LicenseIn = () => {
       value.toString().toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
+
+  // Calcular estatísticas
+  const totalLicenses = licenses.length;
+  const currentMonth = new Date().getMonth();
+  const currentYear = new Date().getFullYear();
+  
+  const licensesThisMonth = licenses.filter(license => {
+    const [day, month, year] = license.previsao.split('/');
+    const licenseDate = new Date(year, month - 1, day);
+    return licenseDate.getMonth() === currentMonth && licenseDate.getFullYear() === currentYear;
+  }).length;
+
+  const statusCount = {
+    'Finalizado': licenses.filter(l => l.status === 'Finalizado').length,
+    'Em Análise': licenses.filter(l => l.status === 'Em Análise').length,
+    'Pendente': licenses.filter(l => l.status === 'Pendente').length,
+  };
 
   const getStatusColor = (status) => {
     switch (status) {
