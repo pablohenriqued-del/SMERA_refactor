@@ -390,7 +390,7 @@ const Dashboard = () => {
         <Card className="border-0 shadow-lg" data-testid="territories-card">
           <CardHeader>
             <CardTitle className="text-xl font-bold">Territórios</CardTitle>
-            <CardDescription>Distribuição por região</CardDescription>
+            <CardDescription>América Latina, Espanha, Portugal e US Latin</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
