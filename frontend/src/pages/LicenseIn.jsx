@@ -243,7 +243,6 @@ const LicenseIn = () => {
                   <TableHead className="font-semibold">Pro-Rata</TableHead>
                   <TableHead className="font-semibold">Previsão Lançamento</TableHead>
                   <TableHead className="font-semibold">Formato</TableHead>
-                  <TableHead className="font-semibold">Territórios</TableHead>
                   <TableHead className="font-semibold">Meios</TableHead>
                   <TableHead className="font-semibold">Status</TableHead>
                   <TableHead className="font-semibold text-center">Ações</TableHead>
