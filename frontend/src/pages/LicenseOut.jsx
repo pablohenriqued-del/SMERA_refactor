@@ -253,8 +253,19 @@ const LicenseOut = () => {
                         <Button 
                           variant="ghost" 
                           size="icon" 
+                          className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50"
+                          onClick={() => window.location.href = `/license-out/${license.id}/approval`}
+                          data-testid={`approval-license-out-${license.id}`}
+                          title="Aprovação"
+                        >
+                          <CheckSquare className="h-4 w-4" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
                           className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                           data-testid={`view-license-out-${license.id}`}
+                          title="Visualizar"
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
@@ -263,6 +274,7 @@ const LicenseOut = () => {
                           size="icon" 
                           className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
                           data-testid={`edit-license-out-${license.id}`}
+                          title="Editar"
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
@@ -271,6 +283,7 @@ const LicenseOut = () => {
                           size="icon" 
                           className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
                           data-testid={`delete-license-out-${license.id}`}
+                          title="Deletar"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
