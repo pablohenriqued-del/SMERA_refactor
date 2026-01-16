@@ -81,10 +81,14 @@ const Dashboard = () => {
   ];
 
   const territories = [
-    { name: 'Brasil e Mundo', count: 84, percentage: 45 },
-    { name: 'América Latina', count: 52, percentage: 28 },
-    { name: 'Europa', count: 38, percentage: 20 },
-    { name: 'Ásia', count: 13, percentage: 7 },
+    { name: 'Brasil', count: 94, percentage: 38 },
+    { name: 'México', count: 52, percentage: 21 },
+    { name: 'Argentina', count: 38, percentage: 15 },
+    { name: 'Colômbia', count: 24, percentage: 10 },
+    { name: 'Chile', count: 18, percentage: 7 },
+    { name: 'US Latin', count: 15, percentage: 6 },
+    { name: 'Espanha', count: 4, percentage: 2 },
+    { name: 'Portugal', count: 3, percentage: 1 },
   ];
 
   return (
