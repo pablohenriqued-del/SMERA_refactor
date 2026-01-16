@@ -62,6 +62,14 @@ const Dashboard = () => {
       icon: FileOutput,
       color: 'gradient-sony-black-red'
     },
+    {
+      title: 'Sony/Sony',
+      value: '87',
+      change: '+15%',
+      trend: 'up',
+      icon: Music,
+      color: 'gradient-sony-red'
+    },
   ];
 
   const recentActivity = [
