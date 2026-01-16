@@ -21,6 +21,7 @@ function App() {
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="license-in" element={<LicenseIn />} />
           <Route path="license-out" element={<LicenseOut />} />
+          <Route path="license-out/:id/approval" element={<LicenseOutApproval />} />
           <Route path="cadastros" element={<Cadastros />} />
           <Route path="rlm" element={<RLM />} />
           <Route path="rlm/:id" element={<RLMDetail />} />
