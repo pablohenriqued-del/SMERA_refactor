@@ -300,15 +300,15 @@ const LicenseIn = () => {
           {/* Pagination */}
           <div className="flex items-center justify-between mt-4">
             <p className="text-sm text-gray-400">
-              Mostrando <span className="font-medium">{filteredLicenses.length}</span> de{' '}
-              <span className="font-medium">{licenses.length}</span> resultados
+              Mostrando <span className="font-medium text-white">{filteredLicenses.length}</span> de{' '}
+              <span className="font-medium text-white">{licenses.length}</span> resultados
             </p>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm">Anterior</Button>
+              <Button variant="outline" size="sm" className="border-gray-700 text-gray-300">Anterior</Button>
               <Button variant="outline" size="sm" className="bg-sony-red text-white border-0 hover:bg-sony-red/90">1</Button>
-              <Button variant="outline" size="sm">2</Button>
-              <Button variant="outline" size="sm">3</Button>
-              <Button variant="outline" size="sm">Próximo</Button>
+              <Button variant="outline" size="sm" className="border-gray-700 text-gray-300">2</Button>
+              <Button variant="outline" size="sm" className="border-gray-700 text-gray-300">3</Button>
+              <Button variant="outline" size="sm" className="border-gray-700 text-gray-300">Próximo</Button>
             </div>
           </div>
         </CardContent>
