@@ -423,7 +423,7 @@ const Dashboard = () => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-300">Total de Licenças</p>
-                  <p className="text-2xl font-bold text-white">187</p>
+                  <p className="text-2xl font-bold text-white">248</p>
                 </div>
               </div>
             </div>
