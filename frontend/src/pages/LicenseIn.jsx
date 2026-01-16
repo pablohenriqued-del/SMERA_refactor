@@ -264,7 +264,6 @@ const LicenseIn = () => {
                     <TableCell>
                       <span className="text-sm">{license.formato}</span>
                     </TableCell>
-                    <TableCell>{license.territorios}</TableCell>
                     <TableCell>{license.meios}</TableCell>
                     <TableCell>
                       <Badge className={getStatusColor(license.status)}>
