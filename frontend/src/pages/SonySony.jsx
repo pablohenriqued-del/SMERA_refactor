@@ -46,7 +46,7 @@ const SonySony = () => {
       tipo: 'Album Completo',
       lancamento: '15/03/2025',
       territorios: 'Global',
-      status: 'Em Produção',
+      status: 'Finalizado',
       valor: 'R$ 450.000'
     },
     {
@@ -59,7 +59,7 @@ const SonySony = () => {
       tipo: 'EP',
       lancamento: '20/04/2025',
       territorios: 'Américas',
-      status: 'Aprovação Final',
+      status: 'Em Análise',
       valor: 'R$ 280.000'
     },
     {
@@ -72,7 +72,7 @@ const SonySony = () => {
       tipo: 'Single',
       lancamento: '10/05/2025',
       territorios: 'Europa',
-      status: 'Mixagem',
+      status: 'Pendente',
       valor: 'R$ 180.000'
     },
     {
@@ -85,7 +85,7 @@ const SonySony = () => {
       tipo: 'Live Album',
       lancamento: '25/06/2025',
       territorios: 'Brasil e Portugal',
-      status: 'Gravação',
+      status: 'Pendenteção',
       valor: 'R$ 320.000'
     },
     {
@@ -98,7 +98,7 @@ const SonySony = () => {
       tipo: 'Compilation',
       lancamento: '01/07/2025',
       territorios: 'América Latina',
-      status: 'Planejamento',
+      status: 'Pendente',
       valor: 'R$ 520.000'
     },
   ];
@@ -111,15 +111,15 @@ const SonySony = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'Planejamento':
+      case 'Pendente':
         return 'bg-blue-100 text-blue-700 hover:bg-blue-100';
-      case 'Gravação':
+      case 'Pendenteção':
         return 'bg-yellow-100 text-yellow-700 hover:bg-yellow-100';
-      case 'Mixagem':
+      case 'Pendente':
         return 'bg-orange-100 text-orange-700 hover:bg-orange-100';
-      case 'Aprovação Final':
+      case 'Em Análise':
         return 'bg-red-100 text-red-700 hover:bg-red-100';
-      case 'Em Produção':
+      case 'Finalizado':
         return 'bg-green-100 text-green-700 hover:bg-green-100';
       case 'Lançado':
         return 'bg-cyan-100 text-cyan-700 hover:bg-cyan-100';
