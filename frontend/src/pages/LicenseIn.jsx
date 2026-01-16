@@ -192,24 +192,24 @@ const LicenseIn = () => {
       </div>
 
       {/* Filters */}
-      <Card className="border-0 shadow-lg">
+      <Card className="border-0 shadow-lg bg-gray-950">
         <CardContent className="pt-6">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
                 placeholder="Buscar por projeto, artista, título..."
-                className="pl-10"
+                className="pl-10 bg-gray-900 border-gray-700 text-white"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 data-testid="search-licenses-input"
               />
             </div>
-            <Button variant="outline" data-testid="filter-btn">
+            <Button variant="outline" className="border-gray-700 text-gray-300" data-testid="filter-btn">
               <Filter className="h-4 w-4 mr-2" />
               Filtros
             </Button>
-            <Button variant="outline" data-testid="export-btn">
+            <Button variant="outline" className="border-gray-700 text-gray-300" data-testid="export-btn">
               <Download className="h-4 w-4 mr-2" />
               Exportar
             </Button>
@@ -218,9 +218,9 @@ const LicenseIn = () => {
       </Card>
 
       {/* Table */}
-      <Card className="border-0 shadow-lg" data-testid="licenses-table-card">
+      <Card className="border-0 shadow-lg bg-gray-950" data-testid="licenses-table-card">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold">
+          <CardTitle className="text-lg font-semibold text-white">
             {filteredLicenses.length} Licença(s) encontrada(s)
           </CardTitle>
         </CardHeader>
@@ -228,36 +228,36 @@ const LicenseIn = () => {
           <div className="rounded-lg border border-gray-700 overflow-hidden">
             <Table>
               <TableHeader>
-                <TableRow className="bg-gray-900">
-                  <TableHead className="font-semibold">Projeto</TableHead>
-                  <TableHead className="font-semibold">Título da Faixa</TableHead>
-                  <TableHead className="font-semibold">Artista Sony</TableHead>
-                  <TableHead className="font-semibold">Artistas Convidados</TableHead>
-                  <TableHead className="font-semibold">Pro-Rata</TableHead>
-                  <TableHead className="font-semibold">Previsão Lançamento</TableHead>
-                  <TableHead className="font-semibold">Formato</TableHead>
-                  <TableHead className="font-semibold">Meios</TableHead>
-                  <TableHead className="font-semibold">Status</TableHead>
-                  <TableHead className="font-semibold text-center">Ações</TableHead>
+                <TableRow className="bg-gray-900 border-gray-800">
+                  <TableHead className="font-semibold text-gray-300">Projeto</TableHead>
+                  <TableHead className="font-semibold text-gray-300">Título da Faixa</TableHead>
+                  <TableHead className="font-semibold text-gray-300">Artista Sony</TableHead>
+                  <TableHead className="font-semibold text-gray-300">Artistas Convidados</TableHead>
+                  <TableHead className="font-semibold text-gray-300">Pro-Rata</TableHead>
+                  <TableHead className="font-semibold text-gray-300">Previsão Lançamento</TableHead>
+                  <TableHead className="font-semibold text-gray-300">Formato</TableHead>
+                  <TableHead className="font-semibold text-gray-300">Meios</TableHead>
+                  <TableHead className="font-semibold text-gray-300">Status</TableHead>
+                  <TableHead className="font-semibold text-center text-gray-300">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredLicenses.map((license) => (
                   <TableRow 
                     key={license.id} 
-                    className="hover:bg-red-50/30 transition-colors"
+                    className="hover:bg-red-50/30 transition-colors border-gray-800"
                     data-testid={`license-row-${license.id}`}
                   >
-                    <TableCell className="font-medium">{license.projeto}</TableCell>
-                    <TableCell>{license.titulo}</TableCell>
-                    <TableCell>{license.artista}</TableCell>
-                    <TableCell>{license.artistasConvidados}</TableCell>
-                    <TableCell>{license.proRata}</TableCell>
-                    <TableCell>{license.previsao}</TableCell>
+                    <TableCell className="font-medium text-white">{license.projeto}</TableCell>
+                    <TableCell className="text-gray-300">{license.titulo}</TableCell>
+                    <TableCell className="text-gray-300">{license.artista}</TableCell>
+                    <TableCell className="text-gray-300">{license.artistasConvidados}</TableCell>
+                    <TableCell className="text-gray-300">{license.proRata}</TableCell>
+                    <TableCell className="text-gray-300">{license.previsao}</TableCell>
                     <TableCell>
-                      <span className="text-sm">{license.formato}</span>
+                      <span className="text-sm text-gray-300">{license.formato}</span>
                     </TableCell>
-                    <TableCell>{license.meios}</TableCell>
+                    <TableCell className="text-gray-300">{license.meios}</TableCell>
                     <TableCell>
                       <Badge className={getStatusColor(license.status)}>
                         {license.status}
