@@ -11,7 +11,8 @@ import {
   X,
   Calendar,
   DollarSign,
-  MapPin
+  MapPin,
+  Music
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
@@ -23,6 +24,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '../components/ui/dialog';
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 
 const Dashboard = () => {
   const [selectedStat, setSelectedStat] = useState(null);
