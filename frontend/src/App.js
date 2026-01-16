@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import LicenseIn from './pages/LicenseIn';
 import LicenseOut from './pages/LicenseOut';
+import LicenseOutApproval from './pages/LicenseOutApproval';
 import Cadastros from './pages/Cadastros';
 import RLM from './pages/RLM';
 import RLMDetail from './pages/RLMDetail';
