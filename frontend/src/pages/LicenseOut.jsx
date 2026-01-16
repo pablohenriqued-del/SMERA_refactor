@@ -6,7 +6,8 @@ import {
   Download, 
   Eye, 
   Edit, 
-  Trash2
+  Trash2,
+  CheckSquare
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
