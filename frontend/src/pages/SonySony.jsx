@@ -28,14 +28,86 @@ import {
 const SonySony = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
-  const stats = [
-    { title: 'Projetos Internos', value: '142', icon: Music, color: 'gradient-sony-red' },
-    { title: 'Artistas Sony', value: '86', icon: Users, color: 'gradient-sony-black-red' },
-    { title: 'Valor Total', value: 'R$ 2.4M', icon: DollarSign, color: 'from-green-500 to-emerald-600' },
-    { title: 'Este Mês', value: '+18', icon: TrendingUp, color: 'from-orange-500 to-pink-600' },
+  const projetos = [
+    {
+      id: 1,
+      codigo: 'SONY-2025-001',
+      projeto: 'Album Collaboration',
+      artistaPrincipal: 'John Artist',
+      artistaConvidado: 'Featured Star',
+      selo: 'Columbia Records',
+      tipo: 'Album Completo',
+      lancamento: '15/12/2024',
+      status: 'Finalizado'
+    },
+    {
+      id: 2,
+      codigo: 'SONY-2025-002',
+      projeto: 'Crossover EP',
+      artistaPrincipal: 'Pop Sensation',
+      artistaConvidado: 'Urban Legend',
+      selo: 'RCA Records',
+      tipo: 'EP',
+      lancamento: '20/11/2024',
+      status: 'Em Análise'
+    },
+    {
+      id: 3,
+      codigo: 'SONY-2025-003',
+      projeto: 'Remix Collection',
+      artistaPrincipal: 'Electronic Duo',
+      artistaConvidado: 'DJ Producer',
+      selo: 'Epic Records',
+      tipo: 'Single',
+      lancamento: '10/12/2024',
+      status: 'Pendente'
+    },
+    {
+      id: 4,
+      codigo: 'SONY-2025-004',
+      projeto: 'Acoustic Sessions',
+      artistaPrincipal: 'Singer Songwriter',
+      artistaConvidado: 'Classical Artist',
+      selo: 'Legacy Recordings',
+      tipo: 'Live Album',
+      lancamento: '25/01/2025',
+      status: 'Pendente'
+    },
+    {
+      id: 5,
+      codigo: 'SONY-2025-005',
+      projeto: 'Summer Hits',
+      artistaPrincipal: 'Pop Group',
+      artistaConvidado: 'Tropical Band',
+      selo: 'Sony Music Latin',
+      tipo: 'Compilation',
+      lancamento: '01/12/2024',
+      status: 'Finalizado'
+    },
   ];
 
-  const projetos = [
+  const filteredProjetos = projetos.filter(projeto =>
+    Object.values(projeto).some(value =>
+      value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  );
+
+  // Calcular estatísticas
+  const totalLicenses = projetos.length;
+  const currentMonth = new Date().getMonth();
+  const currentYear = new Date().getFullYear();
+  
+  const licensesThisMonth = projetos.filter(projeto => {
+    const [day, month, year] = projeto.lancamento.split('/');
+    const licenseDate = new Date(year, month - 1, day);
+    return licenseDate.getMonth() === currentMonth && licenseDate.getFullYear() === currentYear;
+  }).length;
+
+  const statusCount = {
+    'Finalizado': projetos.filter(l => l.status === 'Finalizado').length,
+    'Em Análise': projetos.filter(l => l.status === 'Em Análise').length,
+    'Pendente': projetos.filter(l => l.status === 'Pendente').length,
+  };
     {
       id: 1,
       codigo: 'SONY-2025-001',
