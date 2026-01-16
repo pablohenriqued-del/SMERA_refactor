@@ -157,6 +157,46 @@ const LicenseIn = () => {
         </Button>
       </div>
 
+      {/* Statistics Header */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card className="border-0 shadow-lg bg-gray-950">
+          <CardContent className="p-4">
+            <p className="text-sm text-gray-400">Total de Licenças</p>
+            <p className="text-3xl font-bold text-white mt-1">{totalLicenses}</p>
+          </CardContent>
+        </Card>
+        <Card className="border-0 shadow-lg bg-gray-950">
+          <CardContent className="p-4">
+            <p className="text-sm text-gray-400">Mês Corrente</p>
+            <p className="text-3xl font-bold text-white mt-1">{licensesThisMonth}</p>
+          </CardContent>
+        </Card>
+        <Card className="border-0 shadow-lg bg-gray-950">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-400">Finalizado</p>
+                <p className="text-2xl font-bold text-green-500 mt-1">{statusCount['Finalizado']}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="border-0 shadow-lg bg-gray-950">
+          <CardContent className="p-4">
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <p className="text-xs text-gray-400">Em Análise</p>
+                <p className="text-xl font-bold text-blue-500">{statusCount['Em Análise']}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-400">Pendente</p>
+                <p className="text-xl font-bold text-yellow-500">{statusCount['Pendente']}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Filters */}
       <Card className="border-0 shadow-lg">
         <CardContent className="pt-6">
