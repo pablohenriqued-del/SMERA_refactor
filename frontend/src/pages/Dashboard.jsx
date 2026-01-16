@@ -96,30 +96,26 @@ const Dashboard = () => {
   // Dados para os gráficos de pizza
   const licenseInData = [
     { name: 'Finalizado', value: 85, percentage: 60 },
-    { name: 'Pendente', value: 42, percentage: 30 },
-    { name: 'Em Análise', value: 15, percentage: 10 },
+    { name: 'Em Análise', value: 42, percentage: 30 },
+    { name: 'Pendente', value: 15, percentage: 10 },
   ];
 
   const licenseOutData = [
-    { name: 'Aprovado', value: 64, percentage: 60 },
+    { name: 'Finalizado', value: 64, percentage: 60 },
     { name: 'Em Análise', value: 32, percentage: 30 },
     { name: 'Pendente', value: 10, percentage: 10 },
   ];
 
   const sonySonyData = [
-    { name: 'Em Produção', value: 44, percentage: 50 },
-    { name: 'Aprovação Final', value: 26, percentage: 30 },
-    { name: 'Planejamento', value: 17, percentage: 20 },
+    { name: 'Finalizado', value: 44, percentage: 50 },
+    { name: 'Em Análise', value: 26, percentage: 30 },
+    { name: 'Pendente', value: 17, percentage: 20 },
   ];
 
   const COLORS = {
     'Finalizado': '#22c55e',
-    'Pendente': '#eab308',
     'Em Análise': '#3b82f6',
-    'Aprovado': '#22c55e',
-    'Em Produção': '#22c55e',
-    'Aprovação Final': '#f59e0b',
-    'Planejamento': '#3b82f6',
+    'Pendente': '#eab308',
   };
 
   return (
