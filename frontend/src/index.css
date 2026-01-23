@@ -2,160 +2,269 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-
-body {
-    margin: 0;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-        sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-
-code {
-    font-family:
-        source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
-}
+/* Sony Obsidian Design System Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800&family=Manrope:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 @layer base {
     :root {
         --background: 0 0% 0%;
         --foreground: 0 0% 100%;
-        --card: 0 0% 7%;
+        --card: 0 0% 4%;
         --card-foreground: 0 0% 98%;
-        --popover: 0 0% 7%;
+        --popover: 0 0% 4%;
         --popover-foreground: 0 0% 98%;
-        --primary: 351 100% 44%;
+        --primary: 354 100% 45%;
         --primary-foreground: 0 0% 100%;
-        --secondary: 0 0% 12%;
+        --secondary: 0 0% 7%;
         --secondary-foreground: 0 0% 98%;
-        --muted: 0 0% 12%;
-        --muted-foreground: 0 0% 65%;
-        --accent: 0 0% 12%;
+        --muted: 0 0% 7%;
+        --muted-foreground: 240 5% 65%;
+        --accent: 0 0% 10%;
         --accent-foreground: 0 0% 98%;
         --destructive: 0 84.2% 60.2%;
         --destructive-foreground: 0 0% 98%;
         --border: 0 0% 15%;
-        --input: 0 0% 12%;
-        --ring: 351 100% 44%;
-        --radius: 0.5rem;
+        --input: 0 0% 10%;
+        --ring: 354 100% 45%;
+        --radius: 0.25rem;
         
-        /* Sony Music Brand Colors */
-        --sony-red: 351 100% 44%;
-        --sony-red-dark: 351 100% 35%;
-        --sony-black: 0 0% 0%;
-        --sony-gray: 0 0% 20%;
-        --sony-gray-light: 0 0% 40%;
+        /* Chart Colors */
+        --chart-1: 354 100% 45%;
+        --chart-2: 142 76% 36%;
+        --chart-3: 221 83% 53%;
+        --chart-4: 47 96% 53%;
+        --chart-5: 280 65% 60%;
     }
     
-    .dark {
-        --background: 0 0% 3.9%;
-        --foreground: 0 0% 98%;
-        --card: 0 0% 3.9%;
-        --card-foreground: 0 0% 98%;
-        --popover: 0 0% 3.9%;
-        --popover-foreground: 0 0% 98%;
-        --primary: 351 100% 44%;
-        --primary-foreground: 0 0% 100%;
-        --secondary: 0 0% 14.9%;
-        --secondary-foreground: 0 0% 98%;
-        --muted: 0 0% 14.9%;
-        --muted-foreground: 0 0% 63.9%;
-        --accent: 0 0% 14.9%;
-        --accent-foreground: 0 0% 98%;
-        --destructive: 0 62.8% 30.6%;
-        --destructive-foreground: 0 0% 98%;
-        --border: 0 0% 14.9%;
-        --input: 0 0% 14.9%;
-        --ring: 351 100% 44%;
-    }
-}
-
-@layer base {
     * {
         @apply border-border;
     }
+    
+    html {
+        scroll-behavior: smooth;
+    }
+    
     body {
-        @apply bg-background text-foreground;
+        @apply bg-background text-foreground font-body antialiased;
+        font-feature-settings: "rlig" 1, "calt" 1;
     }
 }
 
-/* Sony Music Gradient Classes */
-.gradient-sony-red {
-    background: linear-gradient(135deg, hsl(var(--sony-red)) 0%, hsl(var(--sony-red-dark)) 100%);
-}
-
-.gradient-sony-red-black {
-    background: linear-gradient(135deg, hsl(var(--sony-red)) 0%, hsl(var(--sony-black)) 100%);
-}
-
-.gradient-sony-black-red {
-    background: linear-gradient(135deg, hsl(var(--sony-black)) 0%, hsl(var(--sony-red)) 100%);
-}
-
-.gradient-sony-gray-red {
-    background: linear-gradient(135deg, hsl(var(--sony-gray)) 0%, hsl(var(--sony-red)) 100%);
-}
-
-.text-gradient-sony {
-    background: linear-gradient(135deg, hsl(var(--sony-red)) 0%, hsl(var(--sony-black)) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.bg-sony-red {
-    background: hsl(var(--sony-red));
-}
-
-.bg-sony-black {
-    background: hsl(var(--sony-black));
-}
-
-.text-sony-red {
-    color: hsl(var(--sony-red));
-}
-
-/* Animations */
-@keyframes shimmer {
-    0% {
-        background-position: -1000px 0;
+@layer components {
+    /* Headings - Barlow Condensed */
+    .heading-xl {
+        @apply font-heading font-bold text-4xl sm:text-5xl lg:text-6xl tracking-tight uppercase;
     }
-    100% {
-        background-position: 1000px 0;
+    
+    .heading-lg {
+        @apply font-heading font-bold text-2xl sm:text-3xl tracking-tight uppercase;
+    }
+    
+    .heading-md {
+        @apply font-heading font-semibold text-xl sm:text-2xl tracking-tight uppercase;
+    }
+    
+    .heading-sm {
+        @apply font-heading font-semibold text-lg tracking-tight uppercase;
+    }
+    
+    /* Overlines and Labels */
+    .overline {
+        @apply font-heading text-xs font-medium tracking-[0.2em] uppercase text-zinc-500;
+    }
+    
+    /* Body Text */
+    .body-lg {
+        @apply font-body text-base sm:text-lg leading-relaxed;
+    }
+    
+    .body-md {
+        @apply font-body text-sm sm:text-base leading-relaxed;
+    }
+    
+    .body-sm {
+        @apply font-body text-xs sm:text-sm leading-relaxed;
+    }
+    
+    /* Sony Red Button */
+    .btn-sony {
+        @apply bg-sony-red text-white font-heading font-bold uppercase tracking-wider 
+               px-6 py-3 rounded-sm transition-all duration-200
+               hover:bg-sony-red-hover hover:shadow-sony-glow
+               active:scale-[0.98];
+    }
+    
+    .btn-sony-outline {
+        @apply bg-transparent text-white border border-white/20 font-heading font-medium uppercase tracking-wider 
+               px-6 py-3 rounded-sm transition-all duration-200
+               hover:bg-white/5 hover:border-white/40;
+    }
+    
+    /* Cards */
+    .card-obsidian {
+        @apply bg-sony-paper border border-white/10 rounded-sm transition-all duration-300
+               hover:border-white/20;
+    }
+    
+    .card-obsidian-interactive {
+        @apply bg-sony-paper border border-white/10 rounded-sm transition-all duration-300 cursor-pointer
+               hover:border-sony-red/50 hover:shadow-sony-glow hover:scale-[1.01];
+    }
+    
+    /* Table Styles */
+    .table-header {
+        @apply font-heading text-xs uppercase tracking-wider text-zinc-500 bg-sony-subtle;
+    }
+    
+    .table-row {
+        @apply border-b border-white/5 transition-colors hover:bg-white/5;
+    }
+    
+    /* Input Styles */
+    .input-obsidian {
+        @apply bg-black border border-white/20 rounded-sm h-12 px-4 text-white placeholder:text-zinc-600
+               focus:border-sony-red focus:ring-1 focus:ring-sony-red focus:outline-none
+               transition-all duration-200;
+    }
+    
+    /* Badge Styles */
+    .badge-success {
+        @apply bg-emerald-500/10 text-emerald-400 border border-emerald-500/20;
+    }
+    
+    .badge-warning {
+        @apply bg-amber-500/10 text-amber-400 border border-amber-500/20;
+    }
+    
+    .badge-info {
+        @apply bg-blue-500/10 text-blue-400 border border-blue-500/20;
+    }
+    
+    .badge-error {
+        @apply bg-red-500/10 text-red-400 border border-red-500/20;
+    }
+    
+    /* Glassmorphism */
+    .glass {
+        @apply bg-white/5 backdrop-blur-xl border border-white/10;
+    }
+    
+    .glass-dark {
+        @apply bg-black/60 backdrop-blur-xl border border-white/10;
+    }
+    
+    /* Glow Effects */
+    .glow-red {
+        @apply shadow-sony-glow;
+    }
+    
+    .glow-red-lg {
+        @apply shadow-sony-glow-lg;
+    }
+    
+    /* Grid Lines Effect */
+    .grid-lines {
+        background-image: 
+            linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        background-size: 50px 50px;
     }
 }
 
-.animate-shimmer {
-    animation: shimmer 2s infinite;
-    background: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
-    background-size: 1000px 100%;
+@layer utilities {
+    /* Noise Texture Overlay */
+    .noise {
+        position: relative;
+    }
+    
+    .noise::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        opacity: 0.02;
+        pointer-events: none;
+        z-index: 1;
+    }
+    
+    /* Sony Red Gradient Glow */
+    .sony-glow-top {
+        background: linear-gradient(180deg, rgba(230, 0, 18, 0.08) 0%, rgba(0, 0, 0, 0) 100%);
+    }
+    
+    /* Text Gradient */
+    .text-gradient-sony {
+        @apply bg-gradient-to-r from-sony-red to-red-400 bg-clip-text text-transparent;
+    }
+    
+    /* Scrollbar */
+    .scrollbar-thin {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+    }
+    
+    .scrollbar-thin::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+    
+    .scrollbar-thin::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+    }
+    
+    .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+        background: rgba(230, 0, 18, 0.5);
+    }
+    
+    /* Hide scrollbar */
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
 }
 
-/* Glassmorphism */
-.glass {
-    background: rgba(255, 255, 255, 0.1);
+/* Custom Selection */
+::selection {
+    background: rgba(230, 0, 18, 0.3);
+    color: white;
+}
+
+/* Focus Visible */
+:focus-visible {
+    outline: 2px solid #E60012;
+    outline-offset: 2px;
+}
+
+/* Recharts Customization */
+.recharts-tooltip-wrapper {
+    outline: none !important;
+}
+
+.recharts-default-tooltip {
+    background: rgba(10, 10, 10, 0.95) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 4px !important;
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* Scrollbar */
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+.recharts-tooltip-label {
+    color: #fff !important;
+    font-family: 'Barlow Condensed', sans-serif !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
 }
 
-::-webkit-scrollbar-track {
-    background: hsl(var(--background));
-}
-
-::-webkit-scrollbar-thumb {
-    background: hsl(var(--muted-foreground) / 0.3);
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--sony-red) / 0.5);
+.recharts-tooltip-item {
+    color: #a1a1aa !important;
+    font-family: 'Manrope', sans-serif !important;
 }
