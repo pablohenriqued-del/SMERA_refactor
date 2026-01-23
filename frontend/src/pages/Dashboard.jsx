@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -6,15 +7,16 @@ import {
   FileOutput, 
   Clock, 
   CheckCircle,
-  AlertCircle,
   Users,
   X,
   Calendar,
   DollarSign,
   MapPin,
-  Music
+  Music,
+  ArrowUpRight,
+  Activity
 } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import {
@@ -24,7 +26,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '../components/ui/dialog';
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 
 const Dashboard = () => {
   const [selectedStat, setSelectedStat] = useState(null);
@@ -38,7 +40,7 @@ const Dashboard = () => {
       change: '+12%',
       trend: 'up',
       icon: CheckCircle,
-      color: 'from-green-500 to-emerald-600'
+      gradient: 'from-emerald-500 to-emerald-600'
     },
     {
       title: 'Pendentes',
@@ -46,7 +48,7 @@ const Dashboard = () => {
       change: '-5%',
       trend: 'down',
       icon: Clock,
-      color: 'from-yellow-500 to-orange-600'
+      gradient: 'from-amber-500 to-amber-600'
     },
     {
       title: 'License In',
@@ -54,7 +56,7 @@ const Dashboard = () => {
       change: '+8%',
       trend: 'up',
       icon: FileInput,
-      color: 'gradient-sony-red-black'
+      gradient: 'from-sony-red to-red-600'
     },
     {
       title: 'License Out',
@@ -62,7 +64,7 @@ const Dashboard = () => {
       change: '+4%',
       trend: 'up',
       icon: FileOutput,
-      color: 'gradient-sony-black-red'
+      gradient: 'from-blue-500 to-blue-600'
     },
     {
       title: 'Sony/Sony',
@@ -70,7 +72,7 @@ const Dashboard = () => {
       change: '+15%',
       trend: 'up',
       icon: Music,
-      color: 'gradient-sony-red'
+      gradient: 'from-violet-500 to-violet-600'
     },
   ];
 
@@ -93,7 +95,6 @@ const Dashboard = () => {
     { name: 'Portugal', count: 3, percentage: 1 },
   ];
 
-  // Dados para os gráficos de pizza
   const licenseInData = [
     { name: 'Finalizado', value: 85, percentage: 60 },
     { name: 'Em Análise', value: 42, percentage: 30 },
@@ -113,110 +114,157 @@ const Dashboard = () => {
   ];
 
   const COLORS = {
-    'Finalizado': '#22c55e',
+    'Finalizado': '#10b981',
     'Em Análise': '#3b82f6',
-    'Pendente': '#eab308',
+    'Pendente': '#f59e0b',
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.08 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
+  };
+
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="glass-dark px-4 py-3 rounded-sm">
+          <p className="font-heading font-bold text-white uppercase tracking-wide text-sm">
+            {payload[0].name}
+          </p>
+          <p className="text-zinc-400 text-sm mt-1">
+            {payload[0].value} licenças ({payload[0].payload.percentage}%)
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const getStatusBadgeClass = (status) => {
+    switch (status) {
+      case 'Finalizado': return 'badge-success';
+      case 'Em Análise': return 'badge-info';
+      case 'Pendente': return 'badge-warning';
+      default: return 'badge-info';
+    }
   };
 
   return (
-    <div className="space-y-6" data-testid="dashboard-page">
+    <motion.div 
+      className="space-y-6"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      data-testid="dashboard-page"
+    >
       {/* Page Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-white" data-testid="dashboard-title">Dashboard</h1>
-        <p className="text-gray-400 mt-1">Visão geral do sistema de licenciamento</p>
-      </div>
+      <motion.div variants={itemVariants} className="flex items-center justify-between">
+        <div>
+          <h1 className="heading-lg text-white" data-testid="dashboard-title">Dashboard</h1>
+          <p className="body-md text-zinc-500 mt-1">Visão geral do sistema de licenciamento</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" className="btn-sony-outline text-sm py-2">
+            <Calendar className="h-4 w-4 mr-2" />
+            Dezembro 2025
+          </Button>
+        </div>
+      </motion.div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+      {/* Stats Grid - Bento Style */}
+      <motion.div 
+        variants={itemVariants}
+        className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3"
+      >
         {stats.map((stat, index) => {
           const Icon = stat.icon;
           const TrendIcon = stat.trend === 'up' ? TrendingUp : TrendingDown;
           
           return (
-            <Card 
-              key={index} 
-              className="overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105" 
-              data-testid={`stat-card-${index}`}
-              onClick={() => setSelectedStat({...stat, index})}
+            <motion.div
+              key={index}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <p className="text-sm font-medium text-gray-400">{stat.title}</p>
-                    <h3 className="text-3xl font-bold text-white">{stat.value}</h3>
-                    <div className="flex items-center gap-1">
-                      <TrendIcon className={`h-4 w-4 ${
-                        stat.trend === 'up' ? 'text-green-500' : 'text-red-500'
-                      }`} />
-                      <span className={`text-sm font-medium ${
-                        stat.trend === 'up' ? 'text-green-500' : 'text-red-500'
-                      }`}>
-                        {stat.change}
-                      </span>
-                      <span className="text-sm text-gray-400">vs mês anterior</span>
+              <Card 
+                className="card-obsidian-interactive overflow-hidden cursor-pointer" 
+                data-testid={`stat-card-${index}`}
+                onClick={() => setSelectedStat({...stat, index})}
+              >
+                <CardContent className="p-4 lg:p-5">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className={`w-10 h-10 rounded-sm bg-gradient-to-br ${stat.gradient} flex items-center justify-center`}>
+                      <Icon className="h-5 w-5 text-white" />
+                    </div>
+                    <div className={`flex items-center gap-1 text-xs font-medium
+                      ${stat.trend === 'up' ? 'text-emerald-400' : 'text-red-400'}`}
+                    >
+                      <TrendIcon className="h-3 w-3" />
+                      {stat.change}
                     </div>
                   </div>
-                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                    <Icon className="h-8 w-8 text-white" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                  <p className="overline mb-1">{stat.title}</p>
+                  <p className="font-heading font-bold text-2xl lg:text-3xl text-white">{stat.value}</p>
+                </CardContent>
+              </Card>
+            </motion.div>
           );
         })}
-      </div>
+      </motion.div>
 
-      {/* Gráficos de Status */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Charts Row */}
+      <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* License In Chart */}
-        <Card className="border-0 shadow-lg bg-gray-950" data-testid="license-in-chart">
-          <CardHeader>
-            <CardTitle className="text-xl font-bold text-white flex items-center gap-2">
-              <FileInput className="h-5 w-5 text-red-500" />
-              License In
-            </CardTitle>
-            <CardDescription>Distribuição por Status</CardDescription>
+        <Card className="card-obsidian" data-testid="license-in-chart">
+          <CardHeader className="pb-2">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-sm bg-sony-red/10 flex items-center justify-center">
+                <FileInput className="h-4 w-4 text-sony-red" />
+              </div>
+              <div>
+                <CardTitle className="font-heading font-bold text-white uppercase tracking-wide text-sm">
+                  License In
+                </CardTitle>
+                <p className="text-xs text-zinc-500">Por Status</p>
+              </div>
+            </div>
           </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={250}>
+          <CardContent className="pt-0">
+            <ResponsiveContainer width="100%" height={180}>
               <PieChart>
                 <Pie
                   data={licenseInData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={60}
-                  outerRadius={90}
-                  paddingAngle={5}
+                  innerRadius={50}
+                  outerRadius={75}
+                  paddingAngle={3}
                   dataKey="value"
+                  strokeWidth={0}
                 >
                   {licenseInData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[entry.name]} />
                   ))}
                 </Pie>
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#1a1a1a', 
-                    border: '1px solid #333',
-                    borderRadius: '8px',
-                    color: '#fff'
-                  }}
-                />
+                <Tooltip content={<CustomTooltip />} />
               </PieChart>
             </ResponsiveContainer>
-            <div className="mt-4 space-y-2">
+            <div className="space-y-2 mt-2">
               {licenseInData.map((item, index) => (
                 <div key={index} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div 
-                      className="w-3 h-3 rounded-full" 
-                      style={{ backgroundColor: COLORS[item.name] }}
-                    />
-                    <span className="text-sm text-gray-300">{item.name}</span>
+                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[item.name] }} />
+                    <span className="text-sm text-zinc-400">{item.name}</span>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm font-semibold text-white">{item.value}</span>
-                    <span className="text-xs text-gray-500">{item.percentage}%</span>
-                  </div>
+                  <span className="text-sm font-medium text-white">{item.value}</span>
                 </div>
               ))}
             </div>
@@ -224,54 +272,48 @@ const Dashboard = () => {
         </Card>
 
         {/* License Out Chart */}
-        <Card className="border-0 shadow-lg bg-gray-950" data-testid="license-out-chart">
-          <CardHeader>
-            <CardTitle className="text-xl font-bold text-white flex items-center gap-2">
-              <FileOutput className="h-5 w-5 text-red-500" />
-              License Out
-            </CardTitle>
-            <CardDescription>Distribuição por Status</CardDescription>
+        <Card className="card-obsidian" data-testid="license-out-chart">
+          <CardHeader className="pb-2">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-sm bg-blue-500/10 flex items-center justify-center">
+                <FileOutput className="h-4 w-4 text-blue-400" />
+              </div>
+              <div>
+                <CardTitle className="font-heading font-bold text-white uppercase tracking-wide text-sm">
+                  License Out
+                </CardTitle>
+                <p className="text-xs text-zinc-500">Por Status</p>
+              </div>
+            </div>
           </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={250}>
+          <CardContent className="pt-0">
+            <ResponsiveContainer width="100%" height={180}>
               <PieChart>
                 <Pie
                   data={licenseOutData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={60}
-                  outerRadius={90}
-                  paddingAngle={5}
+                  innerRadius={50}
+                  outerRadius={75}
+                  paddingAngle={3}
                   dataKey="value"
+                  strokeWidth={0}
                 >
                   {licenseOutData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[entry.name]} />
                   ))}
                 </Pie>
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#1a1a1a', 
-                    border: '1px solid #333',
-                    borderRadius: '8px',
-                    color: '#fff'
-                  }}
-                />
+                <Tooltip content={<CustomTooltip />} />
               </PieChart>
             </ResponsiveContainer>
-            <div className="mt-4 space-y-2">
+            <div className="space-y-2 mt-2">
               {licenseOutData.map((item, index) => (
                 <div key={index} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div 
-                      className="w-3 h-3 rounded-full" 
-                      style={{ backgroundColor: COLORS[item.name] }}
-                    />
-                    <span className="text-sm text-gray-300">{item.name}</span>
+                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[item.name] }} />
+                    <span className="text-sm text-zinc-400">{item.name}</span>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm font-semibold text-white">{item.value}</span>
-                    <span className="text-xs text-gray-500">{item.percentage}%</span>
-                  </div>
+                  <span className="text-sm font-medium text-white">{item.value}</span>
                 </div>
               ))}
             </div>
@@ -279,392 +321,330 @@ const Dashboard = () => {
         </Card>
 
         {/* Sony/Sony Chart */}
-        <Card className="border-0 shadow-lg bg-gray-950" data-testid="sony-sony-chart">
-          <CardHeader>
-            <CardTitle className="text-xl font-bold text-white flex items-center gap-2">
-              <Music className="h-5 w-5 text-red-500" />
-              Sony/Sony
-            </CardTitle>
-            <CardDescription>Distribuição por Status</CardDescription>
+        <Card className="card-obsidian" data-testid="sony-sony-chart">
+          <CardHeader className="pb-2">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-sm bg-violet-500/10 flex items-center justify-center">
+                <Music className="h-4 w-4 text-violet-400" />
+              </div>
+              <div>
+                <CardTitle className="font-heading font-bold text-white uppercase tracking-wide text-sm">
+                  Sony/Sony
+                </CardTitle>
+                <p className="text-xs text-zinc-500">Por Status</p>
+              </div>
+            </div>
           </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={250}>
+          <CardContent className="pt-0">
+            <ResponsiveContainer width="100%" height={180}>
               <PieChart>
                 <Pie
                   data={sonySonyData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={60}
-                  outerRadius={90}
-                  paddingAngle={5}
+                  innerRadius={50}
+                  outerRadius={75}
+                  paddingAngle={3}
                   dataKey="value"
+                  strokeWidth={0}
                 >
                   {sonySonyData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[entry.name]} />
                   ))}
                 </Pie>
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#1a1a1a', 
-                    border: '1px solid #333',
-                    borderRadius: '8px',
-                    color: '#fff'
-                  }}
-                />
+                <Tooltip content={<CustomTooltip />} />
               </PieChart>
             </ResponsiveContainer>
-            <div className="mt-4 space-y-2">
+            <div className="space-y-2 mt-2">
               {sonySonyData.map((item, index) => (
                 <div key={index} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div 
-                      className="w-3 h-3 rounded-full" 
-                      style={{ backgroundColor: COLORS[item.name] }}
-                    />
-                    <span className="text-sm text-gray-300">{item.name}</span>
+                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[item.name] }} />
+                    <span className="text-sm text-zinc-400">{item.name}</span>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm font-semibold text-white">{item.value}</span>
-                    <span className="text-xs text-gray-500">{item.percentage}%</span>
-                  </div>
+                  <span className="text-sm font-medium text-white">{item.value}</span>
                 </div>
               ))}
             </div>
           </CardContent>
         </Card>
-      </div>
+      </motion.div>
 
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recent Activity */}
-        <Card className="lg:col-span-2 border-0 shadow-lg" data-testid="recent-activity-card">
-          <CardHeader>
-            <CardTitle className="text-xl font-bold">Atividade Recente</CardTitle>
-            <CardDescription>Últimas atualizações de licenciamento</CardDescription>
+      {/* Activity & Territories Row */}
+      <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Recent Activity - spans 2 columns */}
+        <Card className="lg:col-span-2 card-obsidian" data-testid="recent-activity-card">
+          <CardHeader className="flex flex-row items-center justify-between pb-4">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-sm bg-white/5 flex items-center justify-center">
+                <Activity className="h-4 w-4 text-zinc-400" />
+              </div>
+              <div>
+                <CardTitle className="font-heading font-bold text-white uppercase tracking-wide text-sm">
+                  Atividade Recente
+                </CardTitle>
+                <p className="text-xs text-zinc-500">Últimas atualizações</p>
+              </div>
+            </div>
+            <Button variant="ghost" size="sm" className="text-zinc-400 hover:text-white">
+              Ver todas
+              <ArrowUpRight className="h-4 w-4 ml-1" />
+            </Button>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {recentActivity.map((activity) => (
-                <div
+          <CardContent className="pt-0">
+            <div className="space-y-2">
+              {recentActivity.map((activity, index) => (
+                <motion.div
                   key={activity.id}
-                  className="flex items-center justify-between p-4 rounded-lg border border-gray-800 hover:border-purple-200 hover:bg-red-50/30 transition-all duration-200 cursor-pointer"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="flex items-center justify-between p-3 rounded-sm border border-white/5 
+                    hover:border-white/10 hover:bg-white/[0.02] transition-all cursor-pointer group"
                   data-testid={`activity-item-${activity.id}`}
                   onClick={() => setSelectedActivity(activity)}
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl gradient-sony-red flex items-center justify-center">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 rounded-sm flex items-center justify-center
+                      ${activity.type === 'License In' ? 'bg-sony-red/10' : 'bg-blue-500/10'}`}
+                    >
                       {activity.type === 'License In' ? (
-                        <FileInput className="h-6 w-6 text-white" />
+                        <FileInput className="h-5 w-5 text-sony-red" />
                       ) : (
-                        <FileOutput className="h-6 w-6 text-white" />
+                        <FileOutput className="h-5 w-5 text-blue-400" />
                       )}
                     </div>
                     <div>
-                      <h4 className="font-semibold text-white">{activity.project}</h4>
-                      <p className="text-sm text-gray-400">{activity.artist}</p>
+                      <h4 className="font-medium text-white text-sm group-hover:text-sony-red transition-colors">
+                        {activity.project}
+                      </h4>
+                      <p className="text-xs text-zinc-500">{activity.artist}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Badge
-                      variant={activity.status === 'Finalizado' ? 'default' : 'secondary'}
-                      className={activity.status === 'Finalizado' 
-                        ? 'bg-green-100 text-green-700 hover:bg-green-100' 
-                        : 'bg-yellow-100 text-yellow-700 hover:bg-yellow-100'
-                      }
-                    >
+                    <Badge className={`${getStatusBadgeClass(activity.status)} text-xs px-2 py-0.5`}>
                       {activity.status}
                     </Badge>
-                    <span className="text-sm text-gray-400">{activity.date}</span>
+                    <span className="text-xs text-zinc-600 hidden sm:block">{activity.date}</span>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </CardContent>
         </Card>
 
-        {/* Territories Distribution */}
-        <Card className="border-0 shadow-lg" data-testid="territories-card">
-          <CardHeader>
-            <CardTitle className="text-xl font-bold">Territórios</CardTitle>
-            <CardDescription>América Latina, Espanha, Portugal e US Latin</CardDescription>
+        {/* Territories */}
+        <Card className="card-obsidian" data-testid="territories-card">
+          <CardHeader className="pb-4">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-sm bg-white/5 flex items-center justify-center">
+                <MapPin className="h-4 w-4 text-zinc-400" />
+              </div>
+              <div>
+                <CardTitle className="font-heading font-bold text-white uppercase tracking-wide text-sm">
+                  Territórios
+                </CardTitle>
+                <p className="text-xs text-zinc-500">América Latina & Iberia</p>
+              </div>
+            </div>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {territories.map((territory, index) => (
-                <div 
+          <CardContent className="pt-0">
+            <div className="space-y-3">
+              {territories.slice(0, 6).map((territory, index) => (
+                <motion.div 
                   key={index} 
-                  className="space-y-2 cursor-pointer hover:bg-gray-800/50 p-2 rounded-lg transition-all" 
+                  className="space-y-1.5 cursor-pointer group"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: index * 0.05 }}
                   data-testid={`territory-item-${index}`}
                   onClick={() => setSelectedTerritory(territory)}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-300">{territory.name}</span>
-                    <span className="text-sm font-bold text-white">{territory.count}</span>
+                    <span className="text-sm text-zinc-400 group-hover:text-white transition-colors">
+                      {territory.name}
+                    </span>
+                    <span className="text-sm font-medium text-white">{territory.count}</span>
                   </div>
-                  <div className="relative h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div
-                      className="absolute top-0 left-0 h-full gradient-sony-red rounded-full transition-all duration-500"
-                      style={{ width: `${territory.percentage}%` }}
+                  <div className="relative h-1.5 bg-white/5 rounded-full overflow-hidden">
+                    <motion.div
+                      className="absolute top-0 left-0 h-full bg-sony-red rounded-full"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${territory.percentage}%` }}
+                      transition={{ duration: 0.8, delay: index * 0.1 }}
                     />
                   </div>
-                  <span className="text-xs text-gray-400">{territory.percentage}% do total</span>
-                </div>
+                </motion.div>
               ))}
             </div>
 
-            <div className="mt-6 p-4 rounded-lg bg-red-50 border border-red-100">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg gradient-sony-red flex items-center justify-center">
-                  <Users className="h-5 w-5 text-white" />
-                </div>
+            <div className="mt-4 pt-4 border-t border-white/5">
+              <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-300">Total de Licenças</p>
-                  <p className="text-2xl font-bold text-white">248</p>
+                  <p className="overline">Total</p>
+                  <p className="font-heading font-bold text-xl text-white">248</p>
+                </div>
+                <div className="w-12 h-12 rounded-sm bg-sony-red/10 flex items-center justify-center">
+                  <Users className="h-6 w-6 text-sony-red" />
                 </div>
               </div>
             </div>
           </CardContent>
         </Card>
-      </div>
+      </motion.div>
 
-      {/* Modal de Estatísticas */}
+      {/* Stat Detail Modal */}
       <Dialog open={selectedStat !== null} onOpenChange={() => setSelectedStat(null)}>
-        <DialogContent className="bg-gray-950 border-gray-800 text-white max-w-2xl">
+        <DialogContent className="glass-dark border-white/10 text-white max-w-lg">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-white flex items-center gap-3">
+            <DialogTitle className="flex items-center gap-3">
               {selectedStat && (
                 <>
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${selectedStat.color} flex items-center justify-center`}>
+                  <div className={`w-12 h-12 rounded-sm bg-gradient-to-br ${selectedStat.gradient} flex items-center justify-center`}>
                     {React.createElement(selectedStat.icon, { className: "h-6 w-6 text-white" })}
                   </div>
-                  {selectedStat.title}
+                  <span className="font-heading font-bold text-xl uppercase tracking-wide">
+                    {selectedStat.title}
+                  </span>
                 </>
               )}
             </DialogTitle>
-            <DialogDescription className="text-gray-400">
-              Detalhes e análise completa
+            <DialogDescription className="text-zinc-500">
+              Análise detalhada
             </DialogDescription>
           </DialogHeader>
           {selectedStat && (
-            <div className="space-y-6 mt-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-gray-900 p-4 rounded-lg">
-                  <p className="text-sm text-gray-400 mb-1">Total Atual</p>
-                  <p className="text-3xl font-bold text-white">{selectedStat.value}</p>
-                  <div className="flex items-center gap-1 mt-2">
-                    {React.createElement(selectedStat.trend === 'up' ? TrendingUp : TrendingDown, {
-                      className: `h-4 w-4 ${selectedStat.trend === 'up' ? 'text-green-500' : 'text-red-500'}`
-                    })}
-                    <span className={`text-sm font-medium ${selectedStat.trend === 'up' ? 'text-green-500' : 'text-red-500'}`}>
-                      {selectedStat.change}
-                    </span>
+            <div className="space-y-4 mt-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="card-obsidian p-4">
+                  <p className="overline mb-1">Total Atual</p>
+                  <p className="font-heading font-bold text-3xl text-white">{selectedStat.value}</p>
+                  <div className={`flex items-center gap-1 mt-2 text-sm
+                    ${selectedStat.trend === 'up' ? 'text-emerald-400' : 'text-red-400'}`}
+                  >
+                    {React.createElement(selectedStat.trend === 'up' ? TrendingUp : TrendingDown, { className: "h-4 w-4" })}
+                    {selectedStat.change}
                   </div>
                 </div>
-                <div className="bg-gray-900 p-4 rounded-lg">
-                  <p className="text-sm text-gray-400 mb-1">Mês Anterior</p>
-                  <p className="text-3xl font-bold text-white">
+                <div className="card-obsidian p-4">
+                  <p className="overline mb-1">Mês Anterior</p>
+                  <p className="font-heading font-bold text-3xl text-white">
                     {selectedStat.index === 0 ? '221' : selectedStat.index === 1 ? '19' : selectedStat.index === 2 ? '131' : '102'}
                   </p>
-                  <p className="text-xs text-gray-500 mt-2">Novembro 2024</p>
+                  <p className="text-xs text-zinc-500 mt-2">Novembro 2025</p>
                 </div>
               </div>
 
-              <div className="bg-gray-900 p-4 rounded-lg space-y-3">
-                <h4 className="font-semibold text-white flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-red-500" />
-                  Últimos 6 Meses
-                </h4>
-                <div className="space-y-2">
-                  {['Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro'].map((month, i) => (
-                    <div key={i} className="flex items-center justify-between">
-                      <span className="text-sm text-gray-400">{month}</span>
-                      <span className="text-sm font-medium text-white">
-                        {Math.floor(parseInt(selectedStat.value) * (0.85 + Math.random() * 0.15))}
-                      </span>
-                    </div>
-                  ))}
+              <div className="card-obsidian p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <DollarSign className="h-4 w-4 text-emerald-400" />
+                  <span className="font-heading font-semibold text-sm uppercase tracking-wide text-white">
+                    Valor Estimado
+                  </span>
                 </div>
-              </div>
-
-              <div className="bg-gray-900 p-4 rounded-lg space-y-2">
-                <h4 className="font-semibold text-white flex items-center gap-2">
-                  <DollarSign className="h-4 w-4 text-green-500" />
-                  Valor Estimado
-                </h4>
-                <p className="text-2xl font-bold text-green-500">
+                <p className="font-heading font-bold text-2xl text-emerald-400">
                   R$ {(parseInt(selectedStat.value) * 1250).toLocaleString('pt-BR')}
                 </p>
-                <p className="text-xs text-gray-400">Receita estimada total</p>
               </div>
             </div>
           )}
         </DialogContent>
       </Dialog>
 
-      {/* Modal de Atividade */}
+      {/* Activity Detail Modal */}
       <Dialog open={selectedActivity !== null} onOpenChange={() => setSelectedActivity(null)}>
-        <DialogContent className="bg-gray-950 border-gray-800 text-white max-w-2xl">
+        <DialogContent className="glass-dark border-white/10 text-white max-w-lg">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-white">
+            <DialogTitle className="font-heading font-bold text-xl uppercase tracking-wide">
               {selectedActivity?.project}
             </DialogTitle>
-            <DialogDescription className="text-gray-400">
-              Detalhes da atividade de licenciamento
+            <DialogDescription className="text-zinc-500">
+              Detalhes do licenciamento
             </DialogDescription>
           </DialogHeader>
           {selectedActivity && (
             <div className="space-y-4 mt-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-gray-900 p-4 rounded-lg">
-                  <p className="text-sm text-gray-400 mb-2">Artista</p>
-                  <p className="text-lg font-semibold text-white">{selectedActivity.artist}</p>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="card-obsidian p-4">
+                  <p className="overline mb-1">Artista</p>
+                  <p className="font-medium text-white">{selectedActivity.artist}</p>
                 </div>
-                <div className="bg-gray-900 p-4 rounded-lg">
-                  <p className="text-sm text-gray-400 mb-2">Status</p>
-                  <Badge className={
-                    selectedActivity.status === 'Finalizado' 
-                      ? 'bg-green-100 text-green-700 hover:bg-green-100' 
-                      : selectedActivity.status === 'Pendente'
-                      ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-100'
-                      : 'bg-blue-100 text-blue-700 hover:bg-blue-100'
-                  }>
+                <div className="card-obsidian p-4">
+                  <p className="overline mb-1">Status</p>
+                  <Badge className={`${getStatusBadgeClass(selectedActivity.status)} mt-1`}>
                     {selectedActivity.status}
                   </Badge>
                 </div>
               </div>
 
-              <div className="bg-gray-900 p-4 rounded-lg space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-400">Tipo de Licença</span>
-                  <span className="text-sm font-medium text-white">{selectedActivity.type}</span>
+              <div className="card-obsidian p-4 space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-zinc-500 text-sm">Tipo</span>
+                  <span className="text-white text-sm">{selectedActivity.type}</span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-400">Data de Solicitação</span>
-                  <span className="text-sm font-medium text-white">{selectedActivity.date}</span>
+                <div className="flex justify-between">
+                  <span className="text-zinc-500 text-sm">Data</span>
+                  <span className="text-white text-sm">{selectedActivity.date}</span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-400">Território</span>
-                  <span className="text-sm font-medium text-white">Brasil e Mundo</span>
+                <div className="flex justify-between">
+                  <span className="text-zinc-500 text-sm">Território</span>
+                  <span className="text-white text-sm">Brasil e Mundo</span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-400">Formato</span>
-                  <span className="text-sm font-medium text-white">Participação Especial</span>
-                </div>
-              </div>
-
-              <div className="bg-gray-900 p-4 rounded-lg space-y-2">
-                <h4 className="font-semibold text-white mb-3">Informações Adicionais</h4>
-                <div className="space-y-2 text-sm">
-                  <p className="text-gray-400">
-                    <strong className="text-white">Gravadora:</strong> Sony Music Entertainment
-                  </p>
-                  <p className="text-gray-400">
-                    <strong className="text-white">Produtor:</strong> {['Carlos Silva', 'Ana Santos', 'João Oliveira', 'Maria Costa'][Math.floor(Math.random() * 4)]}
-                  </p>
-                  <p className="text-gray-400">
-                    <strong className="text-white">Selo:</strong> {['Columbia Records', 'RCA Records', 'Epic Records'][Math.floor(Math.random() * 3)]}
-                  </p>
-                  <p className="text-gray-400">
-                    <strong className="text-white">Código do Projeto:</strong> {`PRJ-${Math.floor(Math.random() * 9000) + 1000}`}
-                  </p>
-                </div>
-              </div>
-
-              <div className="bg-gray-900 p-4 rounded-lg">
-                <h4 className="font-semibold text-white mb-2 flex items-center gap-2">
-                  <DollarSign className="h-4 w-4 text-green-500" />
-                  Valor Estimado
-                </h4>
-                <p className="text-2xl font-bold text-green-500">
-                  R$ {(Math.floor(Math.random() * 150000) + 50000).toLocaleString('pt-BR')}
-                </p>
-                <p className="text-xs text-gray-400 mt-1">Receita estimada do projeto</p>
               </div>
             </div>
           )}
         </DialogContent>
       </Dialog>
 
-      {/* Modal de Território */}
+      {/* Territory Detail Modal */}
       <Dialog open={selectedTerritory !== null} onOpenChange={() => setSelectedTerritory(null)}>
-        <DialogContent className="bg-gray-950 border-gray-800 text-white max-w-2xl">
+        <DialogContent className="glass-dark border-white/10 text-white max-w-lg">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-white flex items-center gap-2">
-              <MapPin className="h-6 w-6 text-red-500" />
-              {selectedTerritory?.name}
+            <DialogTitle className="flex items-center gap-2">
+              <MapPin className="h-5 w-5 text-sony-red" />
+              <span className="font-heading font-bold text-xl uppercase tracking-wide">
+                {selectedTerritory?.name}
+              </span>
             </DialogTitle>
-            <DialogDescription className="text-gray-400">
-              Análise detalhada por território
+            <DialogDescription className="text-zinc-500">
+              Análise por território
             </DialogDescription>
           </DialogHeader>
           {selectedTerritory && (
             <div className="space-y-4 mt-4">
-              <div className="grid grid-cols-3 gap-4">
-                <div className="bg-gray-900 p-4 rounded-lg">
-                  <p className="text-sm text-gray-400 mb-1">Total de Licenças</p>
-                  <p className="text-3xl font-bold text-white">{selectedTerritory.count}</p>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="card-obsidian p-4 text-center">
+                  <p className="overline mb-1">Total</p>
+                  <p className="font-heading font-bold text-2xl text-white">{selectedTerritory.count}</p>
                 </div>
-                <div className="bg-gray-900 p-4 rounded-lg">
-                  <p className="text-sm text-gray-400 mb-1">Percentual</p>
-                  <p className="text-3xl font-bold text-white">{selectedTerritory.percentage}%</p>
+                <div className="card-obsidian p-4 text-center">
+                  <p className="overline mb-1">Percentual</p>
+                  <p className="font-heading font-bold text-2xl text-white">{selectedTerritory.percentage}%</p>
                 </div>
-                <div className="bg-gray-900 p-4 rounded-lg">
-                  <p className="text-sm text-gray-400 mb-1">Ativas</p>
-                  <p className="text-3xl font-bold text-green-500">{Math.floor(selectedTerritory.count * 0.85)}</p>
-                </div>
-              </div>
-
-              <div className="bg-gray-900 p-4 rounded-lg space-y-3">
-                <h4 className="font-semibold text-white mb-3">Distribuição por Tipo</h4>
-                <div className="space-y-3">
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm text-gray-400">License In</span>
-                      <span className="text-sm font-medium text-white">{Math.floor(selectedTerritory.count * 0.6)}</span>
-                    </div>
-                    <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
-                      <div className="h-full gradient-sony-red" style={{ width: '60%' }} />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm text-gray-400">License Out</span>
-                      <span className="text-sm font-medium text-white">{Math.floor(selectedTerritory.count * 0.4)}</span>
-                    </div>
-                    <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
-                      <div className="h-full bg-blue-600" style={{ width: '40%' }} />
-                    </div>
-                  </div>
+                <div className="card-obsidian p-4 text-center">
+                  <p className="overline mb-1">Ativas</p>
+                  <p className="font-heading font-bold text-2xl text-emerald-400">
+                    {Math.floor(selectedTerritory.count * 0.85)}
+                  </p>
                 </div>
               </div>
 
-              <div className="bg-gray-900 p-4 rounded-lg space-y-3">
-                <h4 className="font-semibold text-white mb-3">Top 5 Artistas nesta Região</h4>
-                <div className="space-y-2">
-                  {['Pabllo Vittar', 'Pedro Sampaio', 'Anitta', 'MC Hariel', 'Ludmilla'].slice(0, 5).map((artist, i) => (
-                    <div key={i} className="flex items-center justify-between py-2 border-b border-gray-800 last:border-0">
-                      <span className="text-sm text-gray-300">{artist}</span>
-                      <span className="text-sm font-medium text-white">{Math.floor(Math.random() * 20) + 5} licenças</span>
-                    </div>
-                  ))}
+              <div className="card-obsidian p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <DollarSign className="h-4 w-4 text-emerald-400" />
+                  <span className="font-heading font-semibold text-sm uppercase tracking-wide text-white">
+                    Receita Total
+                  </span>
                 </div>
-              </div>
-
-              <div className="bg-gray-900 p-4 rounded-lg">
-                <h4 className="font-semibold text-white mb-2 flex items-center gap-2">
-                  <DollarSign className="h-4 w-4 text-green-500" />
-                  Receita Total - {selectedTerritory.name}
-                </h4>
-                <p className="text-2xl font-bold text-green-500">
+                <p className="font-heading font-bold text-2xl text-emerald-400">
                   R$ {(selectedTerritory.count * 45000).toLocaleString('pt-BR')}
                 </p>
-                <p className="text-xs text-gray-400 mt-1">Receita acumulada nos últimos 12 meses</p>
               </div>
             </div>
           )}
         </DialogContent>
       </Dialog>
-    </div>
+    </motion.div>
   );
 };
 
