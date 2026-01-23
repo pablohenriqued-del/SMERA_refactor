@@ -1,0 +1,153 @@
+{
+  "brand_identity": {
+    "name": "Sony Music Licensing",
+    "archetype": "The Performance Pro (Elite & Precision)",
+    "vibe": "Super Modern, High-Contrast, Cinematic, Professional",
+    "theme_mode": "dark"
+  },
+  "typography": {
+    "font_family": {
+      "headings": "Barlow Condensed, sans-serif",
+      "body": "Manrope, sans-serif",
+      "mono": "JetBrains Mono, monospace"
+    },
+    "weights": {
+      "headings": "700, 800",
+      "body": "400, 500"
+    },
+    "usage_rules": [
+      "Headings MUST be Uppercase for top-level titles (h1, h2).",
+      "Use 'tracking-tight' for all headings larger than 24px.",
+      "Use 'tracking-wide' for overlines and small labels.",
+      "Body text should have 'leading-relaxed' for readability."
+    ],
+    "import_url": "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800&family=Manrope:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+  },
+  "colors": {
+    "palette": {
+      "background": {
+        "default": "#000000",
+        "paper": "#0A0A0A",
+        "subtle": "#121212"
+      },
+      "primary": {
+        "main": "#E60012",
+        "hover": "#FF1A2C",
+        "muted": "rgba(230, 0, 18, 0.1)"
+      },
+      "text": {
+        "primary": "#FFFFFF",
+        "secondary": "#A1A1AA",
+        "muted": "#52525B"
+      },
+      "border": {
+        "default": "#27272A",
+        "active": "#E60012"
+      },
+      "status": {
+        "success": "#10B981",
+        "warning": "#F59E0B",
+        "error": "#EF4444"
+      }
+    },
+    "gradients": {
+      "sony_glow": "linear-gradient(180deg, rgba(230,0,18,0.15) 0%, rgba(0,0,0,0) 100%)",
+      "card_hover": "linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%)"
+    }
+  },
+  "layout": {
+    "spacing_system": "Generous. Use p-6, p-8, p-12. Avoid cramped p-2 or p-4 for main containers.",
+    "grid_system": {
+      "dashboard": "Bento Grid (Grid Mode A). Mix of col-span-1, col-span-2, row-span-2.",
+      "lists": "High Density Grid (Grid Mode B). Tight gaps (gap-px) with visible grid lines."
+    },
+    "container_style": "Fluid but contained. Max-width 1920px for large screens.",
+    "sidebar": "Fixed width (280px), solid background #050505, border-r border-white/10."
+  },
+  "components": {
+    "cards": {
+      "style": "Flat, sharp or minimal rounded-md. 1px border (border-white/10).",
+      "hover": "Border color changes to white/30. Subtle scale (1.01). No shadow.",
+      "content_padding": "p-6 or p-8"
+    },
+    "buttons": {
+      "primary": "bg-[#E60012] text-white hover:bg-[#FF1A2C] rounded-sm font-bold uppercase tracking-wider px-8 py-6",
+      "secondary": "bg-white/5 text-white border border-white/10 hover:bg-white/10 rounded-sm font-medium px-6 py-6",
+      "ghost": "text-white/70 hover:text-white hover:bg-white/5"
+    },
+    "inputs": {
+      "style": "bg-black border border-white/20 focus:border-[#E60012] focus:ring-1 focus:ring-[#E60012] rounded-sm h-12"
+    },
+    "tables": {
+      "style": "Tech/Data look. Header: uppercase, text-xs, text-white/50, tracking-wider. Rows: border-b border-white/5 hover:bg-white/5 transition-colors."
+    },
+    "charts": {
+      "library": "Recharts (via Shadcn)",
+      "style": "Minimalist. Hide grid lines or make them very subtle (white/5). Tooltips must be dark glassmorphism."
+    }
+  },
+  "visual_enhancers": {
+    "texture": "Add a fixed 'noise' overlay (opacity 0.02) to the entire app to kill digital flatness.",
+    "glow_effects": "Use 'shadow-[0_0_30px_-10px_rgba(230,0,18,0.3)]' for active elements.",
+    "borders": "Use 'Grid Borders' strategy for dashboard sections: visible 1px borders between sections."
+  },
+  "image_urls": {
+    "hero_backgrounds": [
+      {
+        "url": "https://images.unsplash.com/photo-1473396413399-6717ef7c4093?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "category": "hero",
+        "description": "Concert crowd with red lighting - perfect for dashboard hero or login screen"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1701460356742-deecc12da361?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "category": "hero",
+        "description": "Band on stage red lighting"
+      }
+    ],
+    "album_covers": [
+      {
+        "url": "https://images.unsplash.com/photo-1682778964790-b2fa177b5e45?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "category": "album_art",
+        "description": "Abstract red and black liquid"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1569521597715-0e0c4e22e0e4?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "category": "album_art",
+        "description": "Red swirls abstract"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1581084349663-7ab88c58d362?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "category": "album_art",
+        "description": "Black and pink abstract"
+      }
+    ],
+    "artist_portraits": [
+      {
+        "url": "https://images.unsplash.com/photo-1758225709268-fc275fc45ebb?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "category": "artist",
+        "description": "DJ/Artist with sunglasses"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1764014352810-75154d2629f4?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "category": "artist",
+        "description": "Man holding sign"
+      }
+    ]
+  },
+  "instructions_to_main_agent": [
+    "1. INSTALL FONTS: Add the Google Fonts import to index.css immediately.",
+    "2. SETUP THEME: Update tailwind.config.js to use the specific colors defined in 'colors' section. Override the default shadcn colors.",
+    "3. LAYOUT: Create a 'DashboardLayout' component that includes the Sidebar and Topbar. Use the 'Bento Grid' for the main dashboard page.",
+    "4. COMPONENTS: Customize Shadcn components (Card, Button, Input) to match the 'Performance Pro' archetype (sharp edges, high contrast).",
+    "5. DATA: Use the provided image URLs for mock data. Do not use placeholders.",
+    "6. ANIMATION: Add 'framer-motion' for page transitions and hover effects. Use 'AnimatePresence' for smooth tab switching.",
+    "7. CHARTS: Style Recharts to match the dark theme (dark tooltips, thin lines, Sony Red for primary data)."
+  ],
+  "universal_guidelines": [
+    "DO NOT use gradients for backgrounds unless specified (use solid black/obsidian).",
+    "DO NOT use 'Inter' for headings. Use 'Barlow Condensed'.",
+    "Ensure all text has sufficient contrast (WCAG AA).",
+    "Use 'data-testid' for all interactive elements.",
+    "Avoid 'AI Slop' - make it look like a premium music app, not a generic admin panel."
+  ]
+}
