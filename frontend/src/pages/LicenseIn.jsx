@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { 
   Plus, 
   Search, 
@@ -7,13 +8,14 @@ import {
   Eye, 
   Edit, 
   Trash2,
-  FileText,
-  MoreHorizontal
+  FileInput,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Badge } from '../components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { Card, CardContent } from '../components/ui/card';
 import {
   Table,
   TableBody,
@@ -107,7 +109,6 @@ const LicenseIn = () => {
     )
   );
 
-  // Calcular estatísticas
   const totalLicenses = licenses.length;
   const currentMonth = new Date().getMonth();
   const currentYear = new Date().getFullYear();
@@ -124,196 +125,222 @@ const LicenseIn = () => {
     'Pendente': licenses.filter(l => l.status === 'Pendente').length,
   };
 
-  const getStatusColor = (status) => {
+  const getStatusBadgeClass = (status) => {
     switch (status) {
-      case 'Pendente':
-        return 'bg-yellow-100 text-yellow-700 hover:bg-yellow-100';
-      case 'Finalizado':
-        return 'bg-green-100 text-green-700 hover:bg-green-100';
-      case 'Em Análise':
-        return 'bg-blue-100 text-blue-700 hover:bg-blue-100';
-      default:
-        return 'bg-gray-100 text-gray-300 hover:bg-gray-800';
+      case 'Finalizado': return 'badge-success';
+      case 'Em Análise': return 'badge-info';
+      case 'Pendente': return 'badge-warning';
+      default: return 'badge-info';
     }
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.05 } }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
+  };
+
   return (
-    <div className="space-y-6" data-testid="license-in-page">
+    <motion.div 
+      className="space-y-6"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      data-testid="license-in-page"
+    >
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <motion.div variants={itemVariants} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white" data-testid="license-in-title">License In</h1>
-          <p className="text-gray-400 mt-1">Gerencie licenças de entrada</p>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-sm bg-sony-red/10 flex items-center justify-center">
+              <FileInput className="h-5 w-5 text-sony-red" />
+            </div>
+            <div>
+              <h1 className="heading-lg text-white" data-testid="license-in-title">License In</h1>
+              <p className="body-sm text-zinc-500">Gerencie licenças de entrada</p>
+            </div>
+          </div>
         </div>
-        <Button className="bg-sony-red hover:bg-sony-red/90 text-white transition-opacity" data-testid="new-license-btn">
+        <Button className="btn-sony" data-testid="new-license-btn">
           <Plus className="h-4 w-4 mr-2" />
           Novo Pedido
         </Button>
-      </div>
+      </motion.div>
 
-      {/* Statistics Header */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="border-0 shadow-lg bg-gray-950">
+      {/* Statistics */}
+      <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <Card className="card-obsidian">
           <CardContent className="p-4">
-            <p className="text-sm text-gray-400">Total de Licenças</p>
-            <p className="text-3xl font-bold text-white mt-1">{totalLicenses}</p>
+            <p className="overline">Total</p>
+            <p className="font-heading font-bold text-3xl text-white mt-1">{totalLicenses}</p>
           </CardContent>
         </Card>
-        <Card className="border-0 shadow-lg bg-gray-950">
+        <Card className="card-obsidian">
           <CardContent className="p-4">
-            <p className="text-sm text-gray-400">Mês Corrente</p>
-            <p className="text-3xl font-bold text-white mt-1">{licensesThisMonth}</p>
+            <p className="overline">Mês Corrente</p>
+            <p className="font-heading font-bold text-3xl text-white mt-1">{licensesThisMonth}</p>
           </CardContent>
         </Card>
-        <Card className="border-0 shadow-lg bg-gray-950">
+        <Card className="card-obsidian">
           <CardContent className="p-4">
-            <div className="flex items-center justify-between">
+            <p className="overline">Finalizado</p>
+            <p className="font-heading font-bold text-3xl text-emerald-400 mt-1">{statusCount['Finalizado']}</p>
+          </CardContent>
+        </Card>
+        <Card className="card-obsidian">
+          <CardContent className="p-4">
+            <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-sm text-gray-400">Finalizado</p>
-                <p className="text-2xl font-bold text-green-500 mt-1">{statusCount['Finalizado']}</p>
+                <p className="overline text-[10px]">Em Análise</p>
+                <p className="font-heading font-bold text-xl text-blue-400">{statusCount['Em Análise']}</p>
+              </div>
+              <div>
+                <p className="overline text-[10px]">Pendente</p>
+                <p className="font-heading font-bold text-xl text-amber-400">{statusCount['Pendente']}</p>
               </div>
             </div>
           </CardContent>
         </Card>
-        <Card className="border-0 shadow-lg bg-gray-950">
-          <CardContent className="p-4">
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <p className="text-xs text-gray-400">Em Análise</p>
-                <p className="text-xl font-bold text-blue-500">{statusCount['Em Análise']}</p>
-              </div>
-              <div>
-                <p className="text-xs text-gray-400">Pendente</p>
-                <p className="text-xl font-bold text-yellow-500">{statusCount['Pendente']}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      </motion.div>
 
       {/* Filters */}
-      <Card className="border-0 shadow-lg bg-gray-950">
-        <CardContent className="pt-6">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input
-                placeholder="Buscar por projeto, artista, título..."
-                className="pl-10 bg-gray-900 border-gray-700 text-white"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                data-testid="search-licenses-input"
-              />
+      <motion.div variants={itemVariants}>
+        <Card className="card-obsidian">
+          <CardContent className="p-4">
+            <div className="flex flex-col md:flex-row gap-3">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-zinc-500" />
+                <Input
+                  placeholder="Buscar por projeto, artista, título..."
+                  className="input-obsidian pl-10"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  data-testid="search-licenses-input"
+                />
+              </div>
+              <Button variant="outline" className="btn-sony-outline" data-testid="filter-btn">
+                <Filter className="h-4 w-4 mr-2" />
+                Filtros
+              </Button>
+              <Button variant="outline" className="btn-sony-outline" data-testid="export-btn">
+                <Download className="h-4 w-4 mr-2" />
+                Exportar
+              </Button>
             </div>
-            <Button variant="outline" className="border-gray-700 text-gray-300" data-testid="filter-btn">
-              <Filter className="h-4 w-4 mr-2" />
-              Filtros
-            </Button>
-            <Button variant="outline" className="border-gray-700 text-gray-300" data-testid="export-btn">
-              <Download className="h-4 w-4 mr-2" />
-              Exportar
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </motion.div>
 
       {/* Table */}
-      <Card className="border-0 shadow-lg bg-gray-950" data-testid="licenses-table-card">
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold text-white">
-            {filteredLicenses.length} Licença(s) encontrada(s)
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="rounded-lg border border-gray-700 overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-gray-900 border-gray-800">
-                  <TableHead className="font-semibold text-gray-300">Projeto</TableHead>
-                  <TableHead className="font-semibold text-gray-300">Título da Faixa</TableHead>
-                  <TableHead className="font-semibold text-gray-300">Artista Sony</TableHead>
-                  <TableHead className="font-semibold text-gray-300">Artistas Convidados</TableHead>
-                  <TableHead className="font-semibold text-gray-300">Pro-Rata</TableHead>
-                  <TableHead className="font-semibold text-gray-300">Previsão Lançamento</TableHead>
-                  <TableHead className="font-semibold text-gray-300">Formato</TableHead>
-                  <TableHead className="font-semibold text-gray-300">Meios</TableHead>
-                  <TableHead className="font-semibold text-gray-300">Status</TableHead>
-                  <TableHead className="font-semibold text-center text-gray-300">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredLicenses.map((license) => (
-                  <TableRow 
-                    key={license.id} 
-                    className="hover:bg-red-50/30 transition-colors border-gray-800"
-                    data-testid={`license-row-${license.id}`}
-                  >
-                    <TableCell className="font-medium text-white">{license.projeto}</TableCell>
-                    <TableCell className="text-gray-300">{license.titulo}</TableCell>
-                    <TableCell className="text-gray-300">{license.artista}</TableCell>
-                    <TableCell className="text-gray-300">{license.artistasConvidados}</TableCell>
-                    <TableCell className="text-gray-300">{license.proRata}</TableCell>
-                    <TableCell className="text-gray-300">{license.previsao}</TableCell>
-                    <TableCell>
-                      <span className="text-sm text-gray-300">{license.formato}</span>
-                    </TableCell>
-                    <TableCell className="text-gray-300">{license.meios}</TableCell>
-                    <TableCell>
-                      <Badge className={getStatusColor(license.status)}>
-                        {license.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center justify-center gap-2">
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                          data-testid={`view-license-${license.id}`}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
-                          data-testid={`edit-license-${license.id}`}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
-                          data-testid={`delete-license-${license.id}`}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-
-          {/* Pagination */}
-          <div className="flex items-center justify-between mt-4">
-            <p className="text-sm text-gray-400">
-              Mostrando <span className="font-medium text-white">{filteredLicenses.length}</span> de{' '}
-              <span className="font-medium text-white">{licenses.length}</span> resultados
-            </p>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" className="border-gray-700 text-gray-300">Anterior</Button>
-              <Button variant="outline" size="sm" className="bg-sony-red text-white border-0 hover:bg-sony-red/90">1</Button>
-              <Button variant="outline" size="sm" className="border-gray-700 text-gray-300">2</Button>
-              <Button variant="outline" size="sm" className="border-gray-700 text-gray-300">3</Button>
-              <Button variant="outline" size="sm" className="border-gray-700 text-gray-300">Próximo</Button>
+      <motion.div variants={itemVariants}>
+        <Card className="card-obsidian" data-testid="licenses-table-card">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between mb-4">
+              <p className="font-heading font-semibold text-white uppercase tracking-wide text-sm">
+                {filteredLicenses.length} Licença(s)
+              </p>
             </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+            <div className="rounded-sm border border-white/10 overflow-hidden">
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="table-header border-white/5">
+                      <TableHead className="font-heading">Projeto</TableHead>
+                      <TableHead className="font-heading">Título</TableHead>
+                      <TableHead className="font-heading">Artista Sony</TableHead>
+                      <TableHead className="font-heading">Convidados</TableHead>
+                      <TableHead className="font-heading">Pro-Rata</TableHead>
+                      <TableHead className="font-heading">Previsão</TableHead>
+                      <TableHead className="font-heading">Formato</TableHead>
+                      <TableHead className="font-heading">Meios</TableHead>
+                      <TableHead className="font-heading">Status</TableHead>
+                      <TableHead className="font-heading text-center">Ações</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredLicenses.map((license, index) => (
+                      <motion.tr 
+                        key={license.id}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: index * 0.05 }}
+                        className="table-row"
+                        data-testid={`license-row-${license.id}`}
+                      >
+                        <TableCell className="font-medium text-white">{license.projeto}</TableCell>
+                        <TableCell className="text-zinc-400">{license.titulo}</TableCell>
+                        <TableCell className="text-zinc-400">{license.artista}</TableCell>
+                        <TableCell className="text-zinc-400">{license.artistasConvidados}</TableCell>
+                        <TableCell className="text-zinc-400">{license.proRata}</TableCell>
+                        <TableCell className="text-zinc-400 font-mono text-xs">{license.previsao}</TableCell>
+                        <TableCell className="text-zinc-400 text-xs">{license.formato}</TableCell>
+                        <TableCell className="text-zinc-400 text-xs">{license.meios}</TableCell>
+                        <TableCell>
+                          <Badge className={`${getStatusBadgeClass(license.status)} text-xs`}>
+                            {license.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center justify-center gap-1">
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-8 w-8 text-zinc-500 hover:text-white hover:bg-white/5"
+                              data-testid={`view-license-${license.id}`}
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-8 w-8 text-zinc-500 hover:text-white hover:bg-white/5"
+                              data-testid={`edit-license-${license.id}`}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-8 w-8 text-zinc-500 hover:text-red-400 hover:bg-red-500/10"
+                              data-testid={`delete-license-${license.id}`}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </motion.tr>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
+
+            {/* Pagination */}
+            <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/5">
+              <p className="text-sm text-zinc-500">
+                Mostrando <span className="text-white font-medium">{filteredLicenses.length}</span> de{' '}
+                <span className="text-white font-medium">{licenses.length}</span>
+              </p>
+              <div className="flex items-center gap-1">
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-500 hover:text-white">
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <Button variant="ghost" size="sm" className="h-8 w-8 bg-sony-red text-white rounded-sm">1</Button>
+                <Button variant="ghost" size="sm" className="h-8 w-8 text-zinc-500 hover:text-white">2</Button>
+                <Button variant="ghost" size="sm" className="h-8 w-8 text-zinc-500 hover:text-white">3</Button>
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-500 hover:text-white">
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+    </motion.div>
   );
 };
 
