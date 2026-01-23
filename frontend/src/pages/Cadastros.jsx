@@ -1,332 +1,166 @@
 import React, { useState } from 'react';
-import { 
-  Users, 
-  Music, 
-  Building2, 
-  Plus,
-  Search,
-  Edit,
-  Trash2,
-  Mail,
-  Phone
-} from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Users, Music, Building2, Plus, Search, Edit, Trash2, Mail, Phone, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '../components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
 import { Badge } from '../components/ui/badge';
 
 const Cadastros = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const artistas = [
-    { id: 1, nome: 'Pabllo Vittar', gravadora: 'Sony Music', genero: 'Pop/Funk', pais: 'Brasil', status: 'Ativo', email: 'pabllo.vittar@sony.com', telefone: '+55 11 98765-0001' },
-    { id: 2, nome: 'Pedro Sampaio', gravadora: 'Sony Music', genero: 'Funk', pais: 'Brasil', status: 'Ativo', email: 'pedro.sampaio@sony.com', telefone: '+55 11 98765-0002' },
+    { id: 1, nome: 'Pabllo Vittar', gravadora: 'Sony Music', genero: 'Pop/Funk', pais: 'Brasil', status: 'Ativo', email: 'pabllo@sony.com', telefone: '+55 11 98765-0001' },
+    { id: 2, nome: 'Pedro Sampaio', gravadora: 'Sony Music', genero: 'Funk', pais: 'Brasil', status: 'Ativo', email: 'pedro@sony.com', telefone: '+55 11 98765-0002' },
     { id: 3, nome: 'Anitta', gravadora: 'Sony Music', genero: 'Pop/Funk', pais: 'Brasil', status: 'Ativo', email: 'anitta@sony.com', telefone: '+55 11 98765-0003' },
     { id: 4, nome: 'Marília Mendonça', gravadora: 'Sony Music', genero: 'Sertanejo', pais: 'Brasil', status: 'Ativo', email: 'marilia@sony.com', telefone: '+55 11 98765-0004' },
     { id: 5, nome: 'MC Hariel', gravadora: 'Sony Music', genero: 'Funk', pais: 'Brasil', status: 'Ativo', email: 'hariel@sony.com', telefone: '+55 11 98765-0005' },
-    { id: 6, nome: 'Ludmilla', gravadora: 'Sony Music', genero: 'Funk/Pop', pais: 'Brasil', status: 'Ativo', email: 'ludmilla@sony.com', telefone: '+55 11 98765-0006' },
   ];
 
   const gravadoras = [
     { id: 1, nome: 'Sony Music Entertainment', pais: 'Brasil', tipo: 'Major', contato: 'contato@sonymusic.com', telefone: '+55 11 3333-0001', status: 'Ativo' },
     { id: 2, nome: 'Universal Music', pais: 'Brasil', tipo: 'Major', contato: 'info@universal.com', telefone: '+55 11 3333-0002', status: 'Ativo' },
     { id: 3, nome: 'Warner Music', pais: 'EUA', tipo: 'Major', contato: 'contact@warner.com', telefone: '+1 555 0001', status: 'Ativo' },
-    { id: 4, nome: 'Independent Records', pais: 'Brasil', tipo: 'Independente', contato: 'hello@independent.com', telefone: '+55 11 3333-0003', status: 'Ativo' },
   ];
 
   const empresas = [
     { id: 1, nome: 'Nike Inc.', segmento: 'Esportes', pais: 'EUA', contato: 'licensing@nike.com', telefone: '+1 555 1000', status: 'Ativo' },
     { id: 2, nome: 'Netflix', segmento: 'Entretenimento', pais: 'EUA', contato: 'music@netflix.com', telefone: '+1 555 2000', status: 'Ativo' },
-    { id: 3, nome: 'Warner Bros', segmento: 'Cinema', pais: 'EUA', contato: 'music.licensing@wb.com', telefone: '+1 555 3000', status: 'Ativo' },
-    { id: 4, nome: 'EA Games', segmento: 'Games', pais: 'EUA', contato: 'soundtrack@ea.com', telefone: '+1 555 4000', status: 'Ativo' },
+    { id: 3, nome: 'EA Games', segmento: 'Games', pais: 'EUA', contato: 'soundtrack@ea.com', telefone: '+1 555 4000', status: 'Ativo' },
   ];
 
   const stats = [
-    { title: 'Total de Artistas', value: '248', icon: Music, color: 'gradient-sony-red' },
-    { title: 'Gravadoras', value: '42', icon: Building2, color: 'gradient-sony-black-red' },
-    { title: 'Empresas Parceiras', value: '86', icon: Building2, color: 'from-green-500 to-emerald-600' },
+    { title: 'Total de Artistas', value: '248', icon: Music, gradient: 'from-sony-red to-red-600' },
+    { title: 'Gravadoras', value: '42', icon: Building2, gradient: 'from-blue-500 to-blue-600' },
+    { title: 'Empresas Parceiras', value: '86', icon: Building2, gradient: 'from-emerald-500 to-emerald-600' },
   ];
 
-  return (
-    <div className="space-y-6" data-testid="cadastros-page">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-white" data-testid="cadastros-title">Cadastros</h1>
-        <p className="text-gray-400 mt-1">Gerencie artistas, gravadoras e empresas</p>
-      </div>
+  const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.05 } } };
+  const itemVariants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+  return (
+    <motion.div className="space-y-6" variants={containerVariants} initial="hidden" animate="visible" data-testid="cadastros-page">
+      <motion.div variants={itemVariants}>
+        <h1 className="heading-lg text-white" data-testid="cadastros-title">Cadastros</h1>
+        <p className="body-sm text-zinc-500">Gerencie artistas, gravadoras e empresas</p>
+      </motion.div>
+
+      <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {stats.map((stat, index) => {
           const Icon = stat.icon;
           return (
-            <Card key={index} className="border-0 shadow-lg overflow-hidden" data-testid={`stat-${index}`}>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-400">{stat.title}</p>
-                    <h3 className="text-3xl font-bold text-white mt-1">{stat.value}</h3>
-                  </div>
-                  <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                    <Icon className="h-7 w-7 text-white" />
-                  </div>
+            <Card key={index} className="card-obsidian" data-testid={`stat-${index}`}>
+              <CardContent className="p-4">
+                <div className="flex items-start justify-between">
+                  <div><p className="overline">{stat.title}</p><p className="font-heading font-bold text-2xl text-white mt-1">{stat.value}</p></div>
+                  <div className={`w-10 h-10 rounded-sm bg-gradient-to-br ${stat.gradient} flex items-center justify-center`}><Icon className="h-5 w-5 text-white" /></div>
                 </div>
               </CardContent>
             </Card>
           );
         })}
-      </div>
+      </motion.div>
 
-      {/* Tabs */}
-      <Tabs defaultValue="artistas" className="space-y-6">
-        <TabsList className="grid w-full max-w-md grid-cols-3">
-          <TabsTrigger value="artistas" data-testid="tab-artistas">Artistas</TabsTrigger>
-          <TabsTrigger value="gravadoras" data-testid="tab-gravadoras">Gravadoras</TabsTrigger>
-          <TabsTrigger value="empresas" data-testid="tab-empresas">Empresas</TabsTrigger>
-        </TabsList>
+      <motion.div variants={itemVariants}>
+        <Tabs defaultValue="artistas" className="space-y-4">
+          <TabsList className="grid w-full max-w-md grid-cols-3 bg-sony-paper border border-white/10 p-1">
+            <TabsTrigger value="artistas" className="data-[state=active]:bg-sony-red rounded-sm" data-testid="tab-artistas">Artistas</TabsTrigger>
+            <TabsTrigger value="gravadoras" className="data-[state=active]:bg-sony-red rounded-sm" data-testid="tab-gravadoras">Gravadoras</TabsTrigger>
+            <TabsTrigger value="empresas" className="data-[state=active]:bg-sony-red rounded-sm" data-testid="tab-empresas">Empresas</TabsTrigger>
+          </TabsList>
 
-        {/* Artistas Tab */}
-        <TabsContent value="artistas" className="space-y-4">
-          <Card className="border-0 shadow-lg">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>Artistas</CardTitle>
-                  <CardDescription>Gerencie o cadastro de artistas</CardDescription>
+          <TabsContent value="artistas">
+            <Card className="card-obsidian">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div><CardTitle className="font-heading text-white uppercase tracking-wide text-sm">Artistas</CardTitle></div>
+                <Button className="btn-sony text-xs" data-testid="add-artist-btn"><Plus className="h-4 w-4 mr-2" />Novo Artista</Button>
+              </CardHeader>
+              <CardContent>
+                <div className="mb-4 relative"><Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-zinc-500" /><Input placeholder="Buscar artistas..." className="input-obsidian pl-10" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} data-testid="search-artists-input" /></div>
+                <div className="rounded-sm border border-white/10 overflow-hidden">
+                  <Table>
+                    <TableHeader><TableRow className="table-header"><TableHead>Nome</TableHead><TableHead>Gravadora</TableHead><TableHead>Gênero</TableHead><TableHead>País</TableHead><TableHead>Contato</TableHead><TableHead>Status</TableHead><TableHead className="text-center">Ações</TableHead></TableRow></TableHeader>
+                    <TableBody>
+                      {artistas.map((a) => (
+                        <TableRow key={a.id} className="table-row" data-testid={`artist-row-${a.id}`}>
+                          <TableCell className="font-medium text-white">{a.nome}</TableCell>
+                          <TableCell className="text-zinc-400">{a.gravadora}</TableCell>
+                          <TableCell><Badge variant="outline" className="bg-sony-red/10 text-sony-red border-sony-red/20 text-xs">{a.genero}</Badge></TableCell>
+                          <TableCell className="text-zinc-400">{a.pais}</TableCell>
+                          <TableCell><div className="flex flex-col gap-1 text-xs text-zinc-500"><span className="flex items-center gap-1"><Mail className="h-3 w-3" />{a.email}</span><span className="flex items-center gap-1"><Phone className="h-3 w-3" />{a.telefone}</span></div></TableCell>
+                          <TableCell><Badge className="badge-success text-xs">{a.status}</Badge></TableCell>
+                          <TableCell><div className="flex justify-center gap-1"><Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-500 hover:text-white hover:bg-white/5" data-testid={`edit-artist-${a.id}`}><Edit className="h-4 w-4" /></Button><Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-500 hover:text-red-400 hover:bg-red-500/10" data-testid={`delete-artist-${a.id}`}><Trash2 className="h-4 w-4" /></Button></div></TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                 </div>
-                <Button className="bg-sony-red hover:bg-sony-red/90 text-white" data-testid="add-artist-btn">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Novo Artista
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="mb-4">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input
-                    placeholder="Buscar artistas..."
-                    className="pl-10"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    data-testid="search-artists-input"
-                  />
-                </div>
-              </div>
-              
-              <div className="rounded-lg border border-gray-700 overflow-hidden">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-gray-900">
-                      <TableHead className="font-semibold">Nome</TableHead>
-                      <TableHead className="font-semibold">Gravadora</TableHead>
-                      <TableHead className="font-semibold">Gênero</TableHead>
-                      <TableHead className="font-semibold">País</TableHead>
-                      <TableHead className="font-semibold">Contato</TableHead>
-                      <TableHead className="font-semibold">Status</TableHead>
-                      <TableHead className="font-semibold text-center">Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {artistas.map((artista) => (
-                      <TableRow key={artista.id} className="hover:bg-red-50/30" data-testid={`artist-row-${artista.id}`}>
-                        <TableCell className="font-medium">{artista.nome}</TableCell>
-                        <TableCell>{artista.gravadora}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className="bg-red-50 text-red-700">
-                            {artista.genero}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>{artista.pais}</TableCell>
-                        <TableCell>
-                          <div className="flex flex-col gap-1 text-sm">
-                            <div className="flex items-center gap-1 text-gray-600">
-                              <Mail className="h-3 w-3" />
-                              {artista.email}
-                            </div>
-                            <div className="flex items-center gap-1 text-gray-600">
-                              <Phone className="h-3 w-3" />
-                              {artista.telefone}
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge className={artista.status === 'Ativo' 
-                            ? 'bg-green-100 text-green-700 hover:bg-green-100' 
-                            : 'bg-gray-100 text-gray-300 hover:bg-gray-800'
-                          }>
-                            {artista.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center justify-center gap-2">
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
-                              className="h-8 w-8 text-red-600 hover:bg-red-50"
-                              data-testid={`edit-artist-${artista.id}`}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
-                              className="h-8 w-8 text-red-600 hover:bg-red-50"
-                              data-testid={`delete-artist-${artista.id}`}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        {/* Gravadoras Tab */}
-        <TabsContent value="gravadoras" className="space-y-4">
-          <Card className="border-0 shadow-lg">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>Gravadoras</CardTitle>
-                  <CardDescription>Gerencie o cadastro de gravadoras</CardDescription>
+          <TabsContent value="gravadoras">
+            <Card className="card-obsidian">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle className="font-heading text-white uppercase tracking-wide text-sm">Gravadoras</CardTitle>
+                <Button className="btn-sony text-xs" data-testid="add-label-btn"><Plus className="h-4 w-4 mr-2" />Nova Gravadora</Button>
+              </CardHeader>
+              <CardContent>
+                <div className="rounded-sm border border-white/10 overflow-hidden">
+                  <Table>
+                    <TableHeader><TableRow className="table-header"><TableHead>Nome</TableHead><TableHead>País</TableHead><TableHead>Tipo</TableHead><TableHead>Contato</TableHead><TableHead>Telefone</TableHead><TableHead>Status</TableHead><TableHead className="text-center">Ações</TableHead></TableRow></TableHeader>
+                    <TableBody>
+                      {gravadoras.map((g) => (
+                        <TableRow key={g.id} className="table-row" data-testid={`label-row-${g.id}`}>
+                          <TableCell className="font-medium text-white">{g.nome}</TableCell>
+                          <TableCell className="text-zinc-400">{g.pais}</TableCell>
+                          <TableCell><Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/20 text-xs">{g.tipo}</Badge></TableCell>
+                          <TableCell className="text-zinc-400 text-xs">{g.contato}</TableCell>
+                          <TableCell className="text-zinc-400 text-xs">{g.telefone}</TableCell>
+                          <TableCell><Badge className="badge-success text-xs">{g.status}</Badge></TableCell>
+                          <TableCell><div className="flex justify-center gap-1"><Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-500 hover:text-white hover:bg-white/5"><Edit className="h-4 w-4" /></Button><Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-500 hover:text-red-400 hover:bg-red-500/10"><Trash2 className="h-4 w-4" /></Button></div></TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                 </div>
-                <Button className="bg-sony-black hover:bg-sony-black/90 text-white" data-testid="add-label-btn">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Nova Gravadora
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="rounded-lg border border-gray-700 overflow-hidden">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-gray-900">
-                      <TableHead className="font-semibold">Nome</TableHead>
-                      <TableHead className="font-semibold">País</TableHead>
-                      <TableHead className="font-semibold">Tipo</TableHead>
-                      <TableHead className="font-semibold">Contato</TableHead>
-                      <TableHead className="font-semibold">Telefone</TableHead>
-                      <TableHead className="font-semibold">Status</TableHead>
-                      <TableHead className="font-semibold text-center">Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {gravadoras.map((gravadora) => (
-                      <TableRow key={gravadora.id} className="hover:bg-blue-50/30" data-testid={`label-row-${gravadora.id}`}>
-                        <TableCell className="font-medium">{gravadora.nome}</TableCell>
-                        <TableCell>{gravadora.pais}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className="bg-blue-50 text-blue-700">
-                            {gravadora.tipo}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>{gravadora.contato}</TableCell>
-                        <TableCell>{gravadora.telefone}</TableCell>
-                        <TableCell>
-                          <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
-                            {gravadora.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center justify-center gap-2">
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600 hover:bg-blue-50">
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600 hover:bg-red-50">
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        {/* Empresas Tab */}
-        <TabsContent value="empresas" className="space-y-4">
-          <Card className="border-0 shadow-lg">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>Empresas Parceiras</CardTitle>
-                  <CardDescription>Gerencie o cadastro de empresas licenciadas</CardDescription>
+          <TabsContent value="empresas">
+            <Card className="card-obsidian">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle className="font-heading text-white uppercase tracking-wide text-sm">Empresas Parceiras</CardTitle>
+                <Button className="btn-sony text-xs" data-testid="add-company-btn"><Plus className="h-4 w-4 mr-2" />Nova Empresa</Button>
+              </CardHeader>
+              <CardContent>
+                <div className="rounded-sm border border-white/10 overflow-hidden">
+                  <Table>
+                    <TableHeader><TableRow className="table-header"><TableHead>Nome</TableHead><TableHead>Segmento</TableHead><TableHead>País</TableHead><TableHead>Contato</TableHead><TableHead>Telefone</TableHead><TableHead>Status</TableHead><TableHead className="text-center">Ações</TableHead></TableRow></TableHeader>
+                    <TableBody>
+                      {empresas.map((e) => (
+                        <TableRow key={e.id} className="table-row" data-testid={`company-row-${e.id}`}>
+                          <TableCell className="font-medium text-white">{e.nome}</TableCell>
+                          <TableCell><Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-xs">{e.segmento}</Badge></TableCell>
+                          <TableCell className="text-zinc-400">{e.pais}</TableCell>
+                          <TableCell className="text-zinc-400 text-xs">{e.contato}</TableCell>
+                          <TableCell className="text-zinc-400 text-xs">{e.telefone}</TableCell>
+                          <TableCell><Badge className="badge-success text-xs">{e.status}</Badge></TableCell>
+                          <TableCell><div className="flex justify-center gap-1"><Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-500 hover:text-white hover:bg-white/5"><Edit className="h-4 w-4" /></Button><Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-500 hover:text-red-400 hover:bg-red-500/10"><Trash2 className="h-4 w-4" /></Button></div></TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                 </div>
-                <Button className="bg-sony-red hover:bg-sony-red/90 text-white" data-testid="add-company-btn">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Nova Empresa
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="rounded-lg border border-gray-700 overflow-hidden">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-gray-900">
-                      <TableHead className="font-semibold">Nome</TableHead>
-                      <TableHead className="font-semibold">Segmento</TableHead>
-                      <TableHead className="font-semibold">País</TableHead>
-                      <TableHead className="font-semibold">Contato</TableHead>
-                      <TableHead className="font-semibold">Telefone</TableHead>
-                      <TableHead className="font-semibold">Status</TableHead>
-                      <TableHead className="font-semibold text-center">Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {empresas.map((empresa) => (
-                      <TableRow key={empresa.id} className="hover:bg-pink-50/30" data-testid={`company-row-${empresa.id}`}>
-                        <TableCell className="font-medium">{empresa.nome}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className="bg-pink-50 text-pink-700">
-                            {empresa.segmento}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>{empresa.pais}</TableCell>
-                        <TableCell>{empresa.contato}</TableCell>
-                        <TableCell>{empresa.telefone}</TableCell>
-                        <TableCell>
-                          <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
-                            {empresa.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center justify-center gap-2">
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-pink-600 hover:bg-pink-50">
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600 hover:bg-red-50">
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </motion.div>
+    </motion.div>
   );
 };
 
