@@ -12,6 +12,14 @@ const getStatusBadgeClass = (status) => ({
   'Ativo': 'badge-success', 'Em Renovação': 'badge-warning', 'Próximo a Vencer': 'badge-error',
 }[status] || 'badge-info');
 
+// status -> cell tint + dot color
+const STATUS_STYLE = {
+  'Finalizado': { cell: 'bg-emerald-500/15 border-emerald-500/40 hover:bg-emerald-500/25', dot: 'bg-emerald-500' },
+  'Em Análise': { cell: 'bg-blue-500/15 border-blue-500/40 hover:bg-blue-500/25', dot: 'bg-blue-500' },
+  'Pendente': { cell: 'bg-amber-500/15 border-amber-500/40 hover:bg-amber-500/25', dot: 'bg-amber-500' },
+};
+const dotFor = (status) => (STATUS_STYLE[status]?.dot || 'bg-zinc-400');
+
 // parse "dd/mm/yyyy" -> {d, m, y} (m is 1-12) or null
 const parseDate = (str) => {
   if (!str || typeof str !== 'string') return null;
@@ -26,9 +34,9 @@ const dayKey = (y, m, d) => `${y}-${m}-${d}`;
 
 /**
  * Timeline/calendar visualization for contracts.
- * props: items[], dateField, getPrimary(item), getSecondary(item)
+ * props: items[], dateField, getPrimary(item), getSecondary(item), getArtistTrack(item) => {artist, track}
  */
-export const ContractCalendar = ({ items, dateField, getPrimary, getSecondary, testid = 'contract-calendar' }) => {
+export const ContractCalendar = ({ items, dateField, getPrimary, getSecondary, getArtistTrack, testid = 'contract-calendar' }) => {
   // group items by day key + collect available months
   const { byDay, months } = useMemo(() => {
     const map = {};
@@ -129,26 +137,62 @@ export const ContractCalendar = ({ items, dateField, getPrimary, getSecondary, t
                 const dayItems = byDay[key] || [];
                 const hasItems = dayItems.length > 0;
                 const isSelected = key === selectedKey;
+                const statuses = [...new Set(dayItems.map((it) => it.status))];
+                const singleStatusStyle = statuses.length === 1 ? STATUS_STYLE[statuses[0]] : null;
+                const cellClasses = !hasItems
+                  ? 'text-zinc-600 border border-transparent cursor-default'
+                  : singleStatusStyle
+                    ? `text-white border ${singleStatusStyle.cell} cursor-pointer`
+                    : 'text-white border border-white/15 bg-white/[0.04] hover:bg-white/10 cursor-pointer';
                 return (
                   <button
                     key={key}
                     onClick={() => hasItems && setSelectedKey(key)}
+                    onMouseEnter={() => hasItems && setSelectedKey(key)}
                     disabled={!hasItems}
                     data-testid={`${testid}-day-${d}`}
-                    className={`relative aspect-square rounded-md flex flex-col items-center justify-center text-sm transition-all duration-200
-                      ${isSelected ? 'bg-sony-red text-white shadow-[0_0_18px_-4px_rgba(230,0,18,0.5)]'
-                        : hasItems ? 'bg-sony-red/10 text-white border border-sony-red/30 hover:bg-sony-red/20 cursor-pointer'
-                        : 'text-zinc-600 border border-transparent cursor-default'}`}
+                    className={`group relative aspect-square rounded-md flex flex-col items-center justify-center text-sm transition-all duration-200
+                      ${cellClasses} ${isSelected ? 'ring-2 ring-white/70' : ''}`}
                   >
                     <span className={hasItems ? 'font-semibold' : ''}>{d}</span>
                     {hasItems && (
-                      <span className={`mt-0.5 text-[9px] font-bold px-1.5 rounded-full ${isSelected ? 'bg-white/25 text-white' : 'bg-sony-red text-white'}`}>
-                        {dayItems.length}
+                      <span className="mt-1 flex items-center justify-center gap-0.5 flex-wrap max-w-full px-1">
+                        {dayItems.slice(0, 4).map((it, di) => (
+                          <span key={di} className={`w-1.5 h-1.5 rounded-full ${dotFor(it.status)}`} />
+                        ))}
+                        {dayItems.length > 4 && <span className="text-[8px] text-zinc-300 leading-none">+{dayItems.length - 4}</span>}
                       </span>
+                    )}
+
+                    {/* Hover tooltip: Artista — Faixa */}
+                    {hasItems && getArtistTrack && (
+                      <div className="opacity-0 group-hover:opacity-100 pointer-events-none absolute bottom-full mb-2 left-1/2 -translate-x-1/2 z-50 w-max max-w-[220px] transition-opacity duration-150"
+                        data-testid={`${testid}-day-tooltip-${d}`}>
+                        <div className="glass-dark rounded-md px-3 py-2 text-left shadow-xl">
+                          {dayItems.slice(0, 6).map((it, di) => {
+                            const at = getArtistTrack(it);
+                            return (
+                              <div key={di} className="flex items-center gap-1.5 py-0.5">
+                                <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${dotFor(it.status)}`} />
+                                <span className="text-[11px] text-white font-medium truncate">{at.artist}</span>
+                                <span className="text-[11px] text-zinc-500">—</span>
+                                <span className="text-[11px] text-zinc-300 truncate">{at.track}</span>
+                              </div>
+                            );
+                          })}
+                          {dayItems.length > 6 && <p className="text-[10px] text-zinc-500 mt-1">+{dayItems.length - 6} mais</p>}
+                        </div>
+                      </div>
                     )}
                   </button>
                 );
               })}
+            </div>
+            {/* Status legend */}
+            <div className="flex items-center gap-4 mt-4 pt-3 border-t border-white/5">
+              <span className="flex items-center gap-1.5 text-xs text-zinc-400"><span className="w-2 h-2 rounded-full bg-emerald-500" />Finalizado</span>
+              <span className="flex items-center gap-1.5 text-xs text-zinc-400"><span className="w-2 h-2 rounded-full bg-blue-500" />Em Análise</span>
+              <span className="flex items-center gap-1.5 text-xs text-zinc-400"><span className="w-2 h-2 rounded-full bg-amber-500" />Pendente</span>
             </div>
           </div>
 

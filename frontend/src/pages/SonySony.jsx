@@ -84,7 +84,7 @@ const SonySony = () => {
 
       {view === 'calendar' ? (
         <motion.div variants={itemVariants}>
-          <ContractCalendar items={filtered} dateField="lancamento" getPrimary={(i) => i.projeto} getSecondary={(i) => `${i.artistaPrincipal} • ${i.codigo}`} testid="sony-sony-calendar" />
+          <ContractCalendar items={filtered} dateField="lancamento" getPrimary={(i) => i.projeto} getSecondary={(i) => `${i.artistaPrincipal} • ${i.codigo}`} getArtistTrack={(i) => ({ artist: i.artistaPrincipal, track: i.projeto })} testid="sony-sony-calendar" />
         </motion.div>
       ) : (
       <motion.div variants={itemVariants}>

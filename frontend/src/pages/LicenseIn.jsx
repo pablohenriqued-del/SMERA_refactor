@@ -86,7 +86,7 @@ const LicenseIn = () => {
 
       {view === 'calendar' ? (
         <motion.div variants={itemVariants}>
-          <ContractCalendar items={filtered} dateField="previsao" getPrimary={(i) => i.projeto} getSecondary={(i) => `${i.artista} • ${i.titulo}`} testid="license-in-calendar" />
+          <ContractCalendar items={filtered} dateField="previsao" getPrimary={(i) => i.projeto} getSecondary={(i) => `${i.artista} • ${i.titulo}`} getArtistTrack={(i) => ({ artist: i.artista, track: i.titulo })} testid="license-in-calendar" />
         </motion.div>
       ) : (
       <motion.div variants={itemVariants}>

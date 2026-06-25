@@ -85,7 +85,7 @@ const LicenseOut = () => {
 
       {view === 'calendar' ? (
         <motion.div variants={itemVariants}>
-          <ContractCalendar items={filtered} dateField="prazo" getPrimary={(i) => i.projeto} getSecondary={(i) => `${i.artistaSony} • ${i.solicitante}`} testid="license-out-calendar" />
+          <ContractCalendar items={filtered} dateField="prazo" getPrimary={(i) => i.projeto} getSecondary={(i) => `${i.artistaSony} • ${i.solicitante}`} getArtistTrack={(i) => ({ artist: i.artistaSony, track: i.titulo })} testid="license-out-calendar" />
         </motion.div>
       ) : (
       <motion.div variants={itemVariants}>

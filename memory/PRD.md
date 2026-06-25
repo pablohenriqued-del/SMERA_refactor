@@ -46,8 +46,8 @@ Sistema de gerenciamento de licenciamento musical para Sony Music. Full-stack: R
 
 ## Frontend — Páginas
 1. **Login** — branding Sony
-2. **Dashboard** — KPIs ao vivo, 3 donut charts, atividade recente, territórios
-3. **License In / Out / Sony/Sony** — CRUD + **Timeline/Calendário** (toggle Tabela/Timeline com calendário mensal marcando contratos por data)
+2. **Dashboard** — KPIs ao vivo, 3 donut charts, atividade recente (sem painel de Territórios — Smera atualmente só no Brasil)
+3. **License In / Out / Sony/Sony** — CRUD + **Timeline/Calendário** (toggle Tabela/Timeline; calendário mensal com quadrados coloridos pelo status do contrato — verde Finalizado, azul Em Análise, amarelo Pendente — tooltip de hover mostrando Artista — Faixa, e painel lateral do dia)
 4. **RLM** — CRUD + detalhe (preview de contrato)
 5. **Cadastros** — abas Artistas / Gravadoras / Empresas (CRUD)
 6. **Acesso** — gestão de usuários (CRUD, perfis)
