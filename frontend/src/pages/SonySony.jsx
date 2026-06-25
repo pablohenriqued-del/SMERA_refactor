@@ -9,6 +9,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import { useCrud } from '../hooks/useCrud';
 import { EntityFormDialog } from '../components/EntityFormDialog';
 import { ConfirmDeleteDialog } from '../components/ConfirmDeleteDialog';
+import { ViewToggle } from '../components/ViewToggle';
+import { ContractCalendar } from '../components/ContractCalendar';
 
 const STATUS = ['Pendente', 'Em Análise', 'Finalizado'];
 const FIELDS = [
@@ -29,6 +31,7 @@ const itemVariants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 
 const SonySony = () => {
   const { items, loading, create, update, remove } = useCrud('/sony-sony', 'Projeto');
   const [searchTerm, setSearchTerm] = useState('');
+  const [view, setView] = useState('table');
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [deleting, setDeleting] = useState(null);
@@ -69,13 +72,21 @@ const SonySony = () => {
 
       <motion.div variants={itemVariants}>
         <Card className="card-obsidian"><CardContent className="p-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
-            <Input placeholder="Buscar por projeto, artista, selo..." className="input-obsidian pl-10" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} data-testid="search-sony-projects-input" />
+          <div className="flex flex-col md:flex-row gap-3 md:items-center">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
+              <Input placeholder="Buscar por projeto, artista, selo..." className="input-obsidian pl-10" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} data-testid="search-sony-projects-input" />
+            </div>
+            <ViewToggle view={view} onChange={setView} testid="sony-sony-view-toggle" />
           </div>
         </CardContent></Card>
       </motion.div>
 
+      {view === 'calendar' ? (
+        <motion.div variants={itemVariants}>
+          <ContractCalendar items={filtered} dateField="lancamento" getPrimary={(i) => i.projeto} getSecondary={(i) => `${i.artistaPrincipal} • ${i.codigo}`} testid="sony-sony-calendar" />
+        </motion.div>
+      ) : (
       <motion.div variants={itemVariants}>
         <Card className="card-obsidian" data-testid="sony-projects-table-card"><CardContent className="p-4">
           <p className="font-heading font-semibold text-white uppercase tracking-wide text-sm mb-4">{filtered.length} Projeto(s)</p>
@@ -118,6 +129,7 @@ const SonySony = () => {
           </div></div>
         </CardContent></Card>
       </motion.div>
+      )}
 
       <EntityFormDialog open={formOpen} onClose={() => setFormOpen(false)} onSubmit={handleSubmit} fields={FIELDS} initialData={editing} title={editing ? 'Editar Projeto' : 'Novo Projeto'} description="Preencha os dados da colaboração Sony/Sony" />
       <ConfirmDeleteDialog open={!!deleting} onClose={() => setDeleting(null)} onConfirm={() => { remove(deleting.id); setDeleting(null); }} itemName={deleting?.projeto} />

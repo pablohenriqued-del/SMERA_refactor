@@ -2,31 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Sony Obsidian Design System Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800&family=Manrope:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+/* SMERA Design System Fonts — Outfit (headings) + Plus Jakarta Sans (body) */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 @layer base {
     :root {
-        --background: 0 0% 0%;
+        --background: 0 0% 2%;
         --foreground: 0 0% 100%;
-        --card: 0 0% 4%;
+        --card: 240 3% 6%;
         --card-foreground: 0 0% 98%;
-        --popover: 0 0% 4%;
+        --popover: 240 3% 6%;
         --popover-foreground: 0 0% 98%;
-        --primary: 354 100% 45%;
+        --primary: 355 100% 45%;
         --primary-foreground: 0 0% 100%;
-        --secondary: 0 0% 7%;
+        --secondary: 240 4% 10%;
         --secondary-foreground: 0 0% 98%;
-        --muted: 0 0% 7%;
+        --muted: 240 4% 10%;
         --muted-foreground: 240 5% 65%;
-        --accent: 0 0% 10%;
+        --accent: 240 4% 16%;
         --accent-foreground: 0 0% 98%;
         --destructive: 0 84.2% 60.2%;
         --destructive-foreground: 0 0% 98%;
-        --border: 0 0% 15%;
-        --input: 0 0% 10%;
-        --ring: 354 100% 45%;
-        --radius: 0.25rem;
+        --border: 0 0% 12%;
+        --input: 0 0% 12%;
+        --ring: 355 100% 45%;
+        --radius: 0.5rem;
         
         /* Chart Colors */
         --chart-1: 354 100% 45%;
@@ -51,26 +51,26 @@
 }
 
 @layer components {
-    /* Headings - Barlow Condensed */
+    /* Headings - Outfit (no uppercase for a premium, modern feel) */
     .heading-xl {
-        @apply font-heading font-bold text-4xl sm:text-5xl lg:text-6xl tracking-tight uppercase;
+        @apply font-heading font-semibold text-4xl sm:text-5xl lg:text-6xl tracking-tight;
     }
     
     .heading-lg {
-        @apply font-heading font-bold text-2xl sm:text-3xl tracking-tight uppercase;
+        @apply font-heading font-semibold text-2xl sm:text-3xl tracking-tight;
     }
     
     .heading-md {
-        @apply font-heading font-semibold text-xl sm:text-2xl tracking-tight uppercase;
+        @apply font-heading font-medium text-xl sm:text-2xl tracking-tight;
     }
     
     .heading-sm {
-        @apply font-heading font-semibold text-lg tracking-tight uppercase;
+        @apply font-heading font-medium text-lg tracking-tight;
     }
     
-    /* Overlines and Labels */
+    /* Overlines and Labels (uppercase retained) */
     .overline {
-        @apply font-heading text-xs font-medium tracking-[0.2em] uppercase text-zinc-500;
+        @apply font-heading text-[10px] sm:text-xs font-semibold tracking-[0.2em] uppercase text-zinc-500;
     }
     
     /* Body Text */
@@ -88,60 +88,61 @@
     
     /* Sony Red Button */
     .btn-sony {
-        @apply bg-sony-red text-white font-heading font-bold uppercase tracking-wider 
-               px-6 py-3 rounded-sm transition-all duration-200
-               hover:bg-sony-red-hover hover:shadow-sony-glow
-               active:scale-[0.98];
+        @apply bg-sony-red text-white font-body font-semibold tracking-wide
+               px-6 py-2.5 rounded-md transition-all duration-300
+               hover:bg-sony-red-hover hover:shadow-[0_0_20px_-5px_rgba(230,0,18,0.4)]
+               active:scale-[0.98] inline-flex items-center justify-center gap-2;
     }
     
     .btn-sony-outline {
-        @apply bg-transparent text-white border border-white/20 font-heading font-medium uppercase tracking-wider 
-               px-6 py-3 rounded-sm transition-all duration-200
-               hover:bg-white/5 hover:border-white/40;
+        @apply bg-transparent text-white border border-white/15 font-body font-semibold tracking-wide
+               px-6 py-2.5 rounded-md transition-all duration-300
+               hover:bg-white/5 hover:border-white/30 active:scale-[0.98] inline-flex items-center justify-center gap-2;
     }
     
     /* Cards */
     .card-obsidian {
-        @apply bg-sony-paper border border-white/10 rounded-sm transition-all duration-300
-               hover:border-white/20;
+        @apply bg-[#0E0E11] border border-white/5 rounded-xl shadow-2xl shadow-black/50 overflow-hidden relative
+               transition-all duration-300;
     }
     
     .card-obsidian-interactive {
-        @apply bg-sony-paper border border-white/10 rounded-sm transition-all duration-300 cursor-pointer
-               hover:border-sony-red/50 hover:shadow-sony-glow hover:scale-[1.01];
+        @apply bg-[#0E0E11] border border-white/5 rounded-xl shadow-2xl shadow-black/50 overflow-hidden relative
+               transition-all duration-300 cursor-pointer
+               hover:border-sony-red/30 hover:shadow-[0_0_30px_-10px_rgba(230,0,18,0.2)] hover:-translate-y-1;
     }
     
     /* Table Styles */
     .table-header {
-        @apply font-heading text-xs uppercase tracking-wider text-zinc-500 bg-sony-subtle;
+        @apply font-heading text-[10px] uppercase tracking-[0.15em] text-zinc-500 bg-[#16161A];
     }
     
     .table-row {
-        @apply border-b border-white/5 transition-colors hover:bg-white/5;
+        @apply border-b border-white/5 transition-colors hover:bg-white/[0.03];
     }
     
     /* Input Styles */
     .input-obsidian {
-        @apply bg-black border border-white/20 rounded-sm h-12 px-4 text-white placeholder:text-zinc-600
+        @apply bg-black/40 border border-white/10 rounded-md h-12 px-4 text-white placeholder:text-zinc-600
                focus:border-sony-red focus:ring-1 focus:ring-sony-red focus:outline-none
                transition-all duration-200;
     }
     
-    /* Badge Styles */
+    /* Badge Styles (force over shadcn default variant bg-primary) */
     .badge-success {
-        @apply bg-emerald-500/10 text-emerald-400 border border-emerald-500/20;
+        @apply !bg-emerald-500/10 !text-emerald-400 !border-emerald-500/20 rounded-full;
     }
     
     .badge-warning {
-        @apply bg-amber-500/10 text-amber-400 border border-amber-500/20;
+        @apply !bg-amber-500/10 !text-amber-400 !border-amber-500/20 rounded-full;
     }
     
     .badge-info {
-        @apply bg-blue-500/10 text-blue-400 border border-blue-500/20;
+        @apply !bg-blue-500/10 !text-blue-400 !border-blue-500/20 rounded-full;
     }
     
     .badge-error {
-        @apply bg-red-500/10 text-red-400 border border-red-500/20;
+        @apply !bg-red-500/10 !text-red-400 !border-red-500/20 rounded-full;
     }
     
     /* Glassmorphism */
@@ -150,7 +151,7 @@
     }
     
     .glass-dark {
-        @apply bg-black/60 backdrop-blur-xl border border-white/10;
+        @apply bg-black/40 backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)];
     }
     
     /* Glow Effects */
@@ -189,7 +190,8 @@
     
     /* Sony Red Gradient Glow */
     .sony-glow-top {
-        background: linear-gradient(180deg, rgba(230, 0, 18, 0.08) 0%, rgba(0, 0, 0, 0) 100%);
+        background: linear-gradient(180deg, rgba(230, 0, 18, 0.12) 0%, rgba(0, 0, 0, 0) 100%);
+        border-top: 1px solid rgba(230, 0, 18, 0.4);
     }
     
     /* Text Gradient */
@@ -258,13 +260,12 @@
 
 .recharts-tooltip-label {
     color: #fff !important;
-    font-family: 'Barlow Condensed', sans-serif !important;
+    font-family: 'Outfit', sans-serif !important;
     font-weight: 600 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.05em !important;
+    letter-spacing: 0.02em !important;
 }
 
 .recharts-tooltip-item {
     color: #a1a1aa !important;
-    font-family: 'Manrope', sans-serif !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
 }

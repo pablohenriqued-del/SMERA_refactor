@@ -12,6 +12,8 @@ API = f"{BASE_URL}/api"
 
 ADMIN_EMAIL = "pablo.duartel@sonymusic.com"
 ADMIN_PASSWORD = "sony2025"
+NEW_ADMIN_EMAIL = "pablo.duarte@sonymusic.com"
+NEW_ADMIN_PASSWORD = "123456"
 INACTIVE_EMAIL = "carlos.oliveira@sonymusic.com"
 
 
@@ -231,3 +233,119 @@ class TestUsersCrud:
         my_id = r.json()["id"]
         r = requests.delete(f"{API}/users/{my_id}", headers=auth_headers, timeout=30)
         assert r.status_code == 400
+
+
+
+# ---------------- Iteration 2: New admin + Seed (22 contracts, jun/jul 2026) ----------------
+class TestNewAdminLogin:
+    """Verifies the new admin pablo.duarte@sonymusic.com / 123456 works."""
+
+    def test_new_admin_login_success(self):
+        r = requests.post(f"{API}/auth/login", json={"email": NEW_ADMIN_EMAIL, "password": NEW_ADMIN_PASSWORD}, timeout=30)
+        assert r.status_code == 200, f"New admin login failed: {r.status_code} {r.text}"
+        data = r.json()
+        assert "token" in data and len(data["token"]) > 20
+        assert data["user"]["email"] == NEW_ADMIN_EMAIL
+        assert data["user"]["perfil"].lower().startswith("admin")
+        assert "password_hash" not in data["user"]
+
+    def test_legacy_admin_still_valid(self):
+        r = requests.post(f"{API}/auth/login", json={"email": ADMIN_EMAIL, "password": ADMIN_PASSWORD}, timeout=30)
+        assert r.status_code == 200
+
+
+def _date_in_jun_or_jul_2026(date_str):
+    """Accepts dd/mm/yyyy or yyyy-mm-dd or ISO; returns True if month is 06 or 07 / year 2026."""
+    if not date_str or not isinstance(date_str, str):
+        return False
+    # dd/mm/yyyy
+    if "/" in date_str:
+        parts = date_str.split("/")
+        if len(parts) == 3:
+            try:
+                month = int(parts[1])
+                year = int(parts[2][:4])
+                return year == 2026 and month in (6, 7)
+            except ValueError:
+                return False
+    # yyyy-mm-dd or ISO
+    if "-" in date_str:
+        try:
+            year = int(date_str[:4])
+            month = int(date_str[5:7])
+            return year == 2026 and month in (6, 7)
+        except ValueError:
+            return False
+    return False
+
+
+SEED_ENDPOINTS = ["licenses-in", "licenses-out", "sony-sony"]
+
+
+class TestSeed22Contracts:
+    """Each of License In / Out / Sony-Sony must have 22 seeded contracts with dates in June or July 2026."""
+
+    @pytest.mark.parametrize("endpoint", SEED_ENDPOINTS)
+    def test_seed_count_22(self, endpoint, auth_headers):
+        r = requests.get(f"{API}/{endpoint}", headers=auth_headers, timeout=30)
+        assert r.status_code == 200
+        items = r.json()
+        # seed is idempotent; count must be >= 22. We assert exactly 22 only if no TEST_ leftovers.
+        non_test = [i for i in items if not (i.get("projeto", "").startswith("TEST_") or i.get("titulo", "").startswith("TEST_") or i.get("codigo", "").startswith("TEST-"))]
+        assert len(non_test) >= 22, f"{endpoint}: expected >=22 seeded items, got {len(non_test)} (total {len(items)})"
+
+    @pytest.mark.parametrize("endpoint", SEED_ENDPOINTS)
+    def test_seed_dates_jun_jul_2026(self, endpoint, auth_headers):
+        r = requests.get(f"{API}/{endpoint}", headers=auth_headers, timeout=30)
+        assert r.status_code == 200
+        items = r.json()
+        non_test = [i for i in items if not (i.get("projeto", "").startswith("TEST_") or i.get("titulo", "").startswith("TEST_") or i.get("codigo", "").startswith("TEST-"))]
+        # Look for any date-like field on each item
+        date_keys = ["data", "dataInicio", "dataPedido", "dataAprovacao", "dataVencimento", "dataLancamento", "vencimento", "prazo", "previsao"]
+        for it in non_test:
+            found_any_date = False
+            ok = False
+            for k in date_keys:
+                v = it.get(k)
+                if v:
+                    found_any_date = True
+                    if _date_in_jun_or_jul_2026(v):
+                        ok = True
+                        break
+            assert (not found_any_date) or ok, (
+                f"{endpoint} item id={it.get('id')} has date fields not in Jun/Jul 2026: "
+                + ", ".join(f"{k}={it.get(k)}" for k in date_keys if it.get(k))
+            )
+
+    @pytest.mark.parametrize("endpoint", SEED_ENDPOINTS)
+    def test_seed_endpoints_require_auth(self, endpoint):
+        r = requests.get(f"{API}/{endpoint}", timeout=30)
+        assert r.status_code == 401
+
+    def test_seed_spans_both_months(self, auth_headers):
+        """For License In specifically: data must span both June and July 2026 (calendar next-month must be enabled)."""
+        r = requests.get(f"{API}/licenses-in", headers=auth_headers, timeout=30)
+        assert r.status_code == 200
+        items = r.json()
+        non_test = [i for i in items if not (i.get("projeto", "").startswith("TEST_") or i.get("titulo", "").startswith("TEST_"))]
+        months_seen = set()
+        date_keys = ["data", "dataInicio", "dataPedido", "dataAprovacao", "dataVencimento", "dataLancamento", "vencimento", "prazo", "previsao"]
+        for it in non_test:
+            for k in date_keys:
+                v = it.get(k)
+                if v and isinstance(v, str):
+                    if "/" in v:
+                        parts = v.split("/")
+                        if len(parts) == 3:
+                            try:
+                                months_seen.add((int(parts[2][:4]), int(parts[1])))
+                            except ValueError:
+                                pass
+                    elif "-" in v:
+                        try:
+                            months_seen.add((int(v[:4]), int(v[5:7])))
+                        except ValueError:
+                            pass
+        # Must include (2026,6) and (2026,7)
+        assert (2026, 6) in months_seen, f"License In missing June 2026 dates. months seen: {months_seen}"
+        assert (2026, 7) in months_seen, f"License In missing July 2026 dates. months seen: {months_seen}"

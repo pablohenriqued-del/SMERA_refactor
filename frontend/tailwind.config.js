@@ -8,8 +8,8 @@ module.exports = {
   theme: {
         extend: {
                 fontFamily: {
-                        heading: ['Barlow Condensed', 'sans-serif'],
-                        body: ['Manrope', 'sans-serif'],
+                        heading: ['Outfit', 'sans-serif'],
+                        body: ['Plus Jakarta Sans', 'sans-serif'],
                         mono: ['JetBrains Mono', 'monospace'],
                 },
                 borderRadius: {
@@ -63,8 +63,8 @@ module.exports = {
                                 'red-hover': '#FF1A2C',
                                 'red-muted': 'rgba(230, 0, 18, 0.1)',
                                 black: '#000000',
-                                paper: '#0A0A0A',
-                                subtle: '#121212',
+                                paper: '#0E0E11',
+                                subtle: '#16161A',
                         }
                 },
                 boxShadow: {

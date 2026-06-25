@@ -1,0 +1,47 @@
+{
+  "summary": "Regression + new-feature testing after Sony Music redesign. 38/38 backend pytest pass (added 13 new tests for new admin + 22-seed + Jun/Jul 2026 date range). Frontend: new admin login works, redesigned status badges render with correct colors (Finalizado=emerald, Em Análise=blue, Pendente=amber - NOT red), and the new Tabela/Timeline calendar feature works correctly on License In, License Out and Sony/Sony with all required testids, month headers (Junho 2026 / Julho 2026), day count badges, side-panel day list, and a now-enabled next-month arrow.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "Header user-menu trigger / seed_admin",
+        "issue": "After logging in with the NEW admin pablo.duarte@sonymusic.com, the header shows 'Pablo Duartel' (legacy name with extra 'l') instead of 'Pablo Duarte'. Email and auth are correct; this is purely the user.nome field stored in the DB. Likely cause: seed_admin() updates the existing admin record's email/password but does not refresh the 'nome' from a prior seeded value (or both admins were seeded with the same nome 'Pablo Duartel').",
+        "selector": "[data-testid='user-menu-trigger']",
+        "priority": "LOW"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/backend_test.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "OPTIONAL/LOW: In backend/seed_data.py seed_admin, also upsert the 'nome' field for the new admin (set nome='Pablo Duarte' when ADMIN_EMAIL=='pablo.duarte@sonymusic.com'), so the header reflects the new admin's actual name instead of 'Pablo Duartel'.",
+    "Re-confirm (carry-over): CORS combination allow_credentials=True with allow_origins='*' from default env is invalid per spec; tighten CORS_ORIGINS to explicit origins in production (not blocking - app uses Bearer header, not cookies)."
+  ],
+  "critical_code_review_comments": [
+    "ContractCalendar correctly drives month state and respects 'previsao' (dd/mm/yyyy) when computing per-day counts; next-month is enabled because seed spans Jun+Jul 2026.",
+    "ViewToggle has both data-testid='*-view-toggle-table' and '*-view-toggle-calendar' for License In, License Out and Sony/Sony - all verified clickable and switching state correctly.",
+    "Status badge palette in index.css (emerald/blue/amber) now correctly overrides the global red Sony theme via !important - verified on Dashboard recent-activity AND License In table.",
+    "Seed_data._future_date produces dates spread across June and July 2026 (11 in June + 11 in July for License In and License Out; 10/12 split for Sony-Sony). All 22 contracts/type returned by API.",
+    "Backend CRUD endpoints unchanged this iteration (verified by 38/38 pytest including full create/get/update/delete + persistence checks)."
+  ],
+  "updated_files": [
+    "/app/backend/tests/backend_test.py (added TestNewAdminLogin + TestSeed22Contracts: 13 new tests covering new admin auth, 22-contract seed counts, Jun/Jul 2026 date range, both-months span, and auth-required on /licenses-in,/licenses-out,/sony-sony)"
+  ],
+  "success_rate": {
+    "backend": "100% (38/38 pytest)",
+    "frontend": "100% on critical flows (new admin login, dashboard live stats=22, badge colors regression, License In/Out/Sony-Sony calendar toggle + month header + day-list panel + next-month=Julho 2026 enabled, switch back to table). CRUD UI smoke (create from Novo Pedido) was attempted but not asserted in this iteration script - iteration_1 already proved CRUD works end-to-end, and backend pytest re-confirmed all 7 entity CRUD paths."
+  },
+  "test_credentials": "NEW Admin: pablo.duarte@sonymusic.com / 123456 (verified login + dashboard). Legacy Admin: pablo.duartel@sonymusic.com / sony2025 (still works). Source: /app/memory/test_credentials.md.",
+  "seed_data_creation": "No additional seed required. Verified backend seed creates exactly 22 contracts each for license-in/license-out/sony-sony with dates in 06/2026 or 07/2026, and that License In spans BOTH June 2026 and July 2026 (test_seed_spans_both_months).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend tests at /app/backend/tests/backend_test.py - run: pytest backend/tests/backend_test.py -v. The login form uses data-testid 'login-email-input', 'login-password-input', 'login-submit-btn'. Calendar testids follow pattern '<page>-view-toggle-table|calendar', '<page>-calendar', '<page>-calendar-day-<N>', '<page>-calendar-day-list', '<page>-calendar-next-month' for page in {license-in, license-out, sony-sony}. Logout: click data-testid='user-menu-trigger' then '[data-testid=\"logout-btn\"]' (dropdown). License In table has a 'Novo Pedido' button (text-based selector). The minor user-name display bug for new admin is non-blocking.",
+  "rca of the issue": "No critical bug surfaced. The single LOW-priority finding: header shows 'Pablo Duartel' for the new admin. Reproduction: login with pablo.duarte@sonymusic.com / 123456 and inspect the user-menu-trigger top-right. Root cause hypothesis: in backend/seed_data.py seed_admin only ensures the admin record exists with the new email/password but reuses the legacy nome 'Pablo Duartel' (with extra l). Mitigation: have seed_admin upsert nome='Pablo Duarte' when ADMIN_EMAIL matches pablo.duarte@sonymusic.com (idempotent update of the nome field on every startup)."
+}

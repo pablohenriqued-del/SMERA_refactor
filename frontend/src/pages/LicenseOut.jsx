@@ -10,6 +10,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import { useCrud } from '../hooks/useCrud';
 import { EntityFormDialog } from '../components/EntityFormDialog';
 import { ConfirmDeleteDialog } from '../components/ConfirmDeleteDialog';
+import { ViewToggle } from '../components/ViewToggle';
+import { ContractCalendar } from '../components/ContractCalendar';
 
 const STATUS = ['Pendente', 'Em Análise', 'Finalizado'];
 const FIELDS = [
@@ -30,6 +32,7 @@ const LicenseOut = () => {
   const navigate = useNavigate();
   const { items, loading, create, update, remove } = useCrud('/licenses-out', 'Solicitação');
   const [searchTerm, setSearchTerm] = useState('');
+  const [view, setView] = useState('table');
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [deleting, setDeleting] = useState(null);
@@ -70,13 +73,21 @@ const LicenseOut = () => {
 
       <motion.div variants={itemVariants}>
         <Card className="card-obsidian"><CardContent className="p-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
-            <Input placeholder="Buscar por projeto, solicitante, artista..." className="input-obsidian pl-10" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} data-testid="search-license-out-input" />
+          <div className="flex flex-col md:flex-row gap-3 md:items-center">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
+              <Input placeholder="Buscar por projeto, solicitante, artista..." className="input-obsidian pl-10" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} data-testid="search-license-out-input" />
+            </div>
+            <ViewToggle view={view} onChange={setView} testid="license-out-view-toggle" />
           </div>
         </CardContent></Card>
       </motion.div>
 
+      {view === 'calendar' ? (
+        <motion.div variants={itemVariants}>
+          <ContractCalendar items={filtered} dateField="prazo" getPrimary={(i) => i.projeto} getSecondary={(i) => `${i.artistaSony} • ${i.solicitante}`} testid="license-out-calendar" />
+        </motion.div>
+      ) : (
       <motion.div variants={itemVariants}>
         <Card className="card-obsidian" data-testid="license-out-table-card"><CardContent className="p-4">
           <p className="font-heading font-semibold text-white uppercase tracking-wide text-sm mb-4">{filtered.length} Solicitação(ões)</p>
@@ -118,6 +129,7 @@ const LicenseOut = () => {
           </div></div>
         </CardContent></Card>
       </motion.div>
+      )}
 
       <EntityFormDialog open={formOpen} onClose={() => setFormOpen(false)} onSubmit={handleSubmit} fields={FIELDS} initialData={editing} title={editing ? 'Editar Solicitação' : 'Nova Solicitação'} description="Preencha os dados da licença de saída" />
       <ConfirmDeleteDialog open={!!deleting} onClose={() => setDeleting(null)} onConfirm={() => { remove(deleting.id); setDeleting(null); }} itemName={deleting?.titulo} />

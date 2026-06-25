@@ -11,11 +11,11 @@ def _id():
 
 
 def _future_date(i):
-    """Spread dates across June (30 days) and July (31 days) 2026, deterministic."""
-    total = i % 61  # 0..60
+    """Spread dates across June + July 2026 (stride to cover both months), deterministic."""
+    total = (i * 3) % 61  # 0..60 spread across the 61 days of Jun+Jul
     if total < 30:
-        return f"{(total % 30) + 1:02d}/06/2026"
-    return f"{((total - 30) % 31) + 1:02d}/07/2026"
+        return f"{total + 1:02d}/06/2026"
+    return f"{total - 30 + 1:02d}/07/2026"
 
 
 _STATUS = ["Finalizado", "Em Análise", "Pendente"]
