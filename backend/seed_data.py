@@ -164,12 +164,14 @@ async def seed_users():
     admin_email = os.environ["ADMIN_EMAIL"].lower()
     admin_password = os.environ["ADMIN_PASSWORD"]
     default_password = os.environ.get("DEFAULT_USER_PASSWORD", "sony2025")
+    # Derive a friendly display name from the admin email local-part
+    admin_nome = admin_email.split("@")[0].replace(".", " ").replace("-", " ").title()
 
     admin = await db.users.find_one({"email": admin_email})
     if admin is None:
         await db.users.insert_one({
             "id": _id(),
-            "nome": "Pablo Duartel",
+            "nome": admin_nome,
             "email": admin_email,
             "cargo": "Gerente de Licenciamento",
             "perfil": "Administrador",
@@ -178,8 +180,11 @@ async def seed_users():
             "status": "Ativo",
             "password_hash": hash_password(admin_password),
         })
-    elif not verify_password(admin_password, admin.get("password_hash", "")):
-        await db.users.update_one({"email": admin_email}, {"$set": {"password_hash": hash_password(admin_password)}})
+    else:
+        updates = {"nome": admin_nome}
+        if not verify_password(admin_password, admin.get("password_hash", "")):
+            updates["password_hash"] = hash_password(admin_password)
+        await db.users.update_one({"email": admin_email}, {"$set": updates})
 
     for row in USERS:
         existing = await db.users.find_one({"email": row["email"].lower()})
