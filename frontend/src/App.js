@@ -6,6 +6,7 @@ import { Toaster } from './components/ui/sonner';
 import Layout from './components/Layout';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import Timeline from './pages/Timeline';
 import LicenseIn from './pages/LicenseIn';
 import LicenseOut from './pages/LicenseOut';
 import LicenseOutApproval from './pages/LicenseOutApproval';
@@ -45,6 +46,7 @@ function App() {
           >
             <Route index element={<Navigate to="/dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />
+            <Route path="timeline" element={<Timeline />} />
             <Route path="license-in" element={<LicenseIn />} />
             <Route path="license-out" element={<LicenseOut />} />
             <Route path="license-out/:id/approval" element={<LicenseOutApproval />} />

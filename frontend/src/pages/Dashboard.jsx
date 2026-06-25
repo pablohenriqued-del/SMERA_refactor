@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   FileInput, FileOutput, Clock, CheckCircle, Calendar, DollarSign,
@@ -13,6 +14,10 @@ import { toast } from 'sonner';
 import api, { apiErrorMessage } from '../lib/api';
 
 const COLORS = { 'Finalizado': '#10b981', 'Em Análise': '#3b82f6', 'Pendente': '#f59e0b' };
+
+const MONTHS_PT = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+const _now = new Date();
+const CURRENT_MONTH_LABEL = `${MONTHS_PT[_now.getMonth()]} ${_now.getFullYear()}`;
 
 const getStatusBadgeClass = (status) => {
   switch (status) {
@@ -76,6 +81,7 @@ const StatusChart = ({ title, icon: Icon, iconBg, iconColor, data, testid }) => 
 );
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedStat, setSelectedStat] = useState(null);
@@ -112,8 +118,8 @@ const Dashboard = () => {
           <h1 className="heading-lg text-white" data-testid="dashboard-title">Dashboard</h1>
           <p className="body-md text-zinc-500 mt-1">Visão geral do sistema de licenciamento</p>
         </div>
-        <Button variant="outline" className="btn-sony-outline text-sm py-2">
-          <Calendar className="h-4 w-4 mr-2" />Dezembro 2025
+        <Button variant="outline" className="btn-sony-outline text-sm py-2" onClick={() => navigate('/timeline')} data-testid="dashboard-timeline-btn">
+          <Calendar className="h-4 w-4 mr-2" />Timeline · {CURRENT_MONTH_LABEL}
         </Button>
       </motion.div>
 

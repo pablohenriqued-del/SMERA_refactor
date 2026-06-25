@@ -9,6 +9,7 @@ import {
   Shield, 
   Users, 
   Music,
+  CalendarDays,
   Menu,
   X,
   Bell,
@@ -54,6 +55,7 @@ const Layout = () => {
 
   const navigation = [
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
+    { name: 'Timeline', path: '/timeline', icon: CalendarDays },
     { name: 'License In', path: '/license-in', icon: FileInput },
     { name: 'License Out', path: '/license-out', icon: FileOutput },
     { name: 'Sony/Sony', path: '/sony-sony', icon: Music },

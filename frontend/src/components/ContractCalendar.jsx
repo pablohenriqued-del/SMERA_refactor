@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, CalendarDays } from 'lucide-react';
 import { Card, CardContent } from './ui/card';
@@ -34,9 +34,9 @@ const dayKey = (y, m, d) => `${y}-${m}-${d}`;
 
 /**
  * Timeline/calendar visualization for contracts.
- * props: items[], dateField, getPrimary(item), getSecondary(item), getArtistTrack(item) => {artist, track}
+ * props: items[], dateField, getPrimary(item), getSecondary(item), getArtistTrack(item) => {artist, track}, initialMonth {y,m}
  */
-export const ContractCalendar = ({ items, dateField, getPrimary, getSecondary, getArtistTrack, testid = 'contract-calendar' }) => {
+export const ContractCalendar = ({ items, dateField, getPrimary, getSecondary, getArtistTrack, initialMonth, testid = 'contract-calendar' }) => {
   // group items by day key + collect available months
   const { byDay, months } = useMemo(() => {
     const map = {};
@@ -54,8 +54,17 @@ export const ContractCalendar = ({ items, dateField, getPrimary, getSecondary, g
 
   const [monthIdx, setMonthIdx] = useState(0);
   const [selectedKey, setSelectedKey] = useState(null);
+  const initialAppliedRef = useRef(false);
 
   const current = months[monthIdx] || (months.length ? months[0] : { y: 2026, m: 6 });
+
+  // jump to the requested initial month once data is available
+  useEffect(() => {
+    if (!initialMonth || initialAppliedRef.current || !months.length) return;
+    const idx = months.findIndex((mm) => mm.y === initialMonth.y && mm.m === initialMonth.m);
+    if (idx >= 0) setMonthIdx(idx);
+    initialAppliedRef.current = true;
+  }, [months, initialMonth]);
 
   // pick first day-with-contracts in current month when month changes
   useEffect(() => {
