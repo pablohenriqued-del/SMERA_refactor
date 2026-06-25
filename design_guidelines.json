@@ -1,153 +1,122 @@
 {
-  "brand_identity": {
-    "name": "Sony Music Licensing",
-    "archetype": "The Performance Pro (Elite & Precision)",
-    "vibe": "Super Modern, High-Contrast, Cinematic, Professional",
-    "theme_mode": "dark"
+  "project_context": {
+    "name": "SMERA",
+    "domain": "Music Licensing SaaS",
+    "theme_archetype": "Luxury & Swiss High-Contrast Hybrid (Dark Mode)",
+    "core_vibe": "Cinematic, authoritative, sleek, perfect contrasts"
   },
   "typography": {
-    "font_family": {
-      "headings": "Barlow Condensed, sans-serif",
-      "body": "Manrope, sans-serif",
-      "mono": "JetBrains Mono, monospace"
+    "import_url": "https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap",
+    "heading_font": "Outfit, sans-serif",
+    "body_font": "Plus Jakarta Sans, sans-serif",
+    "hierarchy": {
+      "h1": "text-4xl sm:text-5xl tracking-tight font-heading font-semibold text-white",
+      "h2": "text-2xl sm:text-3xl tracking-tight font-heading font-medium text-white",
+      "h3": "text-xl sm:text-2xl tracking-tight font-heading font-medium",
+      "h4": "text-lg sm:text-xl font-heading font-medium text-zinc-100",
+      "body_lg": "text-base sm:text-lg font-body leading-relaxed text-zinc-300",
+      "body_md": "text-sm sm:text-base font-body leading-relaxed text-zinc-300",
+      "body_sm": "text-xs sm:text-sm font-body leading-relaxed text-zinc-400",
+      "overline": "text-[10px] sm:text-xs font-heading font-semibold tracking-[0.2em] uppercase text-zinc-500"
     },
-    "weights": {
-      "headings": "700, 800",
-      "body": "400, 500"
-    },
-    "usage_rules": [
-      "Headings MUST be Uppercase for top-level titles (h1, h2).",
-      "Use 'tracking-tight' for all headings larger than 24px.",
-      "Use 'tracking-wide' for overlines and small labels.",
-      "Body text should have 'leading-relaxed' for readability."
-    ],
-    "import_url": "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800&family=Manrope:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    "rules": [
+      "Avoid standard bold (700) for large headings; prefer medium (500) or semibold (600) with tight tracking.",
+      "Remove uppercase from large headings (heading-xl, heading-lg, heading-md) to make it look more premium. Use uppercase strictly for overlines, labels, and table headers.",
+      "Use Plus Jakarta Sans for tabular data as it has excellent numeral legibility."
+    ]
   },
   "colors": {
-    "palette": {
-      "background": {
-        "default": "#000000",
-        "paper": "#0A0A0A",
-        "subtle": "#121212"
-      },
-      "primary": {
-        "main": "#E60012",
-        "hover": "#FF1A2C",
-        "muted": "rgba(230, 0, 18, 0.1)"
-      },
-      "text": {
-        "primary": "#FFFFFF",
-        "secondary": "#A1A1AA",
-        "muted": "#52525B"
-      },
-      "border": {
-        "default": "#27272A",
-        "active": "#E60012"
-      },
-      "status": {
-        "success": "#10B981",
-        "warning": "#F59E0B",
-        "error": "#EF4444"
-      }
+    "brand": {
+      "sony_red": "#E60012",
+      "sony_red_hover": "#FF1A2C",
+      "pure_white": "#FFFFFF",
+      "obsidian_bg": "#050505",
+      "obsidian_surface": "#0E0E11",
+      "obsidian_subtle": "#16161A"
     },
-    "gradients": {
-      "sony_glow": "linear-gradient(180deg, rgba(230,0,18,0.15) 0%, rgba(0,0,0,0) 100%)",
-      "card_hover": "linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%)"
+    "css_variables_update": {
+      "--background": "0 0% 2%",
+      "--foreground": "0 0% 100%",
+      "--card": "240 3% 6%",
+      "--card-foreground": "0 0% 98%",
+      "--popover": "240 3% 6%",
+      "--popover-foreground": "0 0% 98%",
+      "--primary": "355 100% 45%",
+      "--primary-foreground": "0 0% 100%",
+      "--secondary": "240 4% 10%",
+      "--secondary-foreground": "0 0% 98%",
+      "--muted": "240 4% 10%",
+      "--muted-foreground": "240 5% 65%",
+      "--accent": "240 4% 16%",
+      "--accent-foreground": "0 0% 98%",
+      "--border": "0 0% 12%",
+      "--input": "0 0% 12%",
+      "--ring": "355 100% 45%"
     }
   },
-  "layout": {
-    "spacing_system": "Generous. Use p-6, p-8, p-12. Avoid cramped p-2 or p-4 for main containers.",
-    "grid_system": {
-      "dashboard": "Bento Grid (Grid Mode A). Mix of col-span-1, col-span-2, row-span-2.",
-      "lists": "High Density Grid (Grid Mode B). Tight gaps (gap-px) with visible grid lines."
-    },
-    "container_style": "Fluid but contained. Max-width 1920px for large screens.",
-    "sidebar": "Fixed width (280px), solid background #050505, border-r border-white/10."
+  "spacing_and_layout": {
+    "bento_grid": "Use Mode B: Control Room Grid for the dashboard. Base grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 with tight gaps (gap-4 or gap-6). Ensure all cards stretch to h-full.",
+    "padding": "Use generous padding inside containers. Cards must have p-6 or p-8.",
+    "sidebar": "Refine the left sidebar to use a deep obsidian background, border-r border-white/5, and soft active states (bg-white/5) instead of harsh colors.",
+    "table_layout": "Keep tables dense but readable. Use optical alignment: left-align headers, center-align badges, right-align monetary values/actions."
   },
   "components": {
-    "cards": {
-      "style": "Flat, sharp or minimal rounded-md. 1px border (border-white/10).",
-      "hover": "Border color changes to white/30. Subtle scale (1.01). No shadow.",
-      "content_padding": "p-6 or p-8"
+    "card-obsidian": "Update class to: bg-[#0E0E11] border border-white/5 rounded-xl shadow-2xl shadow-black/50 overflow-hidden relative",
+    "card-obsidian-interactive": "Add to base card: transition-all duration-300 cursor-pointer hover:border-sony-red/30 hover:shadow-[0_0_30px_-10px_rgba(230,0,18,0.2)] hover:-translate-y-1",
+    "btn-sony": "Update class to: bg-sony-red text-white font-body font-semibold px-6 py-2.5 rounded-md transition-all duration-300 hover:bg-sony-red-hover hover:shadow-[0_0_20px_-5px_rgba(230,0,18,0.4)] active:scale-[0.98] flex items-center justify-center gap-2",
+    "btn-sony-outline": "Update class to: bg-transparent text-white border border-white/15 font-body font-semibold px-6 py-2.5 rounded-md transition-all duration-300 hover:bg-white/5 hover:border-white/30 active:scale-[0.98]",
+    "glass-dark": "Update class to: bg-black/40 backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)]",
+    "table-header": "Update class to: font-heading text-[10px] uppercase tracking-[0.15em] text-zinc-500 bg-[#16161A] py-3",
+    "badges": {
+      "success": "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-body text-xs font-medium px-2.5 py-0.5 rounded-full",
+      "warning": "bg-amber-500/10 text-amber-400 border border-amber-500/20 font-body text-xs font-medium px-2.5 py-0.5 rounded-full",
+      "info": "bg-blue-500/10 text-blue-400 border border-blue-500/20 font-body text-xs font-medium px-2.5 py-0.5 rounded-full",
+      "error": "bg-red-500/10 text-red-400 border border-red-500/20 font-body text-xs font-medium px-2.5 py-0.5 rounded-full"
     },
-    "buttons": {
-      "primary": "bg-[#E60012] text-white hover:bg-[#FF1A2C] rounded-sm font-bold uppercase tracking-wider px-8 py-6",
-      "secondary": "bg-white/5 text-white border border-white/10 hover:bg-white/10 rounded-sm font-medium px-6 py-6",
-      "ghost": "text-white/70 hover:text-white hover:bg-white/5"
-    },
-    "inputs": {
-      "style": "bg-black border border-white/20 focus:border-[#E60012] focus:ring-1 focus:ring-[#E60012] rounded-sm h-12"
-    },
-    "tables": {
-      "style": "Tech/Data look. Header: uppercase, text-xs, text-white/50, tracking-wider. Rows: border-b border-white/5 hover:bg-white/5 transition-colors."
-    },
-    "charts": {
-      "library": "Recharts (via Shadcn)",
-      "style": "Minimalist. Hide grid lines or make them very subtle (white/5). Tooltips must be dark glassmorphism."
+    "glow-effects": {
+      "sony-glow-top": "background: linear-gradient(180deg, rgba(230,0,18,0.12) 0%, transparent 100%); border-top: 1px solid rgba(230,0,18,0.4);"
     }
   },
-  "visual_enhancers": {
-    "texture": "Add a fixed 'noise' overlay (opacity 0.02) to the entire app to kill digital flatness.",
-    "glow_effects": "Use 'shadow-[0_0_30px_-10px_rgba(230,0,18,0.3)]' for active elements.",
-    "borders": "Use 'Grid Borders' strategy for dashboard sections: visible 1px borders between sections."
+  "motion_and_interactions": {
+    "animations": "Use Framer Motion for page transitions and staggering lists. Use pure CSS for button/hover states.",
+    "page_load": "Fade in with a slight upward slide: initial={{opacity: 0, y: 10}}, animate={{opacity: 1, y: 0}}, transition={{duration: 0.4, ease: 'easeOut'}}",
+    "stagger_children": "For dashboard KPI cards and table rows, use staggerChildren: 0.05"
   },
-  "image_urls": {
-    "hero_backgrounds": [
+  "media": {
+    "image_urls": [
       {
-        "url": "https://images.unsplash.com/photo-1473396413399-6717ef7c4093?crop=entropy&cs=srgb&fm=jpg&q=85",
-        "category": "hero",
-        "description": "Concert crowd with red lighting - perfect for dashboard hero or login screen"
+        "url": "https://images.unsplash.com/photo-1596865249308-2472dc5807d7?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzNTl8MHwxfHNlYXJjaHwyfHxkYXJrJTIwYWJzdHJhY3QlMjB0ZXh0dXJlfGVufDB8fHx8MTc4MjIzODE0MXww&ixlib=rb-4.1.0&q=85",
+        "description": "Dark abstract texture",
+        "category": "login_background",
+        "instructions": "Use this as the hero background for the Login page. Overlay it with a bg-black/60 to bg-black/80 gradient so the login card is perfectly legible."
       },
       {
-        "url": "https://images.unsplash.com/photo-1701460356742-deecc12da361?crop=entropy&cs=srgb&fm=jpg&q=85",
-        "category": "hero",
-        "description": "Band on stage red lighting"
-      }
-    ],
-    "album_covers": [
-      {
-        "url": "https://images.unsplash.com/photo-1682778964790-b2fa177b5e45?crop=entropy&cs=srgb&fm=jpg&q=85",
-        "category": "album_art",
-        "description": "Abstract red and black liquid"
+        "url": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Nzh8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBwb3J0cmFpdHxlbnwwfHx8fDE3ODI0MDA5NDZ8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Professional male portrait",
+        "category": "user_avatar",
+        "instructions": "Use this as the logged-in user avatar in the top header and within the Acesso (user management) table."
       },
       {
-        "url": "https://images.unsplash.com/photo-1569521597715-0e0c4e22e0e4?crop=entropy&cs=srgb&fm=jpg&q=85",
-        "category": "album_art",
-        "description": "Red swirls abstract"
-      },
-      {
-        "url": "https://images.unsplash.com/photo-1581084349663-7ab88c58d362?crop=entropy&cs=srgb&fm=jpg&q=85",
-        "category": "album_art",
-        "description": "Black and pink abstract"
-      }
-    ],
-    "artist_portraits": [
-      {
-        "url": "https://images.unsplash.com/photo-1758225709268-fc275fc45ebb?crop=entropy&cs=srgb&fm=jpg&q=85",
-        "category": "artist",
-        "description": "DJ/Artist with sunglasses"
-      },
-      {
-        "url": "https://images.unsplash.com/photo-1764014352810-75154d2629f4?crop=entropy&cs=srgb&fm=jpg&q=85",
-        "category": "artist",
-        "description": "Man holding sign"
+        "url": "https://images.unsplash.com/photo-1580489944761-15a19d654956?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Nzh8MHwxfHNlYXJjaHwyfHxwcm9mZXNzaW9uYWwlMjBwb3J0cmFpdHxlbnwwfHx8fDE3ODI0MDA5NDZ8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Professional female portrait",
+        "category": "user_avatar",
+        "instructions": "Use this as secondary avatar placeholders in the Acesso user management table."
       }
     ]
   },
+  "testing": {
+    "attributes": [
+      "All buttons, navigation links, and actionable icons must include a data-testid attribute in kebab-case based on their role.",
+      "Example: data-testid='login-submit-button', data-testid='sidebar-nav-dashboard', data-testid='kpi-card-active-licenses'."
+    ]
+  },
   "instructions_to_main_agent": [
-    "1. INSTALL FONTS: Add the Google Fonts import to index.css immediately.",
-    "2. SETUP THEME: Update tailwind.config.js to use the specific colors defined in 'colors' section. Override the default shadcn colors.",
-    "3. LAYOUT: Create a 'DashboardLayout' component that includes the Sidebar and Topbar. Use the 'Bento Grid' for the main dashboard page.",
-    "4. COMPONENTS: Customize Shadcn components (Card, Button, Input) to match the 'Performance Pro' archetype (sharp edges, high contrast).",
-    "5. DATA: Use the provided image URLs for mock data. Do not use placeholders.",
-    "6. ANIMATION: Add 'framer-motion' for page transitions and hover effects. Use 'AnimatePresence' for smooth tab switching.",
-    "7. CHARTS: Style Recharts to match the dark theme (dark tooltips, thin lines, Sony Red for primary data)."
-  ],
-  "universal_guidelines": [
-    "DO NOT use gradients for backgrounds unless specified (use solid black/obsidian).",
-    "DO NOT use 'Inter' for headings. Use 'Barlow Condensed'.",
-    "Ensure all text has sufficient contrast (WCAG AA).",
-    "Use 'data-testid' for all interactive elements.",
-    "Avoid 'AI Slop' - make it look like a premium music app, not a generic admin panel."
+    "Refactor frontend/src/index.css to replace Barlow Condensed and Manrope with Outfit and Plus Jakarta Sans. Ensure the @import url is updated.",
+    "Update frontend/tailwind.config.js to map 'heading' to Outfit and 'body' to Plus Jakarta Sans. Ensure to retain existing custom colors (e.g., sony-red) while refining the HSL variables in index.css as provided.",
+    "Redesign the Dashboard layout using the 'Control Room Grid' approach. Make sure charts use the new fonts in their tooltips (.recharts-tooltip-label).",
+    "Replace all heavy standard borders in the UI with subtle border-white/5 or border-white/10.",
+    "Ensure the entire app remains in Portuguese.",
+    "In the Login page, use the provided dark abstract texture as the background image with a deep black vignette/overlay.",
+    "For typography in index.css, remove 'uppercase' from the .heading-xl, .heading-lg, .heading-md classes to make it feel more modern and premium. Keep uppercase ONLY on .overline, .table-header, and small buttons."
   ]
 }

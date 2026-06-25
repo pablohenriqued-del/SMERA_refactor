@@ -10,31 +10,110 @@ def _id():
     return str(uuid.uuid4())
 
 
-LICENSES_IN = [
-    {"projeto": "Batidão Tropical 2", "titulo": "Rubi", "artista": "Pabllo Vittar", "artistasConvidados": "Will Love", "proRata": "Não", "previsao": "15/11/2024", "formato": "Participação Especial", "meios": "Físico e Digital", "status": "Finalizado"},
-    {"projeto": "AFTER", "titulo": "Culpa do Cupido", "artista": "Pabllo Vittar", "artistasConvidados": "EPX", "proRata": "Não", "previsao": "20/11/2024", "formato": "Participação Especial", "meios": "Físico e Digital", "status": "Finalizado"},
-    {"projeto": "JETSKI", "titulo": "JETSKI", "artista": "Pedro Sampaio", "artistasConvidados": "MC Meno K", "proRata": "Não", "previsao": "18/12/2025", "formato": "Participação Especial", "meios": "Físico e Digital", "status": "Pendente"},
-    {"projeto": "Noite Perfeita", "titulo": "Romance Proibido", "artista": "Anitta", "artistasConvidados": "Ludmilla", "proRata": "Sim", "previsao": "15/01/2026", "formato": "Participação Especial", "meios": "Físico e Digital", "status": "Em Análise"},
-    {"projeto": "Funk Remix", "titulo": "Beat Pesado", "artista": "MC Hariel", "artistasConvidados": "Kevin O Chris", "proRata": "Não", "previsao": "20/12/2024", "formato": "Participação Especial", "meios": "Digital", "status": "Pendente"},
-    {"projeto": "Sertanejo Top", "titulo": "Coração Partido", "artista": "Marília Mendonça", "artistasConvidados": "Henrique & Juliano", "proRata": "Sim", "previsao": "10/12/2024", "formato": "Participação Especial", "meios": "Físico e Digital", "status": "Finalizado"},
+def _future_date(i):
+    """Spread dates across June (30 days) and July (31 days) 2026, deterministic."""
+    total = i % 61  # 0..60
+    if total < 30:
+        return f"{(total % 30) + 1:02d}/06/2026"
+    return f"{((total - 30) % 31) + 1:02d}/07/2026"
+
+
+_STATUS = ["Finalizado", "Em Análise", "Pendente"]
+_MEIOS = ["Físico e Digital", "Digital", "Físico"]
+
+_ARTISTAS = [
+    "Pabllo Vittar", "Pedro Sampaio", "Anitta", "Marília Mendonça", "MC Hariel",
+    "Luísa Sonza", "Jão", "Ludmilla", "MC Luuky", "Gloria Groove",
+    "Xamã", "Pocah", "Dilsinho", "Iza", "Vintage Culture",
+    "Alok", "Manu Gavassi", "Mc Don Juan", "Tom Veloso", "Lagum",
+    "Jorge & Mateus", "Maiara & Maraisa",
+]
+_CONVIDADOS = [
+    "Will Love", "EPX", "MC Meno K", "Ludmilla", "Kevin O Chris", "Henrique & Juliano",
+    "Wesley Safadão", "DJ GBR", "Tropkillaz", "Gaab", "Major Lazer", "Felipe Amorim",
+    "MC Ryan SP", "Veigh", "Matuê", "Filipe Ret", "Orochi", "Hungria",
+    "DJ Marsha", "Murda Beatz", "Liu", "Oruam",
+]
+_TITULOS_IN = [
+    "Rubi", "Culpa do Cupido", "JETSKI", "Romance Proibido", "Beat Pesado", "Coração Partido",
+    "Verão Tropical", "Noite de Festa", "Amor de Verdade", "Sem Limites", "Brilho da Lua",
+    "Dança Comigo", "Vai com Tudo", "Tarde Demais", "Sol Nascente", "Madrugada Quente",
+    "Pra Sempre", "Liberdade", "Onda Boa", "Recomeço", "Vibração", "Saudade",
+]
+_FORMATOS = ["Participação Especial", "Sampleamento", "Cover", "Trilha Sonora"]
+
+_SOLICITANTES = [
+    "Netflix Brasil", "Coca-Cola Brasil", "Gameloft", "Amazon Prime", "Globo",
+    "Spotify Studios", "Heineken", "Nike Brasil", "Itaú", "Magazine Luiza",
+    "O Boticário", "Ambev", "Disney+", "TikTok", "Mercado Livre",
+    "Riot Games", "Electronic Arts", "Burger King", "Natura", "C&A",
+    "Vivo", "Claro",
+]
+_TIPOS_OUT = ["Remix", "Participação Especial", "Streaming", "Publicidade", "Games"]
+
+_SELOS = ["Columbia Records", "RCA Records", "Epic Records", "Legacy Recordings", "Sony Music Latin"]
+_TIPOS_SONY = ["Single", "EP", "Album Completo", "Live Album", "Compilation"]
+_PROJ_SONY = [
+    "Album Collaboration", "Crossover EP", "Remix Collection", "Acoustic Sessions", "Summer Hits",
+    "Winter Tour", "Studio Live", "Deluxe Edition", "Unplugged", "Future Beats",
+    "Latin Fusion", "Urban Nights", "Pop Explosion", "Funk Universe", "Sertanejo Raiz",
+    "Trap Brasil", "Eletrônica BR", "MPB Sessions", "Festival Mix", "Coletânea Verão",
+    "Hits 2026", "Encontros",
 ]
 
-LICENSES_OUT = [
-    {"projeto": "Novo Licenciamento - CAROLINA APARECIDA RIBEIRO", "titulo": "Pedido a Padre Cícero", "artistaSony": "Ary Lobo", "solicitante": "Carolina Aparecida Ribeiro", "tipo": "Remix", "prazo": "15/12/2024", "status": "Em Análise"},
-    {"projeto": "Novo Licenciamento - Vitor Hugo Souza Silva", "titulo": "Breca Não", "artistaSony": "MC Luuky", "solicitante": "Vitor Hugo Souza Silva", "tipo": "Participação Especial", "prazo": "20/12/2024", "status": "Em Análise"},
-    {"projeto": "Novo Licenciamento - Leila Ouchi de Oliveira", "titulo": "Academia Privada", "artistaSony": "MC Luuky", "solicitante": "Leila Ouchi de Oliveira", "tipo": "Participação Especial", "prazo": "10/11/2024", "status": "Em Análise"},
-    {"projeto": "Licenciamento Netflix - Série Original", "titulo": "Funk Pesado", "artistaSony": "Pedro Sampaio", "solicitante": "Netflix Brasil", "tipo": "Streaming", "prazo": "05/12/2024", "status": "Finalizado"},
-    {"projeto": "Publicidade Coca-Cola", "titulo": "JETSKI", "artistaSony": "Pedro Sampaio", "solicitante": "Coca-Cola Brasil", "tipo": "Publicidade", "prazo": "25/11/2024", "status": "Finalizado"},
-    {"projeto": "Game Mobile - Soundtrack", "titulo": "Rubi", "artistaSony": "Pabllo Vittar", "solicitante": "Gameloft", "tipo": "Games", "prazo": "30/01/2025", "status": "Pendente"},
-]
 
-SONY_SONY = [
-    {"codigo": "SONY-2025-001", "projeto": "Album Collaboration", "artistaPrincipal": "John Artist", "artistaConvidado": "Featured Star", "selo": "Columbia Records", "tipo": "Album Completo", "lancamento": "15/12/2024", "status": "Finalizado"},
-    {"codigo": "SONY-2025-002", "projeto": "Crossover EP", "artistaPrincipal": "Pop Sensation", "artistaConvidado": "Urban Legend", "selo": "RCA Records", "tipo": "EP", "lancamento": "20/11/2024", "status": "Em Análise"},
-    {"codigo": "SONY-2025-003", "projeto": "Remix Collection", "artistaPrincipal": "Electronic Duo", "artistaConvidado": "DJ Producer", "selo": "Epic Records", "tipo": "Single", "lancamento": "10/12/2024", "status": "Pendente"},
-    {"codigo": "SONY-2025-004", "projeto": "Acoustic Sessions", "artistaPrincipal": "Singer Songwriter", "artistaConvidado": "Classical Artist", "selo": "Legacy Recordings", "tipo": "Live Album", "lancamento": "25/01/2025", "status": "Pendente"},
-    {"codigo": "SONY-2025-005", "projeto": "Summer Hits", "artistaPrincipal": "Pop Group", "artistaConvidado": "Tropical Band", "selo": "Sony Music Latin", "tipo": "Compilation", "lancamento": "01/12/2024", "status": "Finalizado"},
-]
+def _build_licenses_in(n=22):
+    rows = []
+    for i in range(n):
+        rows.append({
+            "projeto": f"{_TITULOS_IN[i % len(_TITULOS_IN)]} - Projeto {i + 1:02d}",
+            "titulo": _TITULOS_IN[i % len(_TITULOS_IN)],
+            "artista": _ARTISTAS[i % len(_ARTISTAS)],
+            "artistasConvidados": _CONVIDADOS[i % len(_CONVIDADOS)],
+            "proRata": "Sim" if i % 3 == 0 else "Não",
+            "previsao": _future_date(i),
+            "formato": _FORMATOS[i % len(_FORMATOS)],
+            "meios": _MEIOS[i % len(_MEIOS)],
+            "status": _STATUS[i % len(_STATUS)],
+        })
+    return rows
+
+
+def _build_licenses_out(n=22):
+    rows = []
+    for i in range(n):
+        solicitante = _SOLICITANTES[i % len(_SOLICITANTES)]
+        rows.append({
+            "projeto": f"Licenciamento {solicitante} #{i + 1:02d}",
+            "titulo": _TITULOS_IN[(i + 5) % len(_TITULOS_IN)],
+            "artistaSony": _ARTISTAS[(i + 3) % len(_ARTISTAS)],
+            "solicitante": solicitante,
+            "tipo": _TIPOS_OUT[i % len(_TIPOS_OUT)],
+            "prazo": _future_date(i + 7),
+            "status": _STATUS[i % len(_STATUS)],
+        })
+    return rows
+
+
+def _build_sony_sony(n=22):
+    rows = []
+    for i in range(n):
+        rows.append({
+            "codigo": f"SONY-2026-{i + 1:03d}",
+            "projeto": _PROJ_SONY[i % len(_PROJ_SONY)],
+            "artistaPrincipal": _ARTISTAS[i % len(_ARTISTAS)],
+            "artistaConvidado": _ARTISTAS[(i + 7) % len(_ARTISTAS)],
+            "selo": _SELOS[i % len(_SELOS)],
+            "tipo": _TIPOS_SONY[i % len(_TIPOS_SONY)],
+            "lancamento": _future_date(i + 14),
+            "status": _STATUS[i % len(_STATUS)],
+        })
+    return rows
+
+
+LICENSES_IN = _build_licenses_in()
+LICENSES_OUT = _build_licenses_out()
+SONY_SONY = _build_sony_sony()
 
 RLM_RIGHTS = [
     {"codigo": "RLM-2025-001", "obra": "Summer Vibes", "titular": "Sony Music Publishing", "tipo": "Master", "territorio": "Global", "vencimento": "15/06/2027", "status": "Ativo", "valor": "R$ 500.000"},
