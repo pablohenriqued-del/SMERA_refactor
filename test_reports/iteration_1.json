@@ -1,0 +1,51 @@
+{
+  "summary": "End-to-end testing of SMERA platform: backend (26 pytest tests) and frontend (login, dashboard, CRUD across all entities, logout). All backend tests pass. All frontend flows pass after fixing a blocking ESLint webpack overlay error.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "EntityFormDialog.jsx",
+        "issue": "ESLint rule 'react-hooks/exhaustive-deps' inline disable on line 34 was unknown to the project's ESLint config (react-app preset). This compiled to ERROR via CRA and produced a webpack-dev-server-client-overlay iframe that intercepted ALL pointer events across the entire app (login button, sidebar, every clickable element). Tests fixed by changing the disable directive to `// eslint-disable-next-line` on the previous line.",
+        "selector": "src/components/EntityFormDialog.jsx:34",
+        "priority": "HIGH"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/backend_test.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "Confirm the ESLint fix in EntityFormDialog.jsx is acceptable (already applied). Optionally add the missing 'react-hooks' plugin to ESLint config so the original directive works.",
+    "Consider including `password` and `status` selectable inputs in the user create dialog explicitly (currently fields rely on EntityFormDialog generic field list)."
+  ],
+  "critical_code_review_comments": [
+    "Backend CRUD generic factory `make_crud_router` correctly excludes `_id` via projection - verified for all 7 entities.",
+    "Auth flow correctly returns 401 (wrong password) and 403 (inactive). password_hash is never leaked in /auth/login, /auth/me or /users responses (verified by tests).",
+    "Users router properly hashes passwords via bcrypt on create/update, and enforces unique email (409) and self-delete protection (400).",
+    "JWT secret is loaded from env (good). Token expiry 12h. No refresh token endpoint exists - acceptable for MVP.",
+    "CORS uses `allow_credentials=True` together with `allow_origins=['*']` from default env - this combination is invalid per CORS spec; browsers will reject credentialed requests. For this app it does not break tests because the frontend uses Bearer in Authorization header (not cookies). Recommend tightening CORS_ORIGINS to explicit origins in production.",
+    "Dashboard `recent` sorts by string date `dd/mm/yyyy` which doesn't produce chronological order; consider storing ISO dates. Not blocking.",
+    "Frontend `localStorage` token usage works but is XSS-vulnerable; httpOnly cookies are not used (request says no Google auth required). This is acceptable for MVP per scope.",
+    "EntityFormDialog had a webpack-blocking ESLint error - file lacked proper ESLint plugin for `react-hooks/exhaustive-deps`. Fix is now `// eslint-disable-next-line` placed above the deps line."
+  ],
+  "updated_files": [
+    "/app/frontend/src/components/EntityFormDialog.jsx (changed eslint-disable-line to eslint-disable-next-line to clear webpack overlay)",
+    "/app/backend/tests/backend_test.py (new comprehensive test suite)"
+  ],
+  "success_rate": {
+    "backend": "100% (26/26 pytest)",
+    "frontend": "100% after EntityFormDialog fix (login, dashboard live stats, License In CRUD, License Out approval nav, Sony/Sony CRUD, RLM detail nav, Cadastros tabs Artistas/Gravadoras/Empresas, Acesso user CRUD, logout via user-menu, protected route gating)"
+  },
+  "test_credentials": "Admin pablo.duartel@sonymusic.com / sony2025; Inactive carlos.oliveira@sonymusic.com / sony2025 (403). All from /app/memory/test_credentials.md.",
+  "seed_data_creation": "No additional seed data needed; backend seed_all() seeded LICENSES_IN/OUT, SONY_SONY, RLM_RIGHTS, ARTISTS, LABELS, COMPANIES, USERS (admin + 4 demo users) idempotently on startup. Tests cleaned up TEST_/E2E_ data they created.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend test file at /app/backend/tests/backend_test.py - run with: pytest /app/backend/tests/backend_test.py -v. Logout button is inside a dropdown - must click data-testid='user-menu-trigger' first, then data-testid='logout-btn'. Cadastros has 5 tabs total (artistas, gravadoras, empresas, equipe, diretoria) but request only specified the first 3. Approval form submission is intentionally not persisted (toast only) per request notes. RLM detail tabs beyond the header are static contract preview.",
+  "rca of the issue": "BUG: Login button and all clicks were initially failing because CRA's webpack-dev-server displayed a 'Compiled with problems' iframe overlay (id=webpack-dev-server-client-overlay) covering the entire viewport. Root cause: in /app/frontend/src/components/EntityFormDialog.jsx line 34, an inline `// eslint-disable-line react-hooks/exhaustive-deps` referenced a rule whose plugin was not configured in this project's ESLint setup, causing ESLint to emit a 'Definition for rule not found' ERROR which CRA elevates to a fatal compile error. FIX: replaced with `// eslint-disable-next-line` (no rule name) placed on the line above the dependency array. After fix the overlay disappeared and 100% of frontend tests pass."
+}

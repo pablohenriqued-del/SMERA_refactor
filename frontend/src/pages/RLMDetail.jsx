@@ -1,17 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Plus } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
+import api from '../lib/api';
 
 const RLMDetail = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
   const [activeTab, setActiveTab] = useState('detalhes');
-  const contract = { number: 'TEST004', name: 'FEATURING – TEST004', type: 'FT' };
+  const [direito, setDireito] = useState(null);
+
+  useEffect(() => {
+    api.get(`/rlm-rights/${id}`).then(({ data }) => setDireito(data)).catch(() => {});
+  }, [id]);
+
+  const contract = { number: direito?.codigo || 'TEST004', name: direito ? `${direito.tipo} – ${direito.obra}` : 'FEATURING – TEST004', type: 'FT' };
 
   const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.05 } } };
   const itemVariants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };

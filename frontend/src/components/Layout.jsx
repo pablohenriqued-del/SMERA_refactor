@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   LayoutDashboard, 
@@ -15,7 +15,6 @@ import {
   Search,
   ChevronDown,
   LogOut,
-  Settings,
   User
 } from 'lucide-react';
 import { Button } from './ui/button';
@@ -28,11 +27,30 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
+import { useAuth } from '../context/AuthContext';
+import api from '../lib/api';
+
+const getInitials = (nome) =>
+  (nome || 'U').split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
 
 const Layout = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeCount, setActiveCount] = useState(null);
+
+  useEffect(() => {
+    api.get('/dashboard/stats')
+      .then(({ data }) => setActiveCount(data.stats.licencasAtivas))
+      .catch(() => {});
+  }, []);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login', { replace: true });
+  };
 
   const navigation = [
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
@@ -190,11 +208,11 @@ const Layout = () => {
                   data-testid="user-menu-trigger"
                 >
                   <div className="w-9 h-9 rounded-sm bg-sony-red flex items-center justify-center">
-                    <span className="font-heading font-bold text-sm text-white">PD</span>
+                    <span className="font-heading font-bold text-sm text-white">{getInitials(user?.nome)}</span>
                   </div>
                   <div className="hidden lg:block text-left">
-                    <p className="text-sm font-medium text-white">Pablo Duartel</p>
-                    <p className="text-xs text-zinc-500">Administrador</p>
+                    <p className="text-sm font-medium text-white" data-testid="header-user-name">{user?.nome || 'Usuário'}</p>
+                    <p className="text-xs text-zinc-500">{user?.perfil || ''}</p>
                   </div>
                   <ChevronDown className="h-4 w-4 text-zinc-500 hidden lg:block" />
                 </Button>
@@ -202,16 +220,16 @@ const Layout = () => {
               <DropdownMenuContent align="end" className="w-56 bg-sony-paper border-white/10">
                 <DropdownMenuLabel className="text-zinc-400 font-heading uppercase text-xs tracking-wider">Minha Conta</DropdownMenuLabel>
                 <DropdownMenuSeparator className="bg-white/10" />
-                <DropdownMenuItem className="text-zinc-300 hover:text-white hover:bg-white/5 cursor-pointer">
+                <DropdownMenuItem className="text-zinc-300 hover:text-white hover:bg-white/5 cursor-pointer focus:bg-white/5 focus:text-white">
                   <User className="h-4 w-4 mr-2" />
-                  Perfil
-                </DropdownMenuItem>
-                <DropdownMenuItem className="text-zinc-300 hover:text-white hover:bg-white/5 cursor-pointer">
-                  <Settings className="h-4 w-4 mr-2" />
-                  Configurações
+                  {user?.email || 'Perfil'}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="bg-white/10" />
-                <DropdownMenuItem className="text-red-400 hover:text-red-300 hover:bg-red-500/10 cursor-pointer">
+                <DropdownMenuItem
+                  className="text-red-400 hover:text-red-300 hover:bg-red-500/10 cursor-pointer focus:bg-red-500/10 focus:text-red-300"
+                  onClick={handleLogout}
+                  data-testid="logout-btn"
+                >
                   <LogOut className="h-4 w-4 mr-2" />
                   Sair
                 </DropdownMenuItem>
@@ -288,7 +306,7 @@ const Layout = () => {
             <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/5">
               <div className="card-obsidian p-4">
                 <p className="overline mb-1">Licenças Ativas</p>
-                <p className="font-heading font-bold text-2xl text-white">248</p>
+                <p className="font-heading font-bold text-2xl text-white" data-testid="sidebar-active-count">{activeCount ?? '—'}</p>
                 <div className="mt-2 h-1 bg-white/10 rounded-full overflow-hidden">
                   <div className="h-full w-3/4 bg-sony-red rounded-full" />
                 </div>
