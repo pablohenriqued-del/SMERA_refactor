@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { CalendarDays, FileInput, FileOutput, Music, Loader2 } from 'lucide-react';
 import { Card, CardContent } from '../components/ui/card';
@@ -8,6 +9,29 @@ import { ContractCalendar } from '../components/ContractCalendar';
 
 const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.06 } } };
 const itemVariants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };
+
+const TYPE_OPTIONS = ['Todos', 'License In', 'License Out', 'Sony/Sony'];
+const STATUS_OPTIONS = ['Todos', 'Finalizado', 'Em Análise', 'Pendente'];
+
+const FilterChips = ({ label, options, value, onChange, testid }) => (
+  <div className="flex flex-wrap items-center gap-2" data-testid={testid}>
+    <span className="overline mr-1">{label}</span>
+    {options.map((opt) => {
+      const active = value === opt;
+      return (
+        <button
+          key={opt}
+          onClick={() => onChange(opt)}
+          data-testid={`${testid}-${opt.replace(/[^a-zA-Z]/g, '').toLowerCase()}`}
+          className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 border
+            ${active ? 'bg-sony-red text-white border-sony-red' : 'text-zinc-400 border-white/10 hover:border-white/30 hover:text-white'}`}
+        >
+          {opt}
+        </button>
+      );
+    })}
+  </div>
+);
 
 const TYPE_META = {
   'License In': { icon: FileInput, color: 'text-sony-red', bg: 'bg-sony-red/10' },
@@ -19,8 +43,11 @@ const now = new Date();
 const CURRENT_MONTH = { y: now.getFullYear(), m: now.getMonth() + 1 };
 
 const Timeline = () => {
+  const [searchParams] = useSearchParams();
   const [data, setData] = useState({ in: [], out: [], sony: [] });
   const [loading, setLoading] = useState(true);
+  const [tipoFilter, setTipoFilter] = useState(TYPE_OPTIONS.includes(searchParams.get('tipo')) ? searchParams.get('tipo') : 'Todos');
+  const [statusFilter, setStatusFilter] = useState(STATUS_OPTIONS.includes(searchParams.get('status')) ? searchParams.get('status') : 'Todos');
 
   useEffect(() => {
     Promise.all([
@@ -34,13 +61,18 @@ const Timeline = () => {
   }, []);
 
   // unify the 3 contract types into a single normalized list
-  const items = useMemo(() => {
+  const allItems = useMemo(() => {
     const norm = [];
     data.in.forEach((i) => norm.push({ id: `in-${i.id}`, date: i.previsao, tipo: 'License In', artist: i.artista, track: i.titulo, projeto: i.projeto, status: i.status }));
     data.out.forEach((i) => norm.push({ id: `out-${i.id}`, date: i.prazo, tipo: 'License Out', artist: i.artistaSony, track: i.titulo, projeto: i.projeto, status: i.status }));
     data.sony.forEach((i) => norm.push({ id: `sony-${i.id}`, date: i.lancamento, tipo: 'Sony/Sony', artist: i.artistaPrincipal, track: i.projeto, projeto: i.projeto, status: i.status }));
     return norm;
   }, [data]);
+
+  const items = useMemo(() => allItems.filter((i) =>
+    (tipoFilter === 'Todos' || i.tipo === tipoFilter) &&
+    (statusFilter === 'Todos' || i.status === statusFilter)
+  ), [allItems, tipoFilter, statusFilter]);
 
   const counts = [
     { label: 'License In', value: data.in.length, ...TYPE_META['License In'] },
@@ -77,6 +109,13 @@ const Timeline = () => {
             </Card>
           );
         })}
+      </motion.div>
+
+      <motion.div variants={itemVariants}>
+        <Card className="card-obsidian"><CardContent className="p-4 flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-8">
+          <FilterChips label="Tipo" options={TYPE_OPTIONS} value={tipoFilter} onChange={setTipoFilter} testid="timeline-filter-tipo" />
+          <FilterChips label="Status" options={STATUS_OPTIONS} value={statusFilter} onChange={setStatusFilter} testid="timeline-filter-status" />
+        </CardContent></Card>
       </motion.div>
 
       <motion.div variants={itemVariants}>

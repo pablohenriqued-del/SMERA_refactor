@@ -7,6 +7,7 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { useAuth } from '../context/AuthContext';
 import { apiErrorMessage } from '../lib/api';
+import { SonyLogo } from '../components/SonyLogo';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -42,17 +43,8 @@ const Login = () => {
         className="w-full max-w-md relative z-10"
       >
         <div className="flex flex-col items-center mb-8">
-          <svg viewBox="0 0 80 80" className="h-14 w-auto mb-4" xmlns="http://www.w3.org/2000/svg">
-            <g fill="#E60012">
-              <circle cx="28" cy="12" r="2.5"/><circle cx="40" cy="12" r="2.5"/><circle cx="52" cy="12" r="2.5"/>
-              <circle cx="16" cy="20" r="2.5"/><circle cx="24" cy="20" r="2.5"/><circle cx="32" cy="20" r="2.5"/><circle cx="40" cy="20" r="2.5"/><circle cx="48" cy="20" r="2.5"/><circle cx="56" cy="20" r="2.5"/><circle cx="64" cy="20" r="2.5"/>
-              <circle cx="40" cy="36" r="2.5"/><circle cx="40" cy="44" r="2.5"/><circle cx="40" cy="52" r="2.5"/>
-              <circle cx="28" cy="76" r="2.5"/><circle cx="40" cy="76" r="2.5"/><circle cx="52" cy="76" r="2.5"/>
-            </g>
-          </svg>
-          <span className="overline text-[10px]">Sony Music</span>
-          <h1 className="font-heading font-bold text-4xl text-white tracking-tight">SMERA</h1>
-          <p className="body-sm text-zinc-500 mt-1">Plataforma de Licenciamento Musical</p>
+          <SonyLogo svgClass="h-14 w-auto" titleClass="text-3xl" align="items-center" />
+          <p className="body-sm text-zinc-500 mt-3">Plataforma de Licenciamento Musical</p>
         </div>
 
         <div className="card-obsidian p-8">
