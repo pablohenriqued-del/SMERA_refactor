@@ -12,6 +12,9 @@ import LicenseOut from './pages/LicenseOut';
 import LicenseOutApproval from './pages/LicenseOutApproval';
 import Cadastros from './pages/Cadastros';
 import RLM from './pages/RLM';
+import RLMProcessos from './pages/RLMProcessos';
+import RLMProcessoDetail from './pages/RLMProcessoDetail';
+import RLMPendencias from './pages/RLMPendencias';
 import RLMDetail from './pages/RLMDetail';
 import Acesso from './pages/Acesso';
 import SonySony from './pages/SonySony';
@@ -52,6 +55,9 @@ function App() {
             <Route path="license-out/:id/approval" element={<LicenseOutApproval />} />
             <Route path="cadastros" element={<Cadastros />} />
             <Route path="rlm" element={<RLM />} />
+            <Route path="rlm/processos" element={<RLMProcessos />} />
+            <Route path="rlm/processos/:id" element={<RLMProcessoDetail />} />
+            <Route path="rlm/pendencias" element={<RLMPendencias />} />
             <Route path="rlm/:id" element={<RLMDetail />} />
             <Route path="acesso" element={<Acesso />} />
             <Route path="sony-sony" element={<SonySony />} />

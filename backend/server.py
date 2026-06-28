@@ -8,6 +8,7 @@ from starlette.middleware.cors import CORSMiddleware
 from db import client
 from crud import make_crud_router
 from routes import auth_router, dashboard_router, users_router
+from rlm import router as rlm_router, misc_router as rlm_misc_router, seed_rlm
 from seed_data import seed_all
 import models as m
 
@@ -18,6 +19,7 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await seed_all()
+    await seed_rlm()
     logger.info("Database seeded")
     yield
     client.close()
@@ -36,6 +38,8 @@ async def root():
 api_router.include_router(auth_router)
 api_router.include_router(dashboard_router)
 api_router.include_router(users_router)
+api_router.include_router(rlm_router)
+api_router.include_router(rlm_misc_router)
 
 # Generic CRUD routers
 api_router.include_router(make_crud_router(path="/licenses-in", collection="licenses_in", create_model=m.LicenseInCreate, full_model=m.LicenseIn))

@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import { useCrud } from '../hooks/useCrud';
 import { EntityFormDialog } from '../components/EntityFormDialog';
 import { ConfirmDeleteDialog } from '../components/ConfirmDeleteDialog';
+import { RlmTabs } from '../components/RlmTabs';
 
 const STATUS = ['Ativo', 'Em Renovação', 'Próximo a Vencer'];
 const FIELDS = [
@@ -57,12 +58,14 @@ const RLM = () => {
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-sm bg-sony-red/10 flex items-center justify-center"><Shield className="h-5 w-5 text-sony-red" /></div>
           <div>
-            <h1 className="heading-lg text-white" data-testid="rlm-title">RLM</h1>
-            <p className="body-sm text-zinc-500">Gestão de direitos e licenciamento</p>
+            <h1 className="heading-lg text-white" data-testid="rlm-title">RLM · Fase 2</h1>
+            <p className="body-sm text-zinc-500">Cadastro de Royalties / Direitos</p>
           </div>
         </div>
         <Button className="btn-sony" data-testid="new-right-btn" onClick={openNew}><Plus className="h-4 w-4 mr-2" />Novo Direito</Button>
       </motion.div>
+
+      <motion.div variants={itemVariants}><RlmTabs /></motion.div>
 
       <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {stats.map((stat, index) => {

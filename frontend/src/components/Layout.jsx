@@ -61,7 +61,7 @@ const Layout = () => {
     { name: 'License Out', path: '/license-out', icon: FileOutput },
     { name: 'Sony/Sony', path: '/sony-sony', icon: Music },
     { name: 'Cadastros', path: '/cadastros', icon: FolderPlus },
-    { name: 'RLM', path: '/rlm', icon: Shield },
+    { name: 'RLM', path: '/rlm/processos', matchPrefix: '/rlm', icon: Shield },
     { name: 'Acesso', path: '/acesso', icon: Users },
   ];
 
@@ -199,7 +199,7 @@ const Layout = () => {
               <p className="overline px-4 py-2 mb-2">Menu Principal</p>
               {navigation.map((item, index) => {
                 const Icon = item.icon;
-                const isActive = location.pathname === item.path;
+                const isActive = item.matchPrefix ? location.pathname.startsWith(item.matchPrefix) : location.pathname === item.path;
                 
                 return (
                   <motion.div
