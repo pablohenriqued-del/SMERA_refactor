@@ -111,9 +111,38 @@ def _build_sony_sony(n=22):
     return rows
 
 
-LICENSES_IN = _build_licenses_in()
-LICENSES_OUT = _build_licenses_out()
-SONY_SONY = _build_sony_sony()
+_TIPOS_D2C = ["Vinil", "CD", "Box Set", "Camiseta", "Pôster", "Combo", "Fita K7", "Caneca"]
+_FORMATOS_D2C = ["Edição Limitada", "Edição Standard", "Edição Deluxe", "Colecionador"]
+_CLIENTES_D2C = [
+    "Loja Oficial Sony", "Amazon Brasil", "Mercado Livre", "Shopee", "Magazine Luiza",
+    "FNAC", "Saraiva", "Tracklist Store", "Urban Outfitters", "Centauro",
+    "Loja do Artista", "Submarino", "Americanas", "Riachuelo", "C&A",
+    "Loja Física SP", "Loja Física RJ", "Pop Store", "Vinil Brasil", "Disco Club",
+]
+
+
+def _build_licenses_d2c(n=30):
+    rows = []
+    for i in range(n):
+        rows.append({
+            "projeto": f"D2C {_TIPOS_D2C[i % len(_TIPOS_D2C)]} - {_ARTISTAS[i % len(_ARTISTAS)]}",
+            "titulo": _TITULOS_IN[i % len(_TITULOS_IN)],
+            "artistaSony": _ARTISTAS[i % len(_ARTISTAS)],
+            "cliente": _CLIENTES_D2C[i % len(_CLIENTES_D2C)],
+            "tipo": _TIPOS_D2C[i % len(_TIPOS_D2C)],
+            "formato": _FORMATOS_D2C[i % len(_FORMATOS_D2C)],
+            "quantidade": 100 + (i * 50) % 4900,
+            "prazo": _future_date(i + 21),
+            "status": _STATUS[i % len(_STATUS)],
+        })
+    return rows
+
+
+# Varied quantities per type (per user request: not all the same)
+LICENSES_IN = _build_licenses_in(80)
+LICENSES_OUT = _build_licenses_out(60)
+SONY_SONY = _build_sony_sony(50)
+LICENSES_D2C = _build_licenses_d2c(30)
 
 RLM_RIGHTS = [
     {"codigo": "RLM-2025-001", "obra": "Summer Vibes", "titular": "Sony Music Publishing", "tipo": "Master", "territorio": "Global", "vencimento": "15/06/2027", "status": "Ativo", "valor": "R$ 500.000"},
@@ -201,6 +230,7 @@ async def seed_all():
     await _seed_collection("licenses_in", LICENSES_IN)
     await _seed_collection("licenses_out", LICENSES_OUT)
     await _seed_collection("sony_sony", SONY_SONY)
+    await _seed_collection("licenses_d2c", LICENSES_D2C)
     await _seed_collection("rlm_rights", RLM_RIGHTS)
     await _seed_collection("artists", ARTISTS)
     await _seed_collection("labels", LABELS)

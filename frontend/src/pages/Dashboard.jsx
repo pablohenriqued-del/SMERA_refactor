@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   FileInput, FileOutput, Clock, CheckCircle, Calendar, DollarSign,
-  Music, ArrowUpRight, Activity, Loader2
+  Music, Package, ArrowUpRight, Activity, Loader2
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
@@ -102,13 +102,14 @@ const Dashboard = () => {
     );
   }
 
-  const { stats: s, licenseInData, licenseOutData, sonySonyData, recentActivity } = data;
+  const { stats: s, licenseInData, licenseOutData, sonySonyData, d2cData, recentActivity } = data;
   const stats = [
     { title: 'Licenças Ativas', value: s.licencasAtivas, icon: CheckCircle, gradient: 'from-emerald-500 to-emerald-600' },
     { title: 'Pendentes', value: s.pendentes, icon: Clock, gradient: 'from-amber-500 to-amber-600' },
     { title: 'License In', value: s.licenseIn, icon: FileInput, gradient: 'from-sony-red to-red-600' },
     { title: 'License Out', value: s.licenseOut, icon: FileOutput, gradient: 'from-blue-500 to-blue-600' },
     { title: 'Sony/Sony', value: s.sonySony, icon: Music, gradient: 'from-violet-500 to-violet-600' },
+    { title: 'D2C Físico', value: s.d2c, icon: Package, gradient: 'from-teal-500 to-teal-600' },
   ];
 
   return (
@@ -123,7 +124,7 @@ const Dashboard = () => {
         </Button>
       </motion.div>
 
-      <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+      <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         {stats.map((stat, index) => {
           const Icon = stat.icon;
           return (
@@ -144,10 +145,11 @@ const Dashboard = () => {
         })}
       </motion.div>
 
-      <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
         <StatusChart title="License In" icon={FileInput} iconBg="bg-sony-red/10" iconColor="text-sony-red" data={licenseInData} testid="license-in-chart" />
         <StatusChart title="License Out" icon={FileOutput} iconBg="bg-blue-500/10" iconColor="text-blue-400" data={licenseOutData} testid="license-out-chart" />
         <StatusChart title="Sony/Sony" icon={Music} iconBg="bg-violet-500/10" iconColor="text-violet-400" data={sonySonyData} testid="sony-sony-chart" />
+        <StatusChart title="D2C Físico" icon={Package} iconBg="bg-emerald-500/10" iconColor="text-emerald-400" data={d2cData} testid="d2c-chart" />
       </motion.div>
 
       <motion.div variants={itemVariants}>

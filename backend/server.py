@@ -44,6 +44,7 @@ api_router.include_router(rlm_misc_router)
 # Generic CRUD routers
 api_router.include_router(make_crud_router(path="/licenses-in", collection="licenses_in", create_model=m.LicenseInCreate, full_model=m.LicenseIn))
 api_router.include_router(make_crud_router(path="/licenses-out", collection="licenses_out", create_model=m.LicenseOutCreate, full_model=m.LicenseOut))
+api_router.include_router(make_crud_router(path="/licenses-d2c", collection="licenses_d2c", create_model=m.LicenseD2CCreate, full_model=m.LicenseD2C))
 api_router.include_router(make_crud_router(path="/sony-sony", collection="sony_sony", create_model=m.SonySonyCreate, full_model=m.SonySony))
 api_router.include_router(make_crud_router(path="/rlm-rights", collection="rlm_rights", create_model=m.RLMRightCreate, full_model=m.RLMRight))
 api_router.include_router(make_crud_router(path="/artists", collection="artists", create_model=m.ArtistCreate, full_model=m.Artist))

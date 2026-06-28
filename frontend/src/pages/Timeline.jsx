@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CalendarDays, FileInput, FileOutput, Music, Loader2 } from 'lucide-react';
+import { CalendarDays, FileInput, FileOutput, Music, Package, Loader2 } from 'lucide-react';
 import { Card, CardContent } from '../components/ui/card';
 import { toast } from 'sonner';
 import api, { apiErrorMessage } from '../lib/api';
@@ -10,7 +10,7 @@ import { ContractCalendar } from '../components/ContractCalendar';
 const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.06 } } };
 const itemVariants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };
 
-const TYPE_OPTIONS = ['Todos', 'License In', 'License Out', 'Sony/Sony'];
+const TYPE_OPTIONS = ['Todos', 'License In', 'License Out', 'Sony/Sony', 'D2C'];
 const STATUS_OPTIONS = ['Todos', 'Finalizado', 'Em Análise', 'Pendente'];
 
 const FilterChips = ({ label, options, value, onChange, testid }) => (
@@ -37,6 +37,7 @@ const TYPE_META = {
   'License In': { icon: FileInput, color: 'text-sony-red', bg: 'bg-sony-red/10' },
   'License Out': { icon: FileOutput, color: 'text-blue-400', bg: 'bg-blue-500/10' },
   'Sony/Sony': { icon: Music, color: 'text-violet-400', bg: 'bg-violet-500/10' },
+  'D2C': { icon: Package, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
 };
 
 const now = new Date();
@@ -44,7 +45,7 @@ const CURRENT_MONTH = { y: now.getFullYear(), m: now.getMonth() + 1 };
 
 const Timeline = () => {
   const [searchParams] = useSearchParams();
-  const [data, setData] = useState({ in: [], out: [], sony: [] });
+  const [data, setData] = useState({ in: [], out: [], sony: [], d2c: [] });
   const [loading, setLoading] = useState(true);
   const [tipoFilter, setTipoFilter] = useState(TYPE_OPTIONS.includes(searchParams.get('tipo')) ? searchParams.get('tipo') : 'Todos');
   const [statusFilter, setStatusFilter] = useState(STATUS_OPTIONS.includes(searchParams.get('status')) ? searchParams.get('status') : 'Todos');
@@ -54,18 +55,20 @@ const Timeline = () => {
       api.get('/licenses-in'),
       api.get('/licenses-out'),
       api.get('/sony-sony'),
+      api.get('/licenses-d2c'),
     ])
-      .then(([li, lo, ss]) => setData({ in: li.data, out: lo.data, sony: ss.data }))
+      .then(([li, lo, ss, d2c]) => setData({ in: li.data, out: lo.data, sony: ss.data, d2c: d2c.data }))
       .catch((err) => toast.error(apiErrorMessage(err)))
       .finally(() => setLoading(false));
   }, []);
 
-  // unify the 3 contract types into a single normalized list
+  // unify the contract types into a single normalized list
   const allItems = useMemo(() => {
     const norm = [];
     data.in.forEach((i) => norm.push({ id: `in-${i.id}`, date: i.previsao, tipo: 'License In', artist: i.artista, track: i.titulo, projeto: i.projeto, status: i.status }));
     data.out.forEach((i) => norm.push({ id: `out-${i.id}`, date: i.prazo, tipo: 'License Out', artist: i.artistaSony, track: i.titulo, projeto: i.projeto, status: i.status }));
     data.sony.forEach((i) => norm.push({ id: `sony-${i.id}`, date: i.lancamento, tipo: 'Sony/Sony', artist: i.artistaPrincipal, track: i.projeto, projeto: i.projeto, status: i.status }));
+    data.d2c.forEach((i) => norm.push({ id: `d2c-${i.id}`, date: i.prazo, tipo: 'D2C', artist: i.artistaSony, track: i.titulo, projeto: i.projeto, status: i.status }));
     return norm;
   }, [data]);
 
@@ -78,6 +81,7 @@ const Timeline = () => {
     { label: 'License In', value: data.in.length, ...TYPE_META['License In'] },
     { label: 'License Out', value: data.out.length, ...TYPE_META['License Out'] },
     { label: 'Sony/Sony', value: data.sony.length, ...TYPE_META['Sony/Sony'] },
+    { label: 'D2C', value: data.d2c.length, ...TYPE_META['D2C'] },
   ];
 
   if (loading) {
@@ -94,7 +98,7 @@ const Timeline = () => {
         </div>
       </motion.div>
 
-      <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {counts.map((c) => {
           const Icon = c.icon;
           return (

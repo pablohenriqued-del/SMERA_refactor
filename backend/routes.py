@@ -55,9 +55,10 @@ async def dashboard_stats():
     li = await db.licenses_in.find({}, {"_id": 0}).to_list(2000)
     lo = await db.licenses_out.find({}, {"_id": 0}).to_list(2000)
     ss = await db.sony_sony.find({}, {"_id": 0}).to_list(2000)
+    d2c = await db.licenses_d2c.find({}, {"_id": 0}).to_list(2000)
 
     statuses = ["Finalizado", "Em Análise", "Pendente"]
-    all_items = li + lo + ss
+    all_items = li + lo + ss + d2c
     pendentes = sum(1 for i in all_items if i.get("status") == "Pendente")
     ativas = sum(1 for i in all_items if i.get("status") == "Finalizado")
 
@@ -74,10 +75,12 @@ async def dashboard_stats():
             "licenseIn": len(li),
             "licenseOut": len(lo),
             "sonySony": len(ss),
+            "d2c": len(d2c),
         },
         "licenseInData": _status_breakdown(li, statuses),
         "licenseOutData": _status_breakdown(lo, statuses),
         "sonySonyData": _status_breakdown(ss, statuses),
+        "d2cData": _status_breakdown(d2c, statuses),
         "recentActivity": recent_activity,
     }
 

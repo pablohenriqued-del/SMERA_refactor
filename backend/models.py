@@ -92,6 +92,28 @@ class RLMRight(RLMRightBase):
     id: str = Field(default_factory=_uuid)
 
 
+# ---------------- License D2C (produtos físicos / Direct-to-Consumer) ----------------
+class LicenseD2CBase(BaseModel):
+    projeto: str
+    titulo: str
+    artistaSony: str
+    cliente: str = ""
+    tipo: str = ""
+    formato: str = ""
+    quantidade: int = 0
+    prazo: str = ""
+    status: str = "Pendente"
+
+
+class LicenseD2CCreate(LicenseD2CBase):
+    pass
+
+
+class LicenseD2C(LicenseD2CBase):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=_uuid)
+
+
 # ---------------- Artist ----------------
 class ArtistBase(BaseModel):
     nome: str

@@ -9,6 +9,7 @@ import Dashboard from './pages/Dashboard';
 import Timeline from './pages/Timeline';
 import LicenseIn from './pages/LicenseIn';
 import LicenseOut from './pages/LicenseOut';
+import LicenseD2C from './pages/LicenseD2C';
 import LicenseOutApproval from './pages/LicenseOutApproval';
 import Cadastros from './pages/Cadastros';
 import RLM from './pages/RLM';
@@ -52,6 +53,7 @@ function App() {
             <Route path="timeline" element={<Timeline />} />
             <Route path="license-in" element={<LicenseIn />} />
             <Route path="license-out" element={<LicenseOut />} />
+            <Route path="license-d2c" element={<LicenseD2C />} />
             <Route path="license-out/:id/approval" element={<LicenseOutApproval />} />
             <Route path="cadastros" element={<Cadastros />} />
             <Route path="rlm" element={<RLM />} />
