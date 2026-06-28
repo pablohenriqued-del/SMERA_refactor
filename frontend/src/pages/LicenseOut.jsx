@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Search, Edit, Trash2, FileOutput, CheckSquare, Loader2 } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, FileOutput, CheckSquare, Loader2, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -8,10 +8,18 @@ import { Badge } from '../components/ui/badge';
 import { Card, CardContent } from '../components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
 import { useCrud } from '../hooks/useCrud';
+import { usePagination } from '../hooks/usePagination';
+import { Pagination } from '../components/Pagination';
+import { exportToCsv } from '../lib/exportCsv';
 import { EntityFormDialog } from '../components/EntityFormDialog';
 import { ConfirmDeleteDialog } from '../components/ConfirmDeleteDialog';
 import { ViewToggle } from '../components/ViewToggle';
 import { ContractCalendar } from '../components/ContractCalendar';
+
+const EXPORT_COLS = [
+  { key: 'projeto', label: 'Projeto' }, { key: 'titulo', label: 'Título' }, { key: 'artistaSony', label: 'Artista Sony' },
+  { key: 'solicitante', label: 'Solicitante' }, { key: 'tipo', label: 'Tipo' }, { key: 'prazo', label: 'Prazo' }, { key: 'status', label: 'Status' },
+];
 
 const STATUS = ['Pendente', 'Em Análise', 'Finalizado'];
 const FIELDS = [
@@ -41,6 +49,7 @@ const LicenseOut = () => {
     () => items.filter((l) => Object.values(l).some((v) => v?.toString().toLowerCase().includes(searchTerm.toLowerCase()))),
     [items, searchTerm]
   );
+  const pager = usePagination(filtered, 8);
   const statusCount = {
     'Finalizado': items.filter((l) => l.status === 'Finalizado').length,
     'Em Análise': items.filter((l) => l.status === 'Em Análise').length,
@@ -79,6 +88,7 @@ const LicenseOut = () => {
               <Input placeholder="Buscar por projeto, solicitante, artista..." className="input-obsidian pl-10" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} data-testid="search-license-out-input" />
             </div>
             <ViewToggle view={view} onChange={setView} testid="license-out-view-toggle" />
+            <Button variant="outline" className="btn-sony-outline" onClick={() => exportToCsv('license-out', EXPORT_COLS, filtered)} data-testid="export-btn"><Download className="h-4 w-4 mr-2" />Exportar</Button>
           </div>
         </CardContent></Card>
       </motion.div>
@@ -106,7 +116,7 @@ const LicenseOut = () => {
                   <TableRow><TableCell colSpan={8} className="text-center py-12"><Loader2 className="h-6 w-6 text-sony-red animate-spin mx-auto" /></TableCell></TableRow>
                 ) : filtered.length === 0 ? (
                   <TableRow><TableCell colSpan={8} className="text-center py-12 text-zinc-500">Nenhuma solicitação encontrada</TableCell></TableRow>
-                ) : filtered.map((license, index) => (
+                ) : pager.pageItems.map((license, index) => (
                   <motion.tr key={license.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: index * 0.03 }} className="table-row" data-testid={`license-out-row-${license.id}`}>
                     <TableCell className="font-medium text-white max-w-[200px] truncate">{license.projeto}</TableCell>
                     <TableCell className="text-zinc-400">{license.titulo}</TableCell>
@@ -127,6 +137,7 @@ const LicenseOut = () => {
               </TableBody>
             </Table>
           </div></div>
+          <Pagination page={pager.page} totalPages={pager.totalPages} total={pager.total} from={pager.from} to={pager.to} onPage={pager.setPage} testid="license-out-pagination" />
         </CardContent></Card>
       </motion.div>
       )}

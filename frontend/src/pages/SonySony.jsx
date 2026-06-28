@@ -1,16 +1,25 @@
 import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Music, Plus, Search, Edit, Trash2, Loader2 } from 'lucide-react';
+import { Music, Plus, Search, Edit, Trash2, Loader2, Download } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Badge } from '../components/ui/badge';
 import { Card, CardContent } from '../components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
 import { useCrud } from '../hooks/useCrud';
+import { usePagination } from '../hooks/usePagination';
+import { Pagination } from '../components/Pagination';
+import { exportToCsv } from '../lib/exportCsv';
 import { EntityFormDialog } from '../components/EntityFormDialog';
 import { ConfirmDeleteDialog } from '../components/ConfirmDeleteDialog';
 import { ViewToggle } from '../components/ViewToggle';
 import { ContractCalendar } from '../components/ContractCalendar';
+
+const EXPORT_COLS = [
+  { key: 'codigo', label: 'Código' }, { key: 'projeto', label: 'Projeto' }, { key: 'artistaPrincipal', label: 'Artista Principal' },
+  { key: 'artistaConvidado', label: 'Convidado' }, { key: 'selo', label: 'Selo' }, { key: 'tipo', label: 'Tipo' },
+  { key: 'lancamento', label: 'Lançamento' }, { key: 'status', label: 'Status' },
+];
 
 const STATUS = ['Pendente', 'Em Análise', 'Finalizado'];
 const FIELDS = [
@@ -40,6 +49,7 @@ const SonySony = () => {
     () => items.filter((p) => Object.values(p).some((v) => v?.toString().toLowerCase().includes(searchTerm.toLowerCase()))),
     [items, searchTerm]
   );
+  const pager = usePagination(filtered, 8);
   const statusCount = {
     'Finalizado': items.filter((l) => l.status === 'Finalizado').length,
     'Em Análise': items.filter((l) => l.status === 'Em Análise').length,
@@ -78,6 +88,7 @@ const SonySony = () => {
               <Input placeholder="Buscar por projeto, artista, selo..." className="input-obsidian pl-10" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} data-testid="search-sony-projects-input" />
             </div>
             <ViewToggle view={view} onChange={setView} testid="sony-sony-view-toggle" />
+            <Button variant="outline" className="btn-sony-outline" onClick={() => exportToCsv('sony-sony', EXPORT_COLS, filtered)} data-testid="export-btn"><Download className="h-4 w-4 mr-2" />Exportar</Button>
           </div>
         </CardContent></Card>
       </motion.div>
@@ -106,7 +117,7 @@ const SonySony = () => {
                   <TableRow><TableCell colSpan={9} className="text-center py-12"><Loader2 className="h-6 w-6 text-sony-red animate-spin mx-auto" /></TableCell></TableRow>
                 ) : filtered.length === 0 ? (
                   <TableRow><TableCell colSpan={9} className="text-center py-12 text-zinc-500">Nenhum projeto encontrado</TableCell></TableRow>
-                ) : filtered.map((projeto, index) => (
+                ) : pager.pageItems.map((projeto, index) => (
                   <motion.tr key={projeto.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: index * 0.03 }} className="table-row" data-testid={`sony-project-row-${projeto.id}`}>
                     <TableCell className="font-mono text-xs font-medium text-white">{projeto.codigo}</TableCell>
                     <TableCell className="font-medium text-white">{projeto.projeto}</TableCell>
@@ -127,6 +138,7 @@ const SonySony = () => {
               </TableBody>
             </Table>
           </div></div>
+          <Pagination page={pager.page} totalPages={pager.totalPages} total={pager.total} from={pager.from} to={pager.to} onPage={pager.setPage} testid="sony-sony-pagination" />
         </CardContent></Card>
       </motion.div>
       )}

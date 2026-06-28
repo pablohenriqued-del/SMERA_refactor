@@ -152,6 +152,7 @@ class RlmProcess(RlmProcessBase):
     envioExteriorDone: bool = False
     vendorInputDone: bool = False
     isrcInputDone: bool = False
+    royaltyRightId: str = ""
     history: List[dict] = Field(default_factory=list)
     createdAt: str = ""
     updatedAt: str = ""
@@ -260,6 +261,39 @@ async def delete_process(pid: str):
     if res.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Processo não encontrado")
     return {"success": True, "id": pid}
+
+
+@router.post("/{pid}/create-royalty")
+async def create_royalty(pid: str):
+    """Connect Phase 1 -> Phase 2: create (once) an RLM right (Cadastro de Royalties) from the process."""
+    p = await db.rlm_processes.find_one({"id": pid}, {"_id": 0})
+    if not p:
+        raise HTTPException(status_code=404, detail="Processo não encontrado")
+    if p.get("status") != "pronto_royalties":
+        raise HTTPException(status_code=400, detail="Processo ainda não está pronto para Royalties")
+
+    existing_id = p.get("royaltyRightId")
+    if existing_id:
+        right = await db.rlm_rights.find_one({"id": existing_id}, {"_id": 0})
+        if right:
+            return {"created": False, "right": right}
+
+    year = datetime.now(timezone.utc).year
+    codigo = f"RLM-{year}-{p['id'][:6].upper()}"
+    right = {
+        "id": _id(),
+        "codigo": codigo,
+        "obra": p.get("titulo") or p.get("projeto"),
+        "titular": p.get("artistaPrincipal", ""),
+        "tipo": "Master",
+        "territorio": "Brasil",
+        "vencimento": "",
+        "valor": "",
+        "status": "Ativo",
+    }
+    await db.rlm_rights.insert_one(dict(right))
+    await db.rlm_processes.update_one({"id": pid}, {"$set": {"royaltyRightId": right["id"], "updatedAt": _now_iso()}})
+    return {"created": True, "right": right}
 
 
 # ---------------- Seed ----------------

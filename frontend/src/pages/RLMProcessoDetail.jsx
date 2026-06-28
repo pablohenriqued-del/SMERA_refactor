@@ -301,7 +301,21 @@ const RLMProcessoDetail = () => {
                 <CheckCircle2 className="h-14 w-14 text-emerald-400 mx-auto mb-3" />
                 <p className="font-heading text-xl text-white mb-1">Processo concluído</p>
                 <p className="text-sm text-zinc-500 mb-5">Pronto para o Cadastro de Royalties (Fase 2).</p>
-                <Button className="btn-sony" onClick={() => navigate('/rlm')} data-testid="goto-fase2-btn">Ir para Cadastro de Royalties (Fase 2)</Button>
+                <Button className="btn-sony" disabled={saving} onClick={async () => {
+                  setSaving(true);
+                  try {
+                    const { data } = await api.post(`/rlm-processes/${id}/create-royalty`);
+                    toast.success(data.created ? 'Cadastro de Royalties criado na Fase 2' : 'Abrindo cadastro existente');
+                    navigate(`/rlm/${data.right.id}`);
+                  } catch (err) {
+                    toast.error(apiErrorMessage(err));
+                  } finally {
+                    setSaving(false);
+                  }
+                }} data-testid="goto-fase2-btn">
+                  {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                  {proc.royaltyRightId ? 'Abrir Cadastro de Royalties (Fase 2)' : 'Criar Cadastro de Royalties (Fase 2)'}
+                </Button>
               </div>
             )}
           </CardContent>

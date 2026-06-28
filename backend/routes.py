@@ -41,6 +41,15 @@ def _status_breakdown(items, statuses):
     return [{"name": s, "value": sum(1 for i in items if i.get("status") == s)} for s in statuses]
 
 
+def _parse_ddmmyyyy(s):
+    """Parse 'dd/mm/yyyy' to a sortable (yyyy, mm, dd) tuple; unknown dates sort last."""
+    try:
+        d, m, y = (s or "").split("/")
+        return (int(y), int(m), int(d))
+    except (ValueError, AttributeError):
+        return (0, 0, 0)
+
+
 @dashboard_router.get("/stats")
 async def dashboard_stats():
     li = await db.licenses_in.find({}, {"_id": 0}).to_list(2000)
@@ -52,7 +61,7 @@ async def dashboard_stats():
     pendentes = sum(1 for i in all_items if i.get("status") == "Pendente")
     ativas = sum(1 for i in all_items if i.get("status") == "Finalizado")
 
-    recent = sorted(li, key=lambda x: x.get("previsao", ""), reverse=True)[:5]
+    recent = sorted(li, key=lambda x: _parse_ddmmyyyy(x.get("previsao")), reverse=True)[:5]
     recent_activity = [
         {"project": i.get("projeto"), "artist": i.get("artista"), "status": i.get("status"),
          "date": i.get("previsao"), "type": "License In"} for i in recent
