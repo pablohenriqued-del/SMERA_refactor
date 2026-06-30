@@ -50,6 +50,51 @@ const DocInput = ({ value, onChange, testid }) => {
   );
 };
 
+const SumItem = ({ label, value }) => (
+  <div className="card-obsidian p-3"><p className="overline mb-1">{label}</p><p className="text-white text-sm break-words">{value || '—'}</p></div>
+);
+
+// Read-only summary of a given stage's data (for viewing other stages in the stepper)
+const StageSummary = ({ stageKey, proc }) => {
+  const esc = proc.escritorio || {};
+  const v = proc.vendor || {};
+  const grid = (children) => <div className="grid grid-cols-1 md:grid-cols-2 gap-3">{children}</div>;
+  switch (stageKey) {
+    case 'aguardando_royalty_ar':
+      return grid(<SumItem label="% de Royalties do Artista" value={`${proc.artistRoyaltyPercent || 0}%`} />);
+    case 'aguardando_escritorio':
+    case 'validacao_ar':
+      return (
+        <div className="space-y-3">
+          {esc.submittedAt && <p className="text-xs text-emerald-400">Último preenchimento do escritório: {esc.submittedAt}</p>}
+          {grid(<><SumItem label="Beneficiário" value={esc.artistaBeneficiario} /><SumItem label="CPF / CNPJ" value={esc.cpfCnpj} /><SumItem label="Banco / Ag / Conta" value={`${esc.banco || ''} ${esc.agencia || ''} ${esc.conta || ''}`.trim()} /><SumItem label="Royalty Total da Faixa" value={`${esc.royaltyPorFaixa || 0}%`} /></>)}
+          <div className="card-obsidian p-3">
+            <p className="overline mb-2">Participantes ({(esc.participantes || []).length})</p>
+            {(esc.participantes || []).length === 0 ? <p className="text-xs text-zinc-600">Nenhum.</p> :
+              (esc.participantes || []).map((p, i) => (<div key={i} className="flex justify-between text-sm text-zinc-300 py-0.5"><span>{p.nome || '—'}</span><span className="text-zinc-400">{p.royalty || 0}%</span></div>))}
+          </div>
+        </div>
+      );
+    case 'aguardando_isrc_label':
+      return grid(<><SumItem label="ISRC" value={proc.isrc} /><SumItem label="GRID" value={proc.grid} /></>);
+    case 'aguardando_vendor_ops':
+      return (
+        <div className="space-y-3">
+          {grid(<><SumItem label="Fornecedor" value={v.nomeFornecedor} /><SumItem label="CPF / CNPJ" value={v.cpfCnpj} /><SumItem label="Banco / Ag / Conta" value={`${v.banco || ''} ${v.agencia || ''} ${v.conta || ''}`.trim()} /><SumItem label="Documento assinado" value={proc.signedDocFile?.name || proc.signedDocLink} /></>)}
+          {proc.signedAt && <p className="text-xs text-emerald-400">Documento anexado em {proc.signedAt}</p>}
+        </div>
+      );
+    case 'aguardando_input_sistema':
+      return grid(<><SumItem label="Vendor no sistema" value={proc.vendorInputDone ? 'Sim' : 'Não'} /><SumItem label="ISRCs no sistema" value={proc.isrcInputDone ? 'Sim' : 'Não'} /></>);
+    case 'validacao_final':
+      return grid(<><SumItem label="Vendor" value={`${v.nomeFornecedor || '—'} (${v.cpfCnpj || '—'})`} /><SumItem label="ISRC / GRID" value={`${proc.isrc || '—'} / ${proc.grid || '—'}`} /></>);
+    case 'pronto_royalties':
+      return grid(<SumItem label="Cadastro de Royalties (Fase 2)" value={proc.royaltyRightId ? 'Criado' : 'Pendente'} />);
+    default:
+      return <p className="text-sm text-zinc-500">Sem dados nesta etapa.</p>;
+  }
+};
+
 const RLMProcessoDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -63,6 +108,7 @@ const RLMProcessoDetail = () => {
   const [escEmail, setEscEmail] = useState('');
   const [sending, setSending] = useState(false);
   const [showDoc, setShowDoc] = useState(false);
+  const [viewStage, setViewStage] = useState(null);
 
   const load = useCallback(async () => {
     try {
@@ -71,6 +117,7 @@ const RLMProcessoDetail = () => {
       setStages(s.data);
       setEscNome(p.data.escritorioNome || '');
       setEscEmail(p.data.escritorioEmail || '');
+      setViewStage((cur) => cur || p.data.status);
     } catch (err) {
       toast.error(apiErrorMessage(err));
     } finally {
@@ -163,6 +210,7 @@ const RLMProcessoDetail = () => {
     try {
       const { data } = await api.post(`/rlm-processes/${id}/transition`, { to, note });
       setProc(data);
+      setViewStage(data.status);
       setNote('');
       toast.success('Etapa atualizada');
     } catch (err) {
@@ -178,6 +226,9 @@ const RLMProcessoDetail = () => {
   const cur = stages[curIdx] || {};
   const next = stages[curIdx + 1];
   const prev = stages[curIdx - 1];
+  const viewIdx = stages.findIndex((s) => s.key === viewStage);
+  const viewMeta = stages[viewIdx] || cur;
+  const isViewingCurrent = viewStage === proc.status;
 
   const advanceBtn = (label = 'Avançar') => next && (
     <Button className="btn-sony" onClick={() => transition(next.key)} data-testid="advance-btn"><ChevronRight className="h-4 w-4 mr-1" />{label}</Button>
@@ -229,40 +280,57 @@ const RLMProcessoDetail = () => {
         </div>
       </motion.div>
 
-      {/* Stepper */}
+      {/* Stepper — all 8 steps fit on screen, clickable to view each stage */}
       <motion.div variants={itemVariants}>
-        <Card className="card-obsidian"><CardContent className="p-4 overflow-x-auto">
-          <div className="flex items-center gap-2 min-w-max">
+        <Card className="card-obsidian"><CardContent className="p-4">
+          <div className="flex items-start">
             {stages.map((s, i) => {
               const done = i < curIdx;
-              const isCur = i === curIdx;
+              const isCurrent = i === curIdx;
+              const isViewed = s.key === viewStage;
               return (
-                <React.Fragment key={s.key}>
-                  <div className={`flex items-center gap-2 px-3 py-2 rounded-md border ${isCur ? 'border-sony-red bg-sony-red/10' : done ? 'border-emerald-500/30 bg-emerald-500/5' : 'border-white/5'}`} data-testid={`step-${s.key}`}>
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${isCur ? 'bg-sony-red text-white' : done ? 'bg-emerald-500 text-white' : 'bg-white/10 text-zinc-400'}`}>
-                      {done ? <Check className="h-3.5 w-3.5" /> : s.order}
+                <button
+                  key={s.key}
+                  onClick={() => setViewStage(s.key)}
+                  className="flex-1 min-w-0 flex flex-col items-center group focus:outline-none"
+                  data-testid={`step-${s.key}`}
+                  title={`${s.label} (${s.role})`}
+                >
+                  <div className="flex items-center w-full">
+                    <div className={`h-0.5 flex-1 ${i === 0 ? 'opacity-0' : done || isCurrent ? 'bg-emerald-500/40' : 'bg-white/10'}`} />
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-all
+                      ${isCurrent ? 'bg-sony-red text-white' : done ? 'bg-emerald-500 text-white' : 'bg-white/10 text-zinc-400'}
+                      ${isViewed ? 'ring-2 ring-white ring-offset-2 ring-offset-[#0E0E11]' : 'group-hover:ring-2 group-hover:ring-white/30 group-hover:ring-offset-2 group-hover:ring-offset-[#0E0E11]'}`}>
+                      {done ? <Check className="h-4 w-4" /> : s.order}
                     </div>
-                    <div className="text-left">
-                      <p className={`text-xs font-medium ${isCur ? 'text-white' : 'text-zinc-400'}`}>{s.label}</p>
-                      <p className="text-[10px] text-zinc-600">{s.role}</p>
-                    </div>
+                    <div className={`h-0.5 flex-1 ${i === stages.length - 1 ? 'opacity-0' : done ? 'bg-emerald-500/40' : 'bg-white/10'}`} />
                   </div>
-                  {i < stages.length - 1 && <ChevronRight className="h-4 w-4 text-zinc-700 shrink-0" />}
-                </React.Fragment>
+                  <span className={`text-[10px] leading-tight text-center mt-1.5 px-1 line-clamp-2 ${isViewed ? 'text-white font-medium' : isCurrent ? 'text-zinc-200' : 'text-zinc-500'}`}>{s.label}</span>
+                </button>
               );
             })}
           </div>
         </CardContent></Card>
       </motion.div>
 
-      {/* Current stage panel */}
+      {/* Stage panel */}
       <motion.div variants={itemVariants}>
         <Card className="card-obsidian" data-testid="stage-panel">
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="font-heading text-white uppercase tracking-wide text-sm">Etapa {cur.order}: {cur.label}</CardTitle>
-            <Badge className="badge-info text-xs">{cur.role}</Badge>
+            <CardTitle className="font-heading text-white uppercase tracking-wide text-sm">Etapa {viewMeta.order}: {viewMeta.label}</CardTitle>
+            <div className="flex items-center gap-2">
+              {!isViewingCurrent && <Badge className="badge-warning text-xs">Somente leitura</Badge>}
+              <Badge className="badge-info text-xs">{viewMeta.role}</Badge>
+            </div>
           </CardHeader>
           <CardContent className="space-y-5">
+
+            {!isViewingCurrent ? (
+              <>
+                <StageSummary stageKey={viewStage} proc={proc} />
+                <Button variant="outline" className="btn-sony-outline" onClick={() => setViewStage(proc.status)} data-testid="goto-current-btn"><ChevronRight className="h-4 w-4 mr-1" />Ir para a etapa atual</Button>
+              </>
+            ) : (<>
 
             {proc.status === 'aguardando_royalty_ar' && (
               <>
@@ -442,6 +510,7 @@ const RLMProcessoDetail = () => {
                 </Button>
               </div>
             )}
+            </>)}
           </CardContent>
         </Card>
       </motion.div>
