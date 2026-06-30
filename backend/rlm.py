@@ -150,6 +150,7 @@ class RlmProcess(RlmProcessBase):
     vendor: VendorData = Field(default_factory=VendorData)
     callbackDoc: CallbackDoc = Field(default_factory=CallbackDoc)
     signedDocLink: str = ""
+    signedDocFile: dict = Field(default_factory=dict)
     envioExteriorDone: bool = False
     vendorInputDone: bool = False
     isrcInputDone: bool = False
@@ -194,7 +195,7 @@ def _validate_participantes(esc: dict):
 _UPDATABLE = {
     "projeto", "titulo", "artistaPrincipal", "licenseInId",
     "artistRoyaltyPercent", "escritorio", "isrc", "grid",
-    "vendor", "callbackDoc", "signedDocLink", "envioExteriorDone",
+    "vendor", "callbackDoc", "signedDocLink", "signedDocFile", "envioExteriorDone",
     "vendorInputDone", "isrcInputDone",
 }
 

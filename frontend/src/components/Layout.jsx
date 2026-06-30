@@ -63,7 +63,13 @@ const Layout = () => {
     { name: 'Licenciamento D2C', path: '/license-d2c', icon: Package },
     { name: 'Sony/Sony', path: '/sony-sony', icon: Music },
     { name: 'Cadastros', path: '/cadastros', icon: FolderPlus },
-    { name: 'RLM', path: '/rlm/processos', matchPrefix: '/rlm', icon: Shield },
+    {
+      name: 'RLM', icon: Shield, matchPrefix: '/rlm',
+      children: [
+        { name: 'RLM Fase 1', path: '/rlm/processos', match: (p) => p.startsWith('/rlm/processos') || p.startsWith('/rlm/pendencias') },
+        { name: 'RLM Fase 2', path: '/rlm', match: (p) => p === '/rlm' || (p.startsWith('/rlm/') && !p.startsWith('/rlm/processos') && !p.startsWith('/rlm/pendencias')) },
+      ],
+    },
     { name: 'Acesso', path: '/acesso', icon: Users },
   ];
 
@@ -201,8 +207,39 @@ const Layout = () => {
               <p className="overline px-4 py-2 mb-2">Menu Principal</p>
               {navigation.map((item, index) => {
                 const Icon = item.icon;
+
+                // Item with submenu (children)
+                if (item.children) {
+                  const sectionActive = item.matchPrefix && location.pathname.startsWith(item.matchPrefix);
+                  return (
+                    <motion.div key={item.name} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: index * 0.05 }}>
+                      <div className={`flex items-center gap-3 px-4 py-2.5 rounded-md ${sectionActive ? 'text-white' : 'text-zinc-400'}`}>
+                        <Icon className={`h-5 w-5 ${sectionActive ? 'text-sony-red' : ''}`} />
+                        <span className="font-medium text-sm">{item.name}</span>
+                      </div>
+                      <div className="ml-4 pl-3 border-l border-white/10 space-y-1 mt-1">
+                        {item.children.map((child) => {
+                          const childActive = child.match(location.pathname);
+                          return (
+                            <Link
+                              key={child.path}
+                              to={child.path}
+                              onClick={() => setIsMobileMenuOpen(false)}
+                              data-testid={`nav-link-${child.name.toLowerCase().replace(/\s+/g, '-').replace(/\//g, '')}`}
+                              className={`relative flex items-center gap-2 px-3 py-2 rounded-md transition-all duration-200 text-sm
+                                ${childActive ? 'bg-white/5 text-white' : 'text-zinc-500 hover:bg-white/5 hover:text-white'}`}
+                            >
+                              {childActive && <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-full bg-sony-red" />}
+                              <span className="font-medium">{child.name}</span>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  );
+                }
+
                 const isActive = item.matchPrefix ? location.pathname.startsWith(item.matchPrefix) : location.pathname === item.path;
-                
                 return (
                   <motion.div
                     key={item.path}

@@ -12,6 +12,10 @@ import { toast } from 'sonner';
 import api, { apiErrorMessage } from '../lib/api';
 import { validateDoc, formatCpfCnpj } from '../lib/validators';
 import { ParticipantesEditor, isAllocationValid } from '../components/ParticipantesEditor';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
+import { CallbackDocPreview, printCallbackDoc } from '../components/CallbackDocument';
+import { useAuth } from '../context/AuthContext';
+import { FileText, Printer, Upload, Paperclip } from 'lucide-react';
 
 const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.05 } } };
 const itemVariants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };
@@ -48,6 +52,7 @@ const DocInput = ({ value, onChange, testid }) => {
 const RLMProcessoDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [proc, setProc] = useState(null);
   const [stages, setStages] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -56,6 +61,7 @@ const RLMProcessoDetail = () => {
   const [escNome, setEscNome] = useState('');
   const [escEmail, setEscEmail] = useState('');
   const [sending, setSending] = useState(false);
+  const [showDoc, setShowDoc] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -73,9 +79,30 @@ const RLMProcessoDetail = () => {
 
   useEffect(() => { load(); }, [load]);
 
+  // prefill callback solicitante/email from the logged-in user once, on the vendor stage
+  useEffect(() => {
+    if (proc && proc.status === 'aguardando_vendor_ops' && user) {
+      const cb = proc.callbackDoc || {};
+      if (!cb.solicitante && !cb.email) {
+        setProc((prev) => ({ ...prev, callbackDoc: { ...prev.callbackDoc, solicitante: user.nome || '', email: user.email || '' } }));
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [proc?.status, user]);
+
   const set = (patch) => setProc((prev) => ({ ...prev, ...patch }));
   const setEsc = (patch) => setProc((prev) => ({ ...prev, escritorio: { ...prev.escritorio, ...patch } }));
   const setVendor = (patch) => setProc((prev) => ({ ...prev, vendor: { ...prev.vendor, ...patch } }));
+  const setCb = (patch) => setProc((prev) => ({ ...prev, callbackDoc: { ...prev.callbackDoc, ...patch } }));
+
+  const onUploadSigned = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 4 * 1024 * 1024) { toast.error('Arquivo muito grande (máx. 4MB)'); return; }
+    const reader = new FileReader();
+    reader.onload = () => set({ signedDocFile: { name: file.name, dataUrl: reader.result } });
+    reader.readAsDataURL(file);
+  };
 
   const save = async (silent = false) => {
     setSaving(true);
@@ -281,10 +308,41 @@ const RLMProcessoDetail = () => {
                   <Field label="Agência"><Input className="input-obsidian" value={proc.vendor.agencia} onChange={(e) => setVendor({ agencia: e.target.value })} /></Field>
                   <Field label="Conta Corrente"><Input className="input-obsidian" value={proc.vendor.conta} onChange={(e) => setVendor({ conta: e.target.value })} /></Field>
                 </div>
-                <div className="p-3 rounded-md bg-white/[0.03] border border-white/5 text-xs text-zinc-500">Geração do documento de Callback (Confirmação de dados bancários) será habilitada na Sub-fase C.</div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Field label="Link do documento assinado (SharePoint)" full><Input className="input-obsidian" placeholder="https://..." value={proc.signedDocLink} onChange={(e) => set({ signedDocLink: e.target.value })} data-testid="field-signed-link" /></Field>
+                {/* Callback document (Confirmação de dados bancários) */}
+                <div className="card-obsidian p-4 space-y-3">
+                  <Label className="overline flex items-center gap-2"><FileText className="h-3.5 w-3.5 text-sony-red" />Documento de Callback — Confirmação de dados bancários</Label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Field label="Data"><Input className="input-obsidian" placeholder="dd/mm/aaaa" value={proc.callbackDoc.data} onChange={(e) => setCb({ data: e.target.value })} data-testid="cb-data" /></Field>
+                    <Field label="Solicitante (Sony)"><Input className="input-obsidian" value={proc.callbackDoc.solicitante} onChange={(e) => setCb({ solicitante: e.target.value })} data-testid="cb-solicitante" /></Field>
+                    <Field label="Data da confirmação"><Input className="input-obsidian" placeholder="dd/mm/aaaa" value={proc.callbackDoc.dataConfirmacao} onChange={(e) => setCb({ dataConfirmacao: e.target.value })} /></Field>
+                    <Field label="Confirmado por (nome e cargo)"><Input className="input-obsidian" value={proc.callbackDoc.confirmadoPor} onChange={(e) => setCb({ confirmadoPor: e.target.value })} /></Field>
+                    <Field label="E-mail do solicitante" full><Input className="input-obsidian" value={proc.callbackDoc.email} onChange={(e) => setCb({ email: e.target.value })} /></Field>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <Button variant="outline" className="btn-sony-outline" onClick={() => setShowDoc(true)} data-testid="view-callback-btn"><FileText className="h-4 w-4 mr-1" />Visualizar documento</Button>
+                    <Button variant="outline" className="btn-sony-outline" onClick={() => printCallbackDoc(proc)} data-testid="print-callback-btn"><Printer className="h-4 w-4 mr-1" />Gerar / Imprimir PDF</Button>
+                  </div>
                 </div>
+
+                {/* Signed document: external link OR upload */}
+                <div className="card-obsidian p-4 space-y-3">
+                  <Label className="overline flex items-center gap-2"><Paperclip className="h-3.5 w-3.5 text-sony-red" />Documento assinado (Envio ao Exterior)</Label>
+                  <Field label="Link externo (SharePoint, etc.)" full><Input className="input-obsidian" placeholder="https://..." value={proc.signedDocLink} onChange={(e) => set({ signedDocLink: e.target.value })} data-testid="field-signed-link" /></Field>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <label className="btn-sony-outline cursor-pointer text-sm inline-flex items-center" data-testid="upload-signed-label">
+                      <Upload className="h-4 w-4 mr-2" />Enviar arquivo assinado
+                      <input type="file" accept="application/pdf,image/*" className="hidden" onChange={onUploadSigned} data-testid="upload-signed-input" />
+                    </label>
+                    {proc.signedDocFile?.name && (
+                      <span className="flex items-center gap-2 text-sm text-emerald-400">
+                        <Paperclip className="h-3.5 w-3.5" />
+                        <a href={proc.signedDocFile.dataUrl} download={proc.signedDocFile.name} className="underline hover:text-emerald-300" data-testid="signed-file-link">{proc.signedDocFile.name}</a>
+                        <button onClick={() => set({ signedDocFile: {} })} className="text-zinc-500 hover:text-red-400 text-xs" data-testid="remove-signed-btn">remover</button>
+                      </span>
+                    )}
+                  </div>
+                </div>
+
                 <label className="flex items-center gap-2 text-sm text-zinc-300 cursor-pointer">
                   <input type="checkbox" checked={!!proc.envioExteriorDone} onChange={(e) => set({ envioExteriorDone: e.target.checked })} data-testid="envio-exterior-check" /> Envio ao exterior concluído
                 </label>
@@ -365,6 +423,17 @@ const RLMProcessoDetail = () => {
           </CardContent>
         </Card>
       </motion.div>
+
+      <Dialog open={showDoc} onOpenChange={setShowDoc}>
+        <DialogContent className="glass-dark border-white/10 text-white max-w-2xl">
+          <DialogHeader><DialogTitle className="font-heading uppercase tracking-wide text-sm">Documento de Callback</DialogTitle></DialogHeader>
+          <CallbackDocPreview proc={proc} />
+          <div className="flex justify-end gap-2 mt-2">
+            <Button variant="outline" className="btn-sony-outline" onClick={() => setShowDoc(false)}>Fechar</Button>
+            <Button className="btn-sony" onClick={() => printCallbackDoc(proc)} data-testid="print-callback-modal-btn"><Printer className="h-4 w-4 mr-1" />Gerar / Imprimir PDF</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </motion.div>
   );
 };
