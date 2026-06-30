@@ -87,7 +87,6 @@ const RLMProcessoDetail = () => {
         setProc((prev) => ({ ...prev, callbackDoc: { ...prev.callbackDoc, solicitante: user.nome || '', email: user.email || '' } }));
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [proc?.status, user]);
 
   const set = (patch) => setProc((prev) => ({ ...prev, ...patch }));
@@ -171,8 +170,18 @@ const RLMProcessoDetail = () => {
     setSending(true);
     try {
       const { data } = await api.post(`/rlm-processes/${id}/send-escritorio`, { email: escEmail, nome: escNome, origin: window.location.origin });
-      if (data.email?.sent) toast.success('Formulário enviado por e-mail ao escritório');
-      else toast.message('Link gerado — e-mail não configurado', { description: 'Use "Copiar link" para enviar manualmente.' });
+      if (data.email?.sent) {
+        toast.success('Formulário enviado por e-mail ao escritório');
+      } else {
+        // No Resend key: open the user's own email client pre-filled with the link
+        const link = data.link || publicLink;
+        const subject = encodeURIComponent(`[SMERA] Preenchimento de Vendors — ${proc.projeto}`);
+        const body = encodeURIComponent(
+          `Olá ${escNome || ''},\n\nPor favor, preencha os percentuais e dados dos vendors do projeto "${proc.projeto}" no formulário abaixo:\n\n${link}\n\nObrigado,\nSony Music`
+        );
+        window.location.href = `mailto:${escEmail}?subject=${subject}&body=${body}`;
+        toast.message('Abrindo seu e-mail com o link', { description: 'Ou use "Copiar link" para enviar manualmente.' });
+      }
       await load();
     } catch (err) {
       toast.error(apiErrorMessage(err));
