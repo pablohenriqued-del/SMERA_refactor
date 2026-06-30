@@ -7,6 +7,7 @@ import { Badge } from '../components/ui/badge';
 import { toast } from 'sonner';
 import api, { apiErrorMessage } from '../lib/api';
 import { RlmTabs } from '../components/RlmTabs';
+import { WaitingBadge } from '../components/WaitingBadge';
 import { stageBadgeClass } from './RLMProcessos';
 
 const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.05 } } };
@@ -80,6 +81,7 @@ const RLMPendencias = () => {
                         <p className="text-xs text-zinc-500">{it.titulo} {it.artistaPrincipal ? `• ${it.artistaPrincipal}` : ''}</p>
                       </div>
                       <div className="flex items-center gap-3">
+                        <WaitingBadge item={it} />
                         <span className="text-xs text-zinc-600 font-mono hidden sm:block">{it.updatedAt}</span>
                         <ChevronRight className="h-4 w-4 text-zinc-600" />
                       </div>

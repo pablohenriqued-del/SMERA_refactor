@@ -158,6 +158,7 @@ class RlmProcess(RlmProcessBase):
     royaltyRightId: str = ""
     escritorioEmail: str = ""
     escritorioNome: str = ""
+    escritorioSentAt: str = ""
     arEmail: str = ""
     appOrigin: str = ""
     history: List[dict] = Field(default_factory=list)
@@ -266,7 +267,8 @@ async def pendencies():
         if key == "pronto_royalties":
             continue
         items = [
-            {"id": p["id"], "projeto": p["projeto"], "titulo": p.get("titulo", ""), "artistaPrincipal": p.get("artistaPrincipal", ""), "updatedAt": p.get("updatedAt", "")}
+            {"id": p["id"], "projeto": p["projeto"], "titulo": p.get("titulo", ""), "artistaPrincipal": p.get("artistaPrincipal", ""), "updatedAt": p.get("updatedAt", ""),
+             "status": p.get("status"), "escritorioSentAt": p.get("escritorioSentAt", ""), "escritorioSubmissionCount": p.get("escritorioSubmissionCount", 0)}
             for p in procs if p.get("status") == key
         ]
         groups.append({"stage": key, **STAGE_META[key], "count": len(items), "items": items})
@@ -352,6 +354,7 @@ async def send_escritorio(pid: str, payload: SendEscritorioRequest, current=Depe
         "escritorioToken": token,
         "escritorioEmail": payload.email,
         "escritorioNome": payload.nome,
+        "escritorioSentAt": datetime.now(timezone.utc).isoformat(),
         "arEmail": current.get("email", ""),
         "appOrigin": origin,
         "status": "aguardando_escritorio",

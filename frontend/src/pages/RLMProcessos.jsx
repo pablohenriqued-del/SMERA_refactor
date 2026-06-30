@@ -11,6 +11,7 @@ import { useCrud } from '../hooks/useCrud';
 import { EntityFormDialog } from '../components/EntityFormDialog';
 import { ConfirmDeleteDialog } from '../components/ConfirmDeleteDialog';
 import { RlmTabs } from '../components/RlmTabs';
+import { WaitingBadge } from '../components/WaitingBadge';
 import api from '../lib/api';
 
 export const stageBadgeClass = (key) => {
@@ -99,7 +100,7 @@ const RLMProcessos = () => {
                       <TableCell className="font-medium text-white">{p.projeto}</TableCell>
                       <TableCell className="text-zinc-400">{p.titulo}</TableCell>
                       <TableCell className="text-zinc-400">{p.artistaPrincipal}</TableCell>
-                      <TableCell><Badge className={`${stageBadgeClass(p.status)} text-xs`}>{meta.order ? `${meta.order}. ` : ''}{meta.label || p.status}</Badge></TableCell>
+                      <TableCell><div className="flex items-center gap-2 flex-wrap"><Badge className={`${stageBadgeClass(p.status)} text-xs`}>{meta.order ? `${meta.order}. ` : ''}{meta.label || p.status}</Badge><WaitingBadge item={p} /></div></TableCell>
                       <TableCell className="text-zinc-400 text-xs">{meta.role || '—'}</TableCell>
                       <TableCell className="text-zinc-500 text-xs font-mono">{p.updatedAt}</TableCell>
                       <TableCell>

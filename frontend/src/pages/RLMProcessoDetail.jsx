@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 import api, { apiErrorMessage } from '../lib/api';
 import { validateDoc, formatCpfCnpj } from '../lib/validators';
 import { ParticipantesEditor, isAllocationValid } from '../components/ParticipantesEditor';
+import { WaitingBadge } from '../components/WaitingBadge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
 import { CallbackDocPreview, printCallbackDoc } from '../components/CallbackDocument';
 import { useAuth } from '../context/AuthContext';
@@ -257,7 +258,7 @@ const RLMProcessoDetail = () => {
             {proc.status === 'aguardando_escritorio' && (
               <>
                 <div className="card-obsidian p-4 space-y-3" data-testid="send-escritorio-panel">
-                  <Label className="overline flex items-center gap-2"><Send className="h-3.5 w-3.5 text-sony-red" />Enviar formulário ao Escritório</Label>
+                  <Label className="overline flex items-center gap-2"><Send className="h-3.5 w-3.5 text-sony-red" />Enviar formulário ao Escritório<WaitingBadge item={proc} className="ml-2" /></Label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <Input className="input-obsidian" placeholder="Nome do escritório" value={escNome} onChange={(e) => setEscNome(e.target.value)} data-testid="esc-nome-input" />
                     <Input className="input-obsidian" placeholder="E-mail do escritório" value={escEmail} onChange={(e) => setEscEmail(e.target.value)} data-testid="esc-email-input" />
