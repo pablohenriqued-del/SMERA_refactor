@@ -94,13 +94,22 @@ const RLMProcessoDetail = () => {
   const setVendor = (patch) => setProc((prev) => ({ ...prev, vendor: { ...prev.vendor, ...patch } }));
   const setCb = (patch) => setProc((prev) => ({ ...prev, callbackDoc: { ...prev.callbackDoc, ...patch } }));
 
+  const todayStr = () => {
+    const d = new Date();
+    return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+  };
+
   const onUploadSigned = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 4 * 1024 * 1024) { toast.error('Arquivo muito grande (máx. 4MB)'); return; }
     const reader = new FileReader();
-    reader.onload = () => set({ signedDocFile: { name: file.name, dataUrl: reader.result } });
+    reader.onload = () => set({ signedDocFile: { name: file.name, dataUrl: reader.result }, signedAt: proc.signedAt || todayStr() });
     reader.readAsDataURL(file);
+  };
+
+  const onSignedLink = (value) => {
+    set({ signedDocLink: value, signedAt: value ? (proc.signedAt || todayStr()) : (proc.signedDocFile?.name ? proc.signedAt : '') });
   };
 
   const save = async (silent = false) => {
@@ -165,19 +174,18 @@ const RLMProcessoDetail = () => {
     toast.success('Link copiado');
   };
 
-  const sendEscritorio = async () => {
+  const sendEscritorio = async (reminder = false) => {
     if (!escEmail) return;
     setSending(true);
     try {
-      const { data } = await api.post(`/rlm-processes/${id}/send-escritorio`, { email: escEmail, nome: escNome, origin: window.location.origin });
+      const { data } = await api.post(`/rlm-processes/${id}/send-escritorio`, { email: escEmail, nome: escNome, origin: window.location.origin, reminder });
       if (data.email?.sent) {
-        toast.success('Formulário enviado por e-mail ao escritório');
+        toast.success(reminder ? 'Lembrete enviado por e-mail ao escritório' : 'Formulário enviado por e-mail ao escritório');
       } else {
-        // No Resend key: open the user's own email client pre-filled with the link
         const link = data.link || publicLink;
-        const subject = encodeURIComponent(`[SMERA] Preenchimento de Vendors — ${proc.projeto}`);
+        const subject = encodeURIComponent(`[SMERA] ${reminder ? 'Lembrete: ' : ''}Preenchimento de Vendors — ${proc.projeto}`);
         const body = encodeURIComponent(
-          `Olá ${escNome || ''},\n\nPor favor, preencha os percentuais e dados dos vendors do projeto "${proc.projeto}" no formulário abaixo:\n\n${link}\n\nObrigado,\nSony Music`
+          `Olá ${escNome || ''},\n\n${reminder ? 'Lembrete: ainda aguardamos o preenchimento dos percentuais e dados dos vendors' : 'Por favor, preencha os percentuais e dados dos vendors'} do projeto "${proc.projeto}" no formulário abaixo:\n\n${link}\n\nObrigado,\nSony Music`
         );
         window.location.href = `mailto:${escEmail}?subject=${subject}&body=${body}`;
         toast.message('Abrindo seu e-mail com o link', { description: 'Ou use "Copiar link" para enviar manualmente.' });
@@ -255,7 +263,8 @@ const RLMProcessoDetail = () => {
                     <Input className="input-obsidian" placeholder="E-mail do escritório" value={escEmail} onChange={(e) => setEscEmail(e.target.value)} data-testid="esc-email-input" />
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    <Button className="btn-sony" onClick={sendEscritorio} disabled={sending || !escEmail} data-testid="send-escritorio-btn">{sending ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Send className="h-4 w-4 mr-1" />}Enviar por e-mail</Button>
+                    <Button className="btn-sony" onClick={() => sendEscritorio(false)} disabled={sending || !escEmail} data-testid="send-escritorio-btn">{sending ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Send className="h-4 w-4 mr-1" />}Enviar por e-mail</Button>
+                    {proc.escritorioEmail && <Button variant="outline" className="btn-sony-outline" onClick={() => sendEscritorio(true)} disabled={sending || !escEmail} data-testid="resend-reminder-btn"><Send className="h-4 w-4 mr-1" />Reenviar lembrete</Button>}
                     <Button variant="outline" className="btn-sony-outline" onClick={copyLink} data-testid="copy-link-btn"><Copy className="h-4 w-4 mr-1" />Copiar link</Button>
                   </div>
                   <div className="flex items-center gap-2 text-xs text-zinc-500 break-all"><Link2 className="h-3.5 w-3.5 text-zinc-600 shrink-0" />{publicLink}</div>
@@ -336,7 +345,7 @@ const RLMProcessoDetail = () => {
                 {/* Signed document: external link OR upload */}
                 <div className="card-obsidian p-4 space-y-3">
                   <Label className="overline flex items-center gap-2"><Paperclip className="h-3.5 w-3.5 text-sony-red" />Documento assinado (Envio ao Exterior)</Label>
-                  <Field label="Link externo (SharePoint, etc.)" full><Input className="input-obsidian" placeholder="https://..." value={proc.signedDocLink} onChange={(e) => set({ signedDocLink: e.target.value })} data-testid="field-signed-link" /></Field>
+                  <Field label="Link externo (SharePoint, etc.)" full><Input className="input-obsidian" placeholder="https://..." value={proc.signedDocLink} onChange={(e) => onSignedLink(e.target.value)} data-testid="field-signed-link" /></Field>
                   <div className="flex flex-wrap items-center gap-3">
                     <label className="btn-sony-outline cursor-pointer text-sm inline-flex items-center" data-testid="upload-signed-label">
                       <Upload className="h-4 w-4 mr-2" />Enviar arquivo assinado
@@ -350,6 +359,9 @@ const RLMProcessoDetail = () => {
                       </span>
                     )}
                   </div>
+                  {(proc.signedAt && (proc.signedDocFile?.name || proc.signedDocLink)) && (
+                    <span className="inline-flex items-center gap-1.5 text-xs badge-success rounded-full px-2.5 py-1" data-testid="signed-stamp"><Check className="h-3 w-3" />Documento anexado em {proc.signedAt}</span>
+                  )}
                 </div>
 
                 <label className="flex items-center gap-2 text-sm text-zinc-300 cursor-pointer">

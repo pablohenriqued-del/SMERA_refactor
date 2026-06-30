@@ -151,6 +151,7 @@ class RlmProcess(RlmProcessBase):
     callbackDoc: CallbackDoc = Field(default_factory=CallbackDoc)
     signedDocLink: str = ""
     signedDocFile: dict = Field(default_factory=dict)
+    signedAt: str = ""
     envioExteriorDone: bool = False
     vendorInputDone: bool = False
     isrcInputDone: bool = False
@@ -173,6 +174,7 @@ class SendEscritorioRequest(BaseModel):
     email: str
     nome: str = ""
     origin: str = ""
+    reminder: bool = False
 
 
 def _validate_participantes(esc: dict):
@@ -195,7 +197,7 @@ def _validate_participantes(esc: dict):
 _UPDATABLE = {
     "projeto", "titulo", "artistaPrincipal", "licenseInId",
     "artistRoyaltyPercent", "escritorio", "isrc", "grid",
-    "vendor", "callbackDoc", "signedDocLink", "signedDocFile", "envioExteriorDone",
+    "vendor", "callbackDoc", "signedDocLink", "signedDocFile", "signedAt", "envioExteriorDone",
     "vendorInputDone", "isrcInputDone",
 }
 
@@ -357,13 +359,15 @@ async def send_escritorio(pid: str, payload: SendEscritorioRequest, current=Depe
     }
     history = p.get("history", []) + [{
         "from": p.get("status"), "to": "aguardando_escritorio",
-        "note": f"Formulário enviado ao escritório {payload.nome} <{payload.email}>",
+        "note": (f"Lembrete reenviado ao escritório {payload.nome} <{payload.email}>" if payload.reminder
+                 else f"Formulário enviado ao escritório {payload.nome} <{payload.email}>"),
         "by": current.get("nome", ""), "at": _now_iso(),
     }]
     updates["history"] = history
     await db.rlm_processes.update_one({"id": pid}, {"$set": updates})
 
-    subject = f"[SMERA] Preenchimento de Vendors — {p.get('projeto')}"
+    prefix = "Lembrete: " if payload.reminder else ""
+    subject = f"[SMERA] {prefix}Preenchimento de Vendors — {p.get('projeto')}"
     email_result = await send_email(payload.email, subject, invite_html(p.get("projeto", ""), link, p.get("artistRoyaltyPercent", 0)))
     return {"link": link, "email": email_result, "emailConfigured": is_configured()}
 
