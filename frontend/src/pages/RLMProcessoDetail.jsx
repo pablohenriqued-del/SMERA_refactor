@@ -100,13 +100,33 @@ const RLMProcessoDetail = () => {
     return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
   };
 
-  const onUploadSigned = (e) => {
+  const onUploadSigned = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 4 * 1024 * 1024) { toast.error('Arquivo muito grande (máx. 4MB)'); return; }
-    const reader = new FileReader();
-    reader.onload = () => set({ signedDocFile: { name: file.name, dataUrl: reader.result }, signedAt: proc.signedAt || todayStr() });
-    reader.readAsDataURL(file);
+    if (file.size > 8 * 1024 * 1024) { toast.error('Arquivo muito grande (máx. 8MB)'); return; }
+    const fd = new FormData();
+    fd.append('file', file);
+    setSaving(true);
+    try {
+      const { data } = await api.post(`/rlm-processes/${id}/upload-signed`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+      set({ signedDocFile: data, signedAt: proc.signedAt || todayStr() });
+      toast.success('Documento assinado enviado');
+    } catch (err) {
+      toast.error(apiErrorMessage(err));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const viewSigned = async () => {
+    try {
+      const resp = await api.get(`/rlm-processes/${id}/signed-file`, { responseType: 'blob' });
+      const url = URL.createObjectURL(resp.data);
+      window.open(url, '_blank');
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+    } catch (err) {
+      toast.error(apiErrorMessage(err));
+    }
   };
 
   const onSignedLink = (value) => {
@@ -355,7 +375,7 @@ const RLMProcessoDetail = () => {
                     {proc.signedDocFile?.name && (
                       <span className="flex items-center gap-2 text-sm text-emerald-400">
                         <Paperclip className="h-3.5 w-3.5" />
-                        <a href={proc.signedDocFile.dataUrl} download={proc.signedDocFile.name} className="underline hover:text-emerald-300" data-testid="signed-file-link">{proc.signedDocFile.name}</a>
+                        <button onClick={viewSigned} className="underline hover:text-emerald-300" data-testid="signed-file-link">{proc.signedDocFile.name}</button>
                         <button onClick={() => set({ signedDocFile: {} })} className="text-zinc-500 hover:text-red-400 text-xs" data-testid="remove-signed-btn">remover</button>
                       </span>
                     )}

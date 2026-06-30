@@ -88,6 +88,7 @@ Sistema de gerenciamento de licenciamento musical para Sony Music. Full-stack: R
 ---
 
 ## Notas Técnicas
+- Documentos assinados (RLM) ficam em **object storage** (Emergent, via `EMERGENT_LLM_KEY`), com referência no banco (`signedDocFile.path`) — não mais base64. Upload `POST /rlm-processes/:id/upload-signed`, leitura autenticada `GET /rlm-processes/:id/signed-file`.
 - Token via Authorization Bearer (localStorage) — escolhido pela robustez no ingress.
 - Badges de status forçam cor via `!important` (sobre o variant default vermelho do shadcn).
 - Seed só insere quando a coleção está vazia (preserva dados criados pelo usuário).

@@ -20,6 +20,12 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     await seed_all()
     await seed_rlm()
+    try:
+        import storage_service
+        storage_service.init_storage()
+        logger.info("Object storage initialized")
+    except Exception as e:
+        logger.warning(f"Object storage init skipped: {e}")
     logger.info("Database seeded")
     yield
     client.close()

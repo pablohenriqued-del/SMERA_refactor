@@ -4,12 +4,14 @@ import secrets
 from datetime import datetime, timezone
 from typing import Optional, List
 
-from fastapi import APIRouter, HTTPException, Depends, Body
+from fastapi import APIRouter, HTTPException, Depends, Body, UploadFile, File
+from fastapi.responses import Response
 from pydantic import BaseModel, Field, ConfigDict
 
 from db import db
 from auth import get_current_user
 from email_service import send_email, invite_html, ar_notification_html, is_configured
+import storage_service
 
 # ---------------- CPF / CNPJ validation ----------------
 
@@ -373,6 +375,42 @@ async def send_escritorio(pid: str, payload: SendEscritorioRequest, current=Depe
     subject = f"[SMERA] {prefix}Preenchimento de Vendors — {p.get('projeto')}"
     email_result = await send_email(payload.email, subject, invite_html(p.get("projeto", ""), link, p.get("artistRoyaltyPercent", 0)))
     return {"link": link, "email": email_result, "emailConfigured": is_configured()}
+
+
+@router.post("/{pid}/upload-signed")
+async def upload_signed(pid: str, file: UploadFile = File(...)):
+    p = await db.rlm_processes.find_one({"id": pid}, {"_id": 0})
+    if not p:
+        raise HTTPException(status_code=404, detail="Processo não encontrado")
+    if not storage_service.is_configured():
+        raise HTTPException(status_code=503, detail="Object storage não configurado")
+    data = await file.read()
+    if len(data) > 8 * 1024 * 1024:
+        raise HTTPException(status_code=413, detail="Arquivo muito grande (máx. 8MB)")
+    ext = (file.filename or "bin").rsplit(".", 1)[-1].lower() if "." in (file.filename or "") else "bin"
+    ct = file.content_type or storage_service.MIME_BY_EXT.get(ext, "application/octet-stream")
+    path = f"smera/rlm/{pid}/{uuid.uuid4()}.{ext}"
+    try:
+        result = storage_service.put_object(path, data, ct)
+    except Exception as e:  # noqa: BLE001
+        raise HTTPException(status_code=502, detail=f"Falha no upload: {e}")
+    signed = {"name": file.filename, "path": result["path"], "contentType": ct, "size": result.get("size", len(data))}
+    await db.rlm_processes.update_one({"id": pid}, {"$set": {"signedDocFile": signed, "signedAt": datetime.now(timezone.utc).strftime("%d/%m/%Y"), "updatedAt": _now_iso()}})
+    return signed
+
+
+@router.get("/{pid}/signed-file")
+async def download_signed(pid: str):
+    p = await db.rlm_processes.find_one({"id": pid}, {"_id": 0})
+    if not p or not p.get("signedDocFile", {}).get("path"):
+        raise HTTPException(status_code=404, detail="Documento não encontrado")
+    sf = p["signedDocFile"]
+    try:
+        content, ct = storage_service.get_object(sf["path"])
+    except Exception as e:  # noqa: BLE001
+        raise HTTPException(status_code=502, detail=f"Falha ao obter arquivo: {e}")
+    return Response(content=content, media_type=sf.get("contentType", ct),
+                    headers={"Content-Disposition": f'inline; filename="{sf.get("name", "documento")}"'})
 
 
 @router.post("/{pid}/create-royalty")
