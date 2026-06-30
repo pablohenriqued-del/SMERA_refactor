@@ -5,6 +5,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { Toaster } from './components/ui/sonner';
 import Layout from './components/Layout';
 import Login from './pages/Login';
+import EscritorioForm from './pages/EscritorioForm';
 import Dashboard from './pages/Dashboard';
 import Timeline from './pages/Timeline';
 import LicenseIn from './pages/LicenseIn';
@@ -40,6 +41,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/form/escritorio/:token" element={<EscritorioForm />} />
           <Route
             path="/"
             element={

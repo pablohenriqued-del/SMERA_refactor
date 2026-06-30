@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Loader2, Check, ChevronRight, ChevronLeft, Plus, Trash2, Link2, History, CheckCircle2, Save } from 'lucide-react';
+import { ArrowLeft, Loader2, Check, ChevronRight, ChevronLeft, Link2, History, CheckCircle2, Save, Send, Copy } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
@@ -11,6 +11,7 @@ import { Badge } from '../components/ui/badge';
 import { toast } from 'sonner';
 import api, { apiErrorMessage } from '../lib/api';
 import { validateDoc, formatCpfCnpj } from '../lib/validators';
+import { ParticipantesEditor, isAllocationValid } from '../components/ParticipantesEditor';
 
 const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.05 } } };
 const itemVariants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };
@@ -52,12 +53,17 @@ const RLMProcessoDetail = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [note, setNote] = useState('');
+  const [escNome, setEscNome] = useState('');
+  const [escEmail, setEscEmail] = useState('');
+  const [sending, setSending] = useState(false);
 
   const load = useCallback(async () => {
     try {
       const [p, s] = await Promise.all([api.get(`/rlm-processes/${id}`), api.get('/rlm/stages')]);
       setProc(p.data);
       setStages(s.data);
+      setEscNome(p.data.escritorioNome || '');
+      setEscEmail(p.data.escritorioEmail || '');
     } catch (err) {
       toast.error(apiErrorMessage(err));
     } finally {
@@ -70,7 +76,6 @@ const RLMProcessoDetail = () => {
   const set = (patch) => setProc((prev) => ({ ...prev, ...patch }));
   const setEsc = (patch) => setProc((prev) => ({ ...prev, escritorio: { ...prev.escritorio, ...patch } }));
   const setVendor = (patch) => setProc((prev) => ({ ...prev, vendor: { ...prev.vendor, ...patch } }));
-  const setCb = (patch) => setProc((prev) => ({ ...prev, callbackDoc: { ...prev.callbackDoc, ...patch } }));
 
   const save = async (silent = false) => {
     setSaving(true);
@@ -126,9 +131,28 @@ const RLMProcessoDetail = () => {
   );
 
   const participantes = proc.escritorio?.participantes || [];
-  const addPart = () => { if (participantes.length < 20) setEsc({ participantes: [...participantes, { nome: '', royalty: 0 }] }); };
-  const updPart = (i, patch) => setEsc({ participantes: participantes.map((p, idx) => idx === i ? { ...p, ...patch } : p) });
-  const delPart = (i) => setEsc({ participantes: participantes.filter((_, idx) => idx !== i) });
+  const allocOk = isAllocationValid(participantes, proc.escritorio?.royaltyPorFaixa);
+  const publicLink = `${window.location.origin}/form/escritorio/${proc.escritorioToken}`;
+
+  const copyLink = () => {
+    navigator.clipboard?.writeText(publicLink);
+    toast.success('Link copiado');
+  };
+
+  const sendEscritorio = async () => {
+    if (!escEmail) return;
+    setSending(true);
+    try {
+      const { data } = await api.post(`/rlm-processes/${id}/send-escritorio`, { email: escEmail, nome: escNome, origin: window.location.origin });
+      if (data.email?.sent) toast.success('Formulário enviado por e-mail ao escritório');
+      else toast.message('Link gerado — e-mail não configurado', { description: 'Use "Copiar link" para enviar manualmente.' });
+      await load();
+    } catch (err) {
+      toast.error(apiErrorMessage(err));
+    } finally {
+      setSending(false);
+    }
+  };
 
   return (
     <motion.div className="space-y-6" variants={containerVariants} initial="hidden" animate="visible" data-testid="rlm-processo-detail-page">
@@ -188,10 +212,21 @@ const RLMProcessoDetail = () => {
 
             {proc.status === 'aguardando_escritorio' && (
               <>
-                <div className="p-3 rounded-md bg-white/[0.03] border border-white/5 flex items-center gap-2 text-sm text-zinc-400">
-                  <Link2 className="h-4 w-4 text-sony-red" />
-                  Link público do escritório (Sub-fase B): <code className="text-zinc-300 text-xs">/form/escritorio/{proc.escritorioToken}</code>
+                <div className="card-obsidian p-4 space-y-3" data-testid="send-escritorio-panel">
+                  <Label className="overline flex items-center gap-2"><Send className="h-3.5 w-3.5 text-sony-red" />Enviar formulário ao Escritório</Label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <Input className="input-obsidian" placeholder="Nome do escritório" value={escNome} onChange={(e) => setEscNome(e.target.value)} data-testid="esc-nome-input" />
+                    <Input className="input-obsidian" placeholder="E-mail do escritório" value={escEmail} onChange={(e) => setEscEmail(e.target.value)} data-testid="esc-email-input" />
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <Button className="btn-sony" onClick={sendEscritorio} disabled={sending || !escEmail} data-testid="send-escritorio-btn">{sending ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Send className="h-4 w-4 mr-1" />}Enviar por e-mail</Button>
+                    <Button variant="outline" className="btn-sony-outline" onClick={copyLink} data-testid="copy-link-btn"><Copy className="h-4 w-4 mr-1" />Copiar link</Button>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-zinc-500 break-all"><Link2 className="h-3.5 w-3.5 text-zinc-600 shrink-0" />{publicLink}</div>
+                  {proc.escritorioEmail && <p className="text-xs text-emerald-400">Último envio para: {proc.escritorioNome} &lt;{proc.escritorioEmail}&gt;</p>}
+                  {proc.escritorioSubmissionCount > 0 && <p className="text-xs text-amber-400">O escritório já devolveu o preenchimento {proc.escritorioSubmissionCount}x.</p>}
                 </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Field label="Nome do Artista"><Input className="input-obsidian" value={proc.escritorio.nomeArtista} onChange={(e) => setEsc({ nomeArtista: e.target.value })} data-testid="field-esc-nomeArtista" /></Field>
                   <Field label="Tipo de Contrato do Artista"><Input className="input-obsidian" value={proc.escritorio.tipoContratoArtista} onChange={(e) => setEsc({ tipoContratoArtista: e.target.value })} /></Field>
@@ -200,28 +235,17 @@ const RLMProcessoDetail = () => {
                   <Field label="Banco"><Input className="input-obsidian" value={proc.escritorio.banco} onChange={(e) => setEsc({ banco: e.target.value })} /></Field>
                   <Field label="Agência"><Input className="input-obsidian" value={proc.escritorio.agencia} onChange={(e) => setEsc({ agencia: e.target.value })} /></Field>
                   <Field label="Conta"><Input className="input-obsidian" value={proc.escritorio.conta} onChange={(e) => setEsc({ conta: e.target.value })} /></Field>
-                  <Field label="Royalty por Faixa (%)"><Input type="number" className="input-obsidian" value={proc.escritorio.royaltyPorFaixa} onChange={(e) => setEsc({ royaltyPorFaixa: Number(e.target.value) })} /></Field>
+                  <Field label="Royalty Total da Faixa (%)"><Input type="number" className="input-obsidian" value={proc.escritorio.royaltyPorFaixa} onChange={(e) => setEsc({ royaltyPorFaixa: Number(e.target.value) })} data-testid="field-royalty-total" /></Field>
                   <Field label="Observações" full><Textarea className="input-obsidian min-h-[70px]" value={proc.escritorio.observacoes} onChange={(e) => setEsc({ observacoes: e.target.value })} /></Field>
                 </div>
 
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <Label className="overline">Participantes ({participantes.length}/20)</Label>
-                    <Button variant="outline" size="sm" className="btn-sony-outline !py-1 !px-3 text-xs" onClick={addPart} disabled={participantes.length >= 20} data-testid="add-participante-btn"><Plus className="h-3 w-3 mr-1" />Adicionar</Button>
-                  </div>
-                  <div className="space-y-2">
-                    {participantes.map((p, i) => (
-                      <div key={i} className="flex gap-2 items-center">
-                        <Input className="input-obsidian flex-1" placeholder="Nome do participante" value={p.nome} onChange={(e) => updPart(i, { nome: e.target.value })} data-testid={`participante-nome-${i}`} />
-                        <Input type="number" className="input-obsidian w-28" placeholder="% royalty" value={p.royalty} onChange={(e) => updPart(i, { royalty: Number(e.target.value) })} data-testid={`participante-royalty-${i}`} />
-                        <Button variant="ghost" size="icon" className="h-9 w-9 text-zinc-500 hover:text-red-400" onClick={() => delPart(i)}><Trash2 className="h-4 w-4" /></Button>
-                      </div>
-                    ))}
-                    {participantes.length === 0 && <p className="text-xs text-zinc-600">Nenhum participante adicionado.</p>}
-                  </div>
-                </div>
+                <ParticipantesEditor participantes={participantes} royaltyTotal={proc.escritorio.royaltyPorFaixa} onChange={(arr) => setEsc({ participantes: arr })} />
 
-                <div className="flex gap-2"><Button variant="outline" className="btn-sony-outline" onClick={() => save()} disabled={saving} data-testid="save-btn"><Save className="h-4 w-4 mr-1" />Salvar</Button>{advanceBtn('Enviar para Validação')}</div>
+                <div className="flex gap-2">
+                  <Button variant="outline" className="btn-sony-outline" onClick={() => save()} disabled={saving || !allocOk} data-testid="save-btn"><Save className="h-4 w-4 mr-1" />Salvar</Button>
+                  <Button className="btn-sony" onClick={() => next && transition(next.key)} disabled={!allocOk} data-testid="advance-btn"><ChevronRight className="h-4 w-4 mr-1" />Enviar para Validação</Button>
+                </div>
+                {!allocOk && <p className="text-xs text-red-400">A soma dos participantes ultrapassa o total da faixa — ajuste antes de salvar/avançar.</p>}
               </>
             )}
 

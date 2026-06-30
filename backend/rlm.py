@@ -9,6 +9,7 @@ from pydantic import BaseModel, Field, ConfigDict
 
 from db import db
 from auth import get_current_user
+from email_service import send_email, invite_html, ar_notification_html, is_configured
 
 # ---------------- CPF / CNPJ validation ----------------
 
@@ -153,6 +154,10 @@ class RlmProcess(RlmProcessBase):
     vendorInputDone: bool = False
     isrcInputDone: bool = False
     royaltyRightId: str = ""
+    escritorioEmail: str = ""
+    escritorioNome: str = ""
+    arEmail: str = ""
+    appOrigin: str = ""
     history: List[dict] = Field(default_factory=list)
     createdAt: str = ""
     updatedAt: str = ""
@@ -161,6 +166,28 @@ class RlmProcess(RlmProcessBase):
 class TransitionRequest(BaseModel):
     to: str
     note: str = ""
+
+
+class SendEscritorioRequest(BaseModel):
+    email: str
+    nome: str = ""
+    origin: str = ""
+
+
+def _validate_participantes(esc: dict):
+    """Sum of participant royalties must not exceed the track total (royaltyPorFaixa)."""
+    if not esc:
+        return
+    try:
+        total = float(esc.get("royaltyPorFaixa") or 0)
+        soma = sum(float(p.get("royalty") or 0) for p in (esc.get("participantes") or []))
+    except (ValueError, TypeError):
+        return
+    if soma > total + 1e-9:
+        raise HTTPException(
+            status_code=400,
+            detail=f"A soma dos royalties dos participantes ({soma:g}%) ultrapassa o total da faixa ({total:g}%).",
+        )
 
 
 # fields the generic update accepts
@@ -173,6 +200,49 @@ _UPDATABLE = {
 
 router = APIRouter(prefix="/rlm-processes", tags=["rlm"], dependencies=[Depends(get_current_user)])
 misc_router = APIRouter(tags=["rlm-misc"], dependencies=[Depends(get_current_user)])
+public_router = APIRouter(prefix="/public/escritorio", tags=["rlm-public"])  # no auth
+
+
+@public_router.get("/{token}")
+async def public_get(token: str):
+    p = await db.rlm_processes.find_one({"escritorioToken": token}, {"_id": 0})
+    if not p:
+        raise HTTPException(status_code=404, detail="Link inválido ou expirado")
+    return {
+        "projeto": p.get("projeto"),
+        "titulo": p.get("titulo"),
+        "artistaPrincipal": p.get("artistaPrincipal"),
+        "artistRoyaltyPercent": p.get("artistRoyaltyPercent", 0),
+        "escritorio": p.get("escritorio", {}),
+        "status": p.get("status"),
+        "submissionCount": p.get("escritorioSubmissionCount", 0),
+    }
+
+
+@public_router.post("/{token}")
+async def public_submit(token: str, escritorio: dict = Body(...)):
+    p = await db.rlm_processes.find_one({"escritorioToken": token}, {"_id": 0})
+    if not p:
+        raise HTTPException(status_code=404, detail="Link inválido ou expirado")
+    _validate_participantes(escritorio)
+    escritorio["submittedAt"] = _now_iso()
+    count = p.get("escritorioSubmissionCount", 0) + 1
+    history = p.get("history", []) + [{
+        "from": p.get("status"), "to": p.get("status"),
+        "note": f"Escritório enviou o preenchimento (envio #{count})",
+        "by": p.get("escritorioNome") or "Escritório", "at": _now_iso(),
+    }]
+    await db.rlm_processes.update_one(
+        {"escritorioToken": token},
+        {"$set": {"escritorio": escritorio, "escritorioSubmissionCount": count, "history": history, "updatedAt": _now_iso()}},
+    )
+    # notify A&R (best-effort)
+    ar_email = p.get("arEmail")
+    if ar_email:
+        origin = (p.get("appOrigin") or "").rstrip("/")
+        proc_link = f"{origin}/rlm/processos/{p['id']}" if origin else ""
+        await send_email(ar_email, f"[SMERA] Escritório devolveu — {p.get('projeto')}", ar_notification_html(p.get("projeto", ""), proc_link))
+    return {"success": True, "submissionCount": count}
 
 
 @misc_router.get("/rlm/stages")
@@ -235,6 +305,8 @@ async def update_process(pid: str, payload: dict = Body(...)):
     existing = await db.rlm_processes.find_one({"id": pid}, {"_id": 0})
     if not existing:
         raise HTTPException(status_code=404, detail="Processo não encontrado")
+    if "escritorio" in payload:
+        _validate_participantes(payload["escritorio"])
     update = {k: v for k, v in payload.items() if k in _UPDATABLE}
     update["updatedAt"] = _now_iso()
     await db.rlm_processes.update_one({"id": pid}, {"$set": update})
@@ -261,6 +333,38 @@ async def delete_process(pid: str):
     if res.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Processo não encontrado")
     return {"success": True, "id": pid}
+
+
+@router.post("/{pid}/send-escritorio")
+async def send_escritorio(pid: str, payload: SendEscritorioRequest, current=Depends(get_current_user)):
+    """A&R sends the unique form link to the responsible office (escritório)."""
+    p = await db.rlm_processes.find_one({"id": pid}, {"_id": 0})
+    if not p:
+        raise HTTPException(status_code=404, detail="Processo não encontrado")
+    token = p.get("escritorioToken") or secrets.token_urlsafe(16)
+    origin = (payload.origin or "").rstrip("/")
+    link = f"{origin}/form/escritorio/{token}" if origin else f"/form/escritorio/{token}"
+
+    updates = {
+        "escritorioToken": token,
+        "escritorioEmail": payload.email,
+        "escritorioNome": payload.nome,
+        "arEmail": current.get("email", ""),
+        "appOrigin": origin,
+        "status": "aguardando_escritorio",
+        "updatedAt": _now_iso(),
+    }
+    history = p.get("history", []) + [{
+        "from": p.get("status"), "to": "aguardando_escritorio",
+        "note": f"Formulário enviado ao escritório {payload.nome} <{payload.email}>",
+        "by": current.get("nome", ""), "at": _now_iso(),
+    }]
+    updates["history"] = history
+    await db.rlm_processes.update_one({"id": pid}, {"$set": updates})
+
+    subject = f"[SMERA] Preenchimento de Vendors — {p.get('projeto')}"
+    email_result = await send_email(payload.email, subject, invite_html(p.get("projeto", ""), link, p.get("artistRoyaltyPercent", 0)))
+    return {"link": link, "email": email_result, "emailConfigured": is_configured()}
 
 
 @router.post("/{pid}/create-royalty")
