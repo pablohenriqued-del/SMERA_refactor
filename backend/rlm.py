@@ -9,7 +9,7 @@ from fastapi.responses import Response
 from pydantic import BaseModel, Field, ConfigDict
 
 from db import db
-from auth import get_current_user
+from auth import get_current_user, create_download_token, decode_download_token
 from email_service import send_email, invite_html, ar_notification_html, exterior_html, is_configured
 import storage_service
 
@@ -191,6 +191,7 @@ class SendEscritorioRequest(BaseModel):
 class SendExteriorRequest(BaseModel):
     email: str
     nome: str = ""
+    origin: str = ""
 
 
 class CorrectionRequest(BaseModel):
@@ -225,10 +226,10 @@ _UPDATABLE = {
 
 router = APIRouter(prefix="/rlm-processes", tags=["rlm"], dependencies=[Depends(get_current_user)])
 misc_router = APIRouter(tags=["rlm-misc"], dependencies=[Depends(get_current_user)])
-public_router = APIRouter(prefix="/public/escritorio", tags=["rlm-public"])  # no auth
+public_router = APIRouter(prefix="/public", tags=["rlm-public"])  # no auth
 
 
-@public_router.get("/{token}")
+@public_router.get("/escritorio/{token}")
 async def public_get(token: str):
     p = await db.rlm_processes.find_one({"escritorioToken": token}, {"_id": 0})
     if not p:
@@ -244,7 +245,7 @@ async def public_get(token: str):
     }
 
 
-@public_router.post("/{token}")
+@public_router.post("/escritorio/{token}")
 async def public_submit(token: str, escritorio: dict = Body(...)):
     p = await db.rlm_processes.find_one({"escritorioToken": token}, {"_id": 0})
     if not p:
@@ -268,6 +269,28 @@ async def public_submit(token: str, escritorio: dict = Body(...)):
         proc_link = f"{origin}/rlm/processos/{p['id']}" if origin else ""
         await send_email(ar_email, f"[SMERA] Escritório devolveu — {p.get('projeto')}", ar_notification_html(p.get("projeto", ""), proc_link))
     return {"success": True, "submissionCount": count}
+
+
+@public_router.get("/signed-doc/{token}")
+async def public_signed_doc(token: str):
+    """Public, time-limited download of a signed document (link enviado ao exterior)."""
+    import jwt as _jwt
+    try:
+        pid = decode_download_token(token)
+    except _jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=410, detail="Link expirado. Solicite um novo envio.")
+    except _jwt.InvalidTokenError:
+        raise HTTPException(status_code=404, detail="Link inválido")
+    p = await db.rlm_processes.find_one({"id": pid}, {"_id": 0})
+    sf = (p or {}).get("signedDocFile", {})
+    if not p or not sf.get("path"):
+        raise HTTPException(status_code=404, detail="Documento não encontrado")
+    try:
+        content, ct = storage_service.get_object(sf["path"])
+    except Exception as e:  # noqa: BLE001
+        raise HTTPException(status_code=502, detail=f"Falha ao obter arquivo: {e}")
+    return Response(content=content, media_type=sf.get("contentType", ct),
+                    headers={"Content-Disposition": f'inline; filename="{sf.get("name", "documento")}"'})
 
 
 @misc_router.get("/rlm/stages")
@@ -453,7 +476,14 @@ async def send_exterior(pid: str, payload: SendExteriorRequest, current=Depends(
     p = await db.rlm_processes.find_one({"id": pid}, {"_id": 0})
     if not p:
         raise HTTPException(status_code=404, detail="Processo não encontrado")
-    signed_link = p.get("signedDocLink", "")
+    origin = (payload.origin or "").rstrip("/")
+    # Prefer a temporary signed link to the uploaded file (7-day expiry) so the
+    # international contact can download without a SMERA login; fallback to external link.
+    if p.get("signedDocFile", {}).get("path") and origin:
+        token = create_download_token(pid, days=7)
+        signed_link = f"{origin}/api/public/signed-doc/{token}"
+    else:
+        signed_link = p.get("signedDocLink", "")
     now = _now_iso()
     updates = {
         "exteriorEmail": payload.email,

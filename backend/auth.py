@@ -35,6 +35,23 @@ def create_access_token(user_id: str, email: str) -> str:
     return jwt.encode(payload, _get_secret(), algorithm=JWT_ALGORITHM)
 
 
+def create_download_token(resource_id: str, days: int = 7) -> str:
+    payload = {
+        "sub": resource_id,
+        "type": "download",
+        "exp": datetime.now(timezone.utc) + timedelta(days=days),
+    }
+    return jwt.encode(payload, _get_secret(), algorithm=JWT_ALGORITHM)
+
+
+def decode_download_token(token: str) -> str:
+    """Returns the resource_id if the download token is valid, else raises jwt errors."""
+    payload = jwt.decode(token, _get_secret(), algorithms=[JWT_ALGORITHM])
+    if payload.get("type") != "download":
+        raise jwt.InvalidTokenError("Tipo de token inválido")
+    return payload["sub"]
+
+
 async def get_current_user(request: Request) -> dict:
     token = None
     auth_header = request.headers.get("Authorization", "")

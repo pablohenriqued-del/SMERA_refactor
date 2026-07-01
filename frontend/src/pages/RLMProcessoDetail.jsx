@@ -319,7 +319,7 @@ const RLMProcessoDetail = () => {
     if (!extEmail) return;
     setSendingExt(true);
     try {
-      const { data } = await api.post(`/rlm-processes/${id}/send-exterior`, { email: extEmail, nome: extNome });
+      const { data } = await api.post(`/rlm-processes/${id}/send-exterior`, { email: extEmail, nome: extNome, origin: window.location.origin });
       if (data.email?.sent) {
         toast.success('Callback enviado ao exterior por e-mail');
       } else {
