@@ -74,11 +74,12 @@ def ar_notification_html(projeto: str, link: str) -> str:
     """
 
 
-def exterior_html(projeto: str, titulo: str, vendor: dict, signed_link: str = "") -> str:
+def exterior_html(projeto: str, titulo: str, vendor: dict, signed_link: str = "", expires_days: int = 7) -> str:
     v = vendor or {}
     faixa_line = f'<p style="margin:2px 0;color:#b3b3b3;">Faixa: <strong style="color:#fff;">{titulo}</strong></p>' if titulo else ""
     link_block = (
         f'<p style="margin:20px 0;"><a href="{signed_link}" style="background:#E60012;color:#fff;text-decoration:none;padding:10px 20px;border-radius:6px;font-weight:bold;display:inline-block;">Abrir documento assinado</a></p>'
+        f'<p style="color:#777;font-size:12px;">Link válido por {expires_days} dias.</p>'
         if signed_link else '<p style="color:#f59e0b;font-size:13px;">O documento assinado segue em anexo (envie manualmente se necessário).</p>'
     )
     return f"""

@@ -192,6 +192,7 @@ class SendExteriorRequest(BaseModel):
     email: str
     nome: str = ""
     origin: str = ""
+    expiresDays: int = 7
 
 
 class CorrectionRequest(BaseModel):
@@ -477,10 +478,11 @@ async def send_exterior(pid: str, payload: SendExteriorRequest, current=Depends(
     if not p:
         raise HTTPException(status_code=404, detail="Processo não encontrado")
     origin = (payload.origin or "").rstrip("/")
-    # Prefer a temporary signed link to the uploaded file (7-day expiry) so the
+    days = payload.expiresDays if payload.expiresDays in (3, 7, 30) else 7
+    # Prefer a temporary signed link to the uploaded file so the
     # international contact can download without a SMERA login; fallback to external link.
     if p.get("signedDocFile", {}).get("path") and origin:
-        token = create_download_token(pid, days=7)
+        token = create_download_token(pid, days=days)
         signed_link = f"{origin}/api/public/signed-doc/{token}"
     else:
         signed_link = p.get("signedDocLink", "")
@@ -501,8 +503,8 @@ async def send_exterior(pid: str, payload: SendExteriorRequest, current=Depends(
     await db.rlm_processes.update_one({"id": pid}, {"$set": updates})
 
     subject = f"[SMERA] Callback / Envio ao Exterior — {p.get('projeto')}"
-    email_result = await send_email(payload.email, subject, exterior_html(p.get("projeto", ""), p.get("titulo", ""), p.get("vendor", {}), signed_link))
-    return {"email": email_result, "emailConfigured": is_configured(), "signedLink": signed_link}
+    email_result = await send_email(payload.email, subject, exterior_html(p.get("projeto", ""), p.get("titulo", ""), p.get("vendor", {}), signed_link, days))
+    return {"email": email_result, "emailConfigured": is_configured(), "signedLink": signed_link, "expiresDays": days}
 
 
 @router.post("/{pid}/create-royalty")

@@ -16,6 +16,7 @@ import { WaitingBadge } from '../components/WaitingBadge';
 import { BankSelect } from '../components/BankSelect';
 import { stageBadgeClass } from './RLMProcessos';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { CallbackDocPreview, printCallbackDoc } from '../components/CallbackDocument';
 import { useAuth } from '../context/AuthContext';
 import { FileText, Printer, Upload, Paperclip, Pencil, Plus, Trash2 } from 'lucide-react';
@@ -129,6 +130,7 @@ const RLMProcessoDetail = () => {
   const [sending, setSending] = useState(false);
   const [extNome, setExtNome] = useState('');
   const [extEmail, setExtEmail] = useState('');
+  const [extExpires, setExtExpires] = useState('7');
   const [sendingExt, setSendingExt] = useState(false);
   const [showDoc, setShowDoc] = useState(false);
   const [viewStage, setViewStage] = useState(null);
@@ -319,7 +321,7 @@ const RLMProcessoDetail = () => {
     if (!extEmail) return;
     setSendingExt(true);
     try {
-      const { data } = await api.post(`/rlm-processes/${id}/send-exterior`, { email: extEmail, nome: extNome, origin: window.location.origin });
+      const { data } = await api.post(`/rlm-processes/${id}/send-exterior`, { email: extEmail, nome: extNome, origin: window.location.origin, expiresDays: Number(extExpires) });
       if (data.email?.sent) {
         toast.success('Callback enviado ao exterior por e-mail');
       } else {
@@ -335,6 +337,7 @@ const RLMProcessoDetail = () => {
           `- Banco: ${v.banco || '—'} | Agência: ${v.agencia || '—'} | Conta: ${v.conta || '—'}`,
           '',
           data.signedLink ? `Documento assinado: ${data.signedLink}` : 'Documento assinado em anexo (anexe manualmente).',
+          data.signedLink && data.expiresDays ? `(Link válido por ${data.expiresDays} dias)` : null,
           '',
           'Sony Music',
         ].filter((l) => l !== null).join('\n');
@@ -584,9 +587,17 @@ const RLMProcessoDetail = () => {
                 <div className="card-obsidian p-4 space-y-3">
                   <Label className="overline text-sony-red flex items-center gap-2"><Send className="h-3.5 w-3.5" />4 · Envio ao Exterior</Label>
                   <p className="text-xs text-zinc-500">Envie o Callback (dados do fornecedor + documento assinado) ao contato internacional.</p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <Input className="input-obsidian" placeholder="Nome do contato (exterior)" value={extNome} onChange={(e) => setExtNome(e.target.value)} data-testid="ext-nome-input" />
                     <Input className="input-obsidian" placeholder="E-mail do contato (exterior)" value={extEmail} onChange={(e) => setExtEmail(e.target.value)} data-testid="ext-email-input" />
+                    <Select value={extExpires} onValueChange={setExtExpires}>
+                      <SelectTrigger className="input-obsidian" data-testid="ext-expires-select"><SelectValue /></SelectTrigger>
+                      <SelectContent className="bg-sony-paper border-white/10 text-white">
+                        <SelectItem value="3" className="text-zinc-300 focus:bg-white/5 focus:text-white">Link válido por 3 dias</SelectItem>
+                        <SelectItem value="7" className="text-zinc-300 focus:bg-white/5 focus:text-white">Link válido por 7 dias</SelectItem>
+                        <SelectItem value="30" className="text-zinc-300 focus:bg-white/5 focus:text-white">Link válido por 30 dias</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="flex flex-wrap items-center gap-3">
                     <Button className="btn-sony" onClick={sendExterior} disabled={sendingExt || !extEmail} data-testid="send-exterior-btn">{sendingExt ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Send className="h-4 w-4 mr-1" />}Enviar ao Exterior</Button>
