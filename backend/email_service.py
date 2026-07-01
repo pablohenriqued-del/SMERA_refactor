@@ -72,3 +72,30 @@ def ar_notification_html(projeto: str, link: str) -> str:
       </table>
     </div>
     """
+
+
+def exterior_html(projeto: str, titulo: str, vendor: dict, signed_link: str = "") -> str:
+    v = vendor or {}
+    faixa_line = f'<p style="margin:2px 0;color:#b3b3b3;">Faixa: <strong style="color:#fff;">{titulo}</strong></p>' if titulo else ""
+    link_block = (
+        f'<p style="margin:20px 0;"><a href="{signed_link}" style="background:#E60012;color:#fff;text-decoration:none;padding:10px 20px;border-radius:6px;font-weight:bold;display:inline-block;">Abrir documento assinado</a></p>'
+        if signed_link else '<p style="color:#f59e0b;font-size:13px;">O documento assinado segue em anexo (envie manualmente se necessário).</p>'
+    )
+    return f"""
+    <div style="font-family:Arial,sans-serif;background:#0b0b0c;padding:24px;color:#fff;">
+      <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;background:#141417;border-radius:12px;border:1px solid #222;">
+        <tr><td style="padding:28px;">
+          <span style="color:#E60012;font-weight:bold;letter-spacing:2px;font-size:12px;">SONY MUSIC · SMERA</span>
+          <h2 style="margin:12px 0 8px;color:#fff;">Callback — Confirmação de dados bancários (Envio ao Exterior)</h2>
+          <p style="margin:2px 0;color:#b3b3b3;">Projeto: <strong style="color:#fff;">{projeto}</strong></p>
+          {faixa_line}
+          <div style="margin:16px 0;padding:14px;background:#0a0a0a;border:1px solid #222;border-radius:8px;">
+            <p style="margin:0 0 6px;color:#777;font-size:11px;text-transform:uppercase;letter-spacing:1px;">Fornecedor</p>
+            <p style="margin:2px 0;color:#fff;"><strong>{v.get('nomeFornecedor','—')}</strong> · {v.get('cpfCnpj','—')}</p>
+            <p style="margin:2px 0;color:#b3b3b3;">Banco: {v.get('banco','—')} · Ag: {v.get('agencia','—')} · Cc: {v.get('conta','—')}</p>
+          </div>
+          {link_block}
+        </td></tr>
+      </table>
+    </div>
+    """

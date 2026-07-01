@@ -10,7 +10,7 @@ from pydantic import BaseModel, Field, ConfigDict
 
 from db import db
 from auth import get_current_user
-from email_service import send_email, invite_html, ar_notification_html, is_configured
+from email_service import send_email, invite_html, ar_notification_html, exterior_html, is_configured
 import storage_service
 
 # ---------------- CPF / CNPJ validation ----------------
@@ -160,6 +160,9 @@ class RlmProcess(RlmProcessBase):
     signedDocFile: dict = Field(default_factory=dict)
     signedAt: str = ""
     envioExteriorDone: bool = False
+    exteriorEmail: str = ""
+    exteriorNome: str = ""
+    envioExteriorAt: str = ""
     vendorInputDone: bool = False
     isrcInputDone: bool = False
     royaltyRightId: str = ""
@@ -183,6 +186,11 @@ class SendEscritorioRequest(BaseModel):
     nome: str = ""
     origin: str = ""
     reminder: bool = False
+
+
+class SendExteriorRequest(BaseModel):
+    email: str
+    nome: str = ""
 
 
 class CorrectionRequest(BaseModel):
@@ -211,6 +219,7 @@ _UPDATABLE = {
     "projeto", "titulo", "artistaPrincipal", "licenseInId",
     "artistRoyaltyPercent", "escritorio", "isrc", "grid", "isrcs",
     "vendor", "callbackDoc", "signedDocLink", "signedDocFile", "signedAt", "envioExteriorDone",
+    "exteriorEmail", "exteriorNome", "envioExteriorAt",
     "vendorInputDone", "isrcInputDone",
 }
 
@@ -436,6 +445,34 @@ async def download_signed(pid: str):
         raise HTTPException(status_code=502, detail=f"Falha ao obter arquivo: {e}")
     return Response(content=content, media_type=sf.get("contentType", ct),
                     headers={"Content-Disposition": f'inline; filename="{sf.get("name", "documento")}"'})
+
+
+@router.post("/{pid}/send-exterior")
+async def send_exterior(pid: str, payload: SendExteriorRequest, current=Depends(get_current_user)):
+    """Send the signed Callback document abroad (envio ao exterior) to an international recipient."""
+    p = await db.rlm_processes.find_one({"id": pid}, {"_id": 0})
+    if not p:
+        raise HTTPException(status_code=404, detail="Processo não encontrado")
+    signed_link = p.get("signedDocLink", "")
+    now = _now_iso()
+    updates = {
+        "exteriorEmail": payload.email,
+        "exteriorNome": payload.nome,
+        "envioExteriorDone": True,
+        "envioExteriorAt": now,
+        "updatedAt": now,
+    }
+    history = p.get("history", []) + [{
+        "from": p.get("status"), "to": p.get("status"),
+        "note": f"Callback enviado ao exterior para {payload.nome} <{payload.email}>",
+        "by": current.get("nome", ""), "at": now,
+    }]
+    updates["history"] = history
+    await db.rlm_processes.update_one({"id": pid}, {"$set": updates})
+
+    subject = f"[SMERA] Callback / Envio ao Exterior — {p.get('projeto')}"
+    email_result = await send_email(payload.email, subject, exterior_html(p.get("projeto", ""), p.get("titulo", ""), p.get("vendor", {}), signed_link))
+    return {"email": email_result, "emailConfigured": is_configured(), "signedLink": signed_link}
 
 
 @router.post("/{pid}/create-royalty")

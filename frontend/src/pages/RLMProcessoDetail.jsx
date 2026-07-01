@@ -127,6 +127,9 @@ const RLMProcessoDetail = () => {
   const [escNome, setEscNome] = useState('');
   const [escEmail, setEscEmail] = useState('');
   const [sending, setSending] = useState(false);
+  const [extNome, setExtNome] = useState('');
+  const [extEmail, setExtEmail] = useState('');
+  const [sendingExt, setSendingExt] = useState(false);
   const [showDoc, setShowDoc] = useState(false);
   const [viewStage, setViewStage] = useState(null);
   const [correcting, setCorrecting] = useState(false);
@@ -138,6 +141,8 @@ const RLMProcessoDetail = () => {
       setStages(s.data);
       setEscNome(p.data.escritorioNome || '');
       setEscEmail(p.data.escritorioEmail || '');
+      setExtNome(p.data.exteriorNome || '');
+      setExtEmail(p.data.exteriorEmail || '');
       setViewStage((cur) => cur || p.data.status);
     } catch (err) {
       toast.error(apiErrorMessage(err));
@@ -307,6 +312,40 @@ const RLMProcessoDetail = () => {
       toast.error(apiErrorMessage(err));
     } finally {
       setSending(false);
+    }
+  };
+
+  const sendExterior = async () => {
+    if (!extEmail) return;
+    setSendingExt(true);
+    try {
+      const { data } = await api.post(`/rlm-processes/${id}/send-exterior`, { email: extEmail, nome: extNome });
+      if (data.email?.sent) {
+        toast.success('Callback enviado ao exterior por e-mail');
+      } else {
+        const v = proc.vendor || {};
+        const subject = encodeURIComponent(`[SMERA] Callback / Envio ao Exterior — ${proc.projeto}`);
+        const bodyText = [
+          `Projeto: ${proc.projeto}`,
+          proc.titulo ? `Faixa: ${proc.titulo}` : null,
+          '',
+          'Fornecedor:',
+          `- Nome: ${v.nomeFornecedor || '—'}`,
+          `- CPF/CNPJ: ${v.cpfCnpj || '—'}`,
+          `- Banco: ${v.banco || '—'} | Agência: ${v.agencia || '—'} | Conta: ${v.conta || '—'}`,
+          '',
+          data.signedLink ? `Documento assinado: ${data.signedLink}` : 'Documento assinado em anexo (anexe manualmente).',
+          '',
+          'Sony Music',
+        ].filter((l) => l !== null).join('\n');
+        window.location.href = `mailto:${extEmail}?subject=${subject}&body=${encodeURIComponent(bodyText)}`;
+        toast.message('Abrindo seu e-mail com o resumo do Callback', { description: 'Anexe o documento assinado se necessário.' });
+      }
+      await load();
+    } catch (err) {
+      toast.error(apiErrorMessage(err));
+    } finally {
+      setSendingExt(false);
     }
   };
 
@@ -542,9 +581,21 @@ const RLMProcessoDetail = () => {
                 </div>
 
                 {isViewingCurrent && (
-                <label className="flex items-center gap-2 text-sm text-zinc-300 cursor-pointer">
-                  <input type="checkbox" checked={!!proc.envioExteriorDone} onChange={(e) => set({ envioExteriorDone: e.target.checked })} data-testid="envio-exterior-check" /> Envio ao exterior concluído
-                </label>
+                <div className="card-obsidian p-4 space-y-3">
+                  <Label className="overline text-sony-red flex items-center gap-2"><Send className="h-3.5 w-3.5" />4 · Envio ao Exterior</Label>
+                  <p className="text-xs text-zinc-500">Envie o Callback (dados do fornecedor + documento assinado) ao contato internacional.</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <Input className="input-obsidian" placeholder="Nome do contato (exterior)" value={extNome} onChange={(e) => setExtNome(e.target.value)} data-testid="ext-nome-input" />
+                    <Input className="input-obsidian" placeholder="E-mail do contato (exterior)" value={extEmail} onChange={(e) => setExtEmail(e.target.value)} data-testid="ext-email-input" />
+                  </div>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <Button className="btn-sony" onClick={sendExterior} disabled={sendingExt || !extEmail} data-testid="send-exterior-btn">{sendingExt ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Send className="h-4 w-4 mr-1" />}Enviar ao Exterior</Button>
+                    <label className="flex items-center gap-2 text-sm text-zinc-300 cursor-pointer">
+                      <input type="checkbox" checked={!!proc.envioExteriorDone} onChange={(e) => set({ envioExteriorDone: e.target.checked })} data-testid="envio-exterior-check" /> Envio ao exterior concluído
+                    </label>
+                  </div>
+                  {proc.exteriorEmail && <p className="text-xs text-emerald-400">Enviado para {proc.exteriorNome} &lt;{proc.exteriorEmail}&gt;{proc.envioExteriorAt ? ` em ${proc.envioExteriorAt}` : ''}</p>}
+                </div>
                 )}
                 {isViewingCurrent && <div className="flex gap-2"><Button variant="outline" className="btn-sony-outline" onClick={() => save()} disabled={saving} data-testid="save-btn"><Save className="h-4 w-4 mr-1" />Salvar</Button>{advanceBtn('Avançar para Input no Sistema')}</div>}
               </>
