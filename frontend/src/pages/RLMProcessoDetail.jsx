@@ -87,7 +87,12 @@ const StageSummary = ({ stageKey, proc }) => {
         <div className="card-obsidian p-3">
           <p className="overline mb-2">ISRCs / GRIDs ({list.length})</p>
           {list.length === 0 ? <p className="text-xs text-zinc-600">Nenhum.</p> :
-            list.map((x, i) => (<div key={i} className="flex justify-between text-sm text-zinc-300 py-0.5"><span>ISRC: {x.isrc || '—'}</span><span className="text-zinc-400">GRID: {x.grid || '—'}</span></div>))}
+            list.map((x, i) => (
+              <div key={i} className="py-1.5 border-b border-white/5 last:border-0">
+                <p className="text-sm text-zinc-200">{x.faixa || 'Faixa —'}</p>
+                <p className="text-xs text-zinc-500">ISRC: {x.isrc || '—'} · GRID: {x.grid || '—'}</p>
+              </div>
+            ))}
         </div>
       );
     }
@@ -268,8 +273,9 @@ const RLMProcessoDetail = () => {
 
   const participantes = proc.escritorio?.participantes || [];
   const allocOk = isAllocationValid(participantes, proc.escritorio?.royaltyPorFaixa);
+  const participantesBankOk = participantes.every((p) => p.nome && p.banco && p.agencia && p.conta);
   const isrcs = proc.isrcs || [];
-  const addIsrc = () => set({ isrcs: [...isrcs, { isrc: '', grid: '' }] });
+  const addIsrc = () => set({ isrcs: [...isrcs, { faixa: '', isrc: '', grid: '' }] });
   const updIsrc = (idx, patch) => set({ isrcs: isrcs.map((x, i) => (i === idx ? { ...x, ...patch } : x)) });
   const delIsrc = (idx) => set({ isrcs: isrcs.filter((_, i) => i !== idx) });
   const publicLink = `${window.location.origin}/form/escritorio/${proc.escritorioToken}`;
@@ -422,10 +428,11 @@ const RLMProcessoDetail = () => {
                 {isViewingCurrent && (
                 <div className="flex gap-2">
                   <Button variant="outline" className="btn-sony-outline" onClick={() => save()} disabled={saving || !allocOk} data-testid="save-btn"><Save className="h-4 w-4 mr-1" />Salvar</Button>
-                  <Button className="btn-sony" onClick={() => next && transition(next.key)} disabled={!allocOk} data-testid="advance-btn"><ChevronRight className="h-4 w-4 mr-1" />Enviar para Validação</Button>
+                  <Button className="btn-sony" onClick={() => next && transition(next.key)} disabled={!allocOk || !participantesBankOk} data-testid="advance-btn"><ChevronRight className="h-4 w-4 mr-1" />Enviar para Validação</Button>
                 </div>
                 )}
                 {!allocOk && <p className="text-xs text-red-400">A soma dos participantes ultrapassa o total da faixa — ajuste antes de salvar.</p>}
+                {allocOk && !participantesBankOk && <p className="text-xs text-amber-400">Todos os participantes precisam ter nome, banco, agência e conta preenchidos para avançar.</p>}
               </>
             )}
 
@@ -450,15 +457,16 @@ const RLMProcessoDetail = () => {
                 </div>
                 <div className="space-y-2">
                   {isrcs.map((x, idx) => (
-                    <div key={idx} className="grid grid-cols-1 sm:grid-cols-2 gap-3 border border-white/10 rounded-md p-3" data-testid={`isrc-row-${idx}`}>
-                      <Field label={`ISRC #${idx + 1}`}><Input className="input-obsidian" value={x.isrc} onChange={(e) => updIsrc(idx, { isrc: e.target.value })} data-testid={`field-isrc-${idx}`} /></Field>
+                    <div key={idx} className="grid grid-cols-1 sm:grid-cols-3 gap-3 border border-white/10 rounded-md p-3" data-testid={`isrc-row-${idx}`}>
+                      <Field label={`Faixa #${idx + 1}`}><Input className="input-obsidian" placeholder="Nome da faixa" value={x.faixa || ''} onChange={(e) => updIsrc(idx, { faixa: e.target.value })} data-testid={`field-faixa-${idx}`} /></Field>
+                      <Field label="ISRC"><Input className="input-obsidian" value={x.isrc} onChange={(e) => updIsrc(idx, { isrc: e.target.value })} data-testid={`field-isrc-${idx}`} /></Field>
                       <div className="flex gap-2 items-end">
                         <div className="flex-1"><Field label="GRID"><Input className="input-obsidian" value={x.grid} onChange={(e) => updIsrc(idx, { grid: e.target.value })} data-testid={`field-grid-${idx}`} /></Field></div>
                         <Button type="button" variant="ghost" size="icon" className="h-9 w-9 text-zinc-500 hover:text-red-400 mb-0.5" onClick={() => delIsrc(idx)} data-testid={`del-isrc-${idx}`}><Trash2 className="h-4 w-4" /></Button>
                       </div>
                     </div>
                   ))}
-                  {isrcs.length === 0 && <p className="text-xs text-zinc-600">Nenhum ISRC/GRID adicionado. Clique em "Adicionar ISRC/GRID".</p>}
+                  {isrcs.length === 0 && <p className="text-xs text-zinc-600">Nenhum ISRC/GRID adicionado. Clique em Adicionar ISRC/GRID.</p>}
                 </div>
                 {isViewingCurrent && <div className="flex gap-2"><Button variant="outline" className="btn-sony-outline" onClick={() => save()} disabled={saving} data-testid="save-btn"><Save className="h-4 w-4 mr-1" />Salvar</Button>{advanceBtn('Concluir ISRC/GRID')}</div>}
               </>
@@ -466,17 +474,20 @@ const RLMProcessoDetail = () => {
 
             {showStage('aguardando_vendor_ops') && (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Field label="Nome do Fornecedor"><Input className="input-obsidian" value={proc.vendor.nomeFornecedor} onChange={(e) => setVendor({ nomeFornecedor: e.target.value })} data-testid="field-vendor-nome" /></Field>
-                  <Field label="CPF / CNPJ do Fornecedor"><DocInput value={proc.vendor.cpfCnpj} onChange={(v) => setVendor({ cpfCnpj: v })} testid="field-vendor-cpfcnpj" /></Field>
-                  <Field label="Banco"><BankSelect value={proc.vendor.banco} onChange={(v) => setVendor({ banco: v })} testid="field-vendor-banco" /></Field>
-                  <Field label="Agência"><Input className="input-obsidian" value={proc.vendor.agencia} onChange={(e) => setVendor({ agencia: e.target.value })} /></Field>
-                  <Field label="Conta Corrente"><Input className="input-obsidian" value={proc.vendor.conta} onChange={(e) => setVendor({ conta: e.target.value })} /></Field>
+                <div className="card-obsidian p-4 space-y-3">
+                  <Label className="overline text-sony-red">1 · Dados do Vendor (Fornecedor)</Label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Field label="Nome do Fornecedor"><Input className="input-obsidian" value={proc.vendor.nomeFornecedor} onChange={(e) => setVendor({ nomeFornecedor: e.target.value })} data-testid="field-vendor-nome" /></Field>
+                    <Field label="CPF / CNPJ do Fornecedor"><DocInput value={proc.vendor.cpfCnpj} onChange={(v) => setVendor({ cpfCnpj: v })} testid="field-vendor-cpfcnpj" /></Field>
+                    <Field label="Banco"><BankSelect value={proc.vendor.banco} onChange={(v) => setVendor({ banco: v })} testid="field-vendor-banco" /></Field>
+                    <Field label="Agência"><Input className="input-obsidian" value={proc.vendor.agencia} onChange={(e) => setVendor({ agencia: e.target.value })} /></Field>
+                    <Field label="Conta Corrente"><Input className="input-obsidian" value={proc.vendor.conta} onChange={(e) => setVendor({ conta: e.target.value })} /></Field>
+                  </div>
                 </div>
                 {/* Callback document (Confirmação de dados bancários) */}
                 <div className="card-obsidian p-4 space-y-3">
-                  <Label className="overline flex items-center gap-2"><FileText className="h-3.5 w-3.5 text-sony-red" />Documento de Callback — Confirmação de dados bancários</Label>
-                  <p className="text-xs text-zinc-500">Este é o <strong className="text-zinc-300">template padrão de Envio ao Exterior</strong>. Gere/imprima, colete a assinatura e anexe o documento assinado abaixo.</p>
+                  <Label className="overline text-sony-red flex items-center gap-2"><FileText className="h-3.5 w-3.5" />2 · Documento de Callback (template de Envio ao Exterior)</Label>
+                  <p className="text-xs text-zinc-500">Gere/imprima a Confirmação de dados bancários, colete a assinatura e anexe o documento assinado na seção 3.</p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Field label="Data"><Input className="input-obsidian" placeholder="dd/mm/aaaa" value={proc.callbackDoc.data} onChange={(e) => setCb({ data: e.target.value })} data-testid="cb-data" /></Field>
                     <Field label="Solicitante (Sony)"><Input className="input-obsidian" value={proc.callbackDoc.solicitante} onChange={(e) => setCb({ solicitante: e.target.value })} data-testid="cb-solicitante" /></Field>
@@ -492,7 +503,7 @@ const RLMProcessoDetail = () => {
 
                 {/* Signed document: external link OR upload */}
                 <div className="card-obsidian p-4 space-y-3">
-                  <Label className="overline flex items-center gap-2"><Paperclip className="h-3.5 w-3.5 text-sony-red" />Documento assinado (Envio ao Exterior)</Label>
+                  <Label className="overline text-sony-red flex items-center gap-2"><Paperclip className="h-3.5 w-3.5" />3 · Documento assinado (Envio ao Exterior)</Label>
                   <Field label="Link externo (SharePoint, etc.)" full><Input className="input-obsidian" placeholder="https://..." value={proc.signedDocLink} onChange={(e) => onSignedLink(e.target.value)} data-testid="field-signed-link" /></Field>
                   <div className="flex flex-wrap items-center gap-3">
                     <label className="btn-sony-outline cursor-pointer text-sm inline-flex items-center" data-testid="upload-signed-label">

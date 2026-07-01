@@ -1,0 +1,34 @@
+{
+  "summary": "Frontend-only verification of SMERA RLM Fase 1 new features (bank-required gating, ISRC faixa field, License In prefill, Etapa 5 layout, CSS overline fix) + regressions. All 5 requested scenarios PASS end-to-end with 0 console errors.",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/backend_test.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "#7 License In prefill VERIFIED: NewProcessDialog.pickLicense sets projeto/titulo/artistaPrincipal/licenseInId from the selected contract. Backend GET /api/rlm-processes/{id} returned licenseInId=b9e2be4f-... after creation → persistence confirmed. 80 License In options loaded in the select.",
+    "#1 Bank data gating VERIFIED: in RLMProcessoDetail.jsx, participantesBankOk = every participant has nome+banco+agencia+conta. With participant royalty=20 but empty bank, advance-btn.disabled=true AND amber hint 'Todos os participantes precisam ter nome, banco, agência e conta preenchidos para avançar.' is displayed. After filling banco (from dropdown, 88 options), agência and conta, advance-btn becomes enabled.",
+    "#3 ISRC faixa VERIFIED: add-isrc-btn creates a row with THREE fields (field-faixa-0, field-isrc-0, field-grid-0). Saved values persisted in backend: isrcs[0]={faixa:'Faixa Teste 1', isrc:'BRSNE2500001', grid:'A1-2425-00000001-A'}.",
+    "#2/#6 CSS overline VERIFIED: 4/4 .overline elements on process detail page have computed textDecorationLine === 'none' (0 with underline/overline). Zero console errors across the full flow.",
+    "#5 Etapa 5 layout code-review: RLMProcessoDetail.jsx renders three numbered sections '1 · Dados do Vendor', '2 · Documento de Callback', '3 · Documento assinado' inside separate card-obsidian blocks with Sony red overline labels — matches request.",
+    "REGRESSIONS VERIFIED: (a) royalty sum guard — setting participant royalty=80 with total=50 shows red 'ultrapassa o total' hint and disables save-btn; (b) main artist remaining share auto-computed (total 50 - participant 20 = 30% shown in ParticipantesEditor); (c) bank dropdown works for escritório (field-esc-banco) and participants (participante-banco-0); (d) multiple ISRC rows add/remove works (added row 1 then del-isrc-1 removed it); (e) correction mode still works — correct-btn on completed stage exposes save-correction-btn/cancel-correction-btn.",
+    "MINOR (carry-over cosmetic from iter_2/3): header still shows the legacy admin name for the new admin — not blocking."
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "not re-run this iteration (frontend-only request); backend confirmed via 2 GET /api/rlm-processes/{id} calls (licenseInId + isrcs persistence)",
+    "frontend": "100% (7/7 scenarios: License In prefill, licenseInId persistence, bank-gating disable + amber hint, bank-gating enable, sum-over-total guard, ISRC faixa persistence, overline no line, plus correction/multi-ISRC regressions)"
+  },
+  "test_credentials": "Admin pablo.duarte@sonymusic.com / 123456 (from /app/memory/test_credentials.md).",
+  "seed_data_creation": "Created 1 test process id=0ab38dcc-40bf-4635-8f6f-1c98fc508f2d (projeto='TEST_RLM_135318', prefilled from License In 'Rubi - Projeto 01' → 'Rubi' / 'Pabllo Vittar'). Advanced through royalty%, escritório, validacao_ar and reached stage 'aguardando_isrc_label' with a persisted ISRC row.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "New testids in this round: license-in-select, np-projeto, np-titulo, np-artista, np-create-btn, new-process-dialog, field-faixa-<n>, field-royalty-total, participante-banco-<n>, participante-agencia-<n>, participante-conta-<n>. participantesBankOk gate lives in RLMProcessoDetail.jsx line ~276. Backend uses licenseInId field on process. CSS overline rule with !important is in /app/frontend/src/index.css. Test process 0ab38dcc-40bf-4635-8f6f-1c98fc508f2d left at stage aguardando_isrc_label — can be advanced further to reach vendor/upload stage.",
+  "rca_of_the_issue": "N/A — this iteration validated new features; no bugs found. All requested user stories pass."
+}

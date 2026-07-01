@@ -68,9 +68,12 @@
         @apply font-heading font-medium text-lg tracking-tight;
     }
     
-    /* Overlines and Labels (uppercase retained) */
+    /* Overlines and Labels (uppercase retained). 
+       Force no text-decoration to override Tailwind's built-in `overline` utility
+       (which would otherwise draw a line above every label). */
     .overline {
         @apply font-heading text-[10px] sm:text-xs font-semibold tracking-[0.2em] uppercase text-zinc-500;
+        text-decoration: none !important;
     }
     
     /* Body Text */
