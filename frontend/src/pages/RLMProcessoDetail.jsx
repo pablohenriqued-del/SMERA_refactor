@@ -14,6 +14,7 @@ import { validateDoc, formatCpfCnpj } from '../lib/validators';
 import { ParticipantesEditor, isAllocationValid } from '../components/ParticipantesEditor';
 import { WaitingBadge } from '../components/WaitingBadge';
 import { BankSelect } from '../components/BankSelect';
+import { stageBadgeClass } from './RLMProcessos';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
 import { CallbackDocPreview, printCallbackDoc } from '../components/CallbackDocument';
 import { useAuth } from '../context/AuthContext';
@@ -311,11 +312,28 @@ const RLMProcessoDetail = () => {
 
   return (
     <motion.div className="space-y-6" variants={containerVariants} initial="hidden" animate="visible" data-testid="rlm-processo-detail-page">
-      <motion.div variants={itemVariants} className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => navigate('/rlm/processos')} className="text-zinc-400 hover:text-white hover:bg-white/5" data-testid="back-btn"><ArrowLeft className="h-5 w-5" /></Button>
-        <div>
-          <h1 className="heading-lg text-white" data-testid="processo-title">{proc.projeto}</h1>
-          <p className="text-base md:text-lg text-zinc-300 mt-0.5 font-medium">{proc.titulo}{proc.artistaPrincipal ? <span className="text-zinc-500"> • {proc.artistaPrincipal}</span> : ''}</p>
+      <motion.div variants={itemVariants} className="sticky top-16 z-30 -mx-4 lg:-mx-8 -mt-4 lg:-mt-8 px-4 lg:px-8 py-3 glass-dark border-b border-white/10 mb-2" data-testid="process-summary-header">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <Button variant="ghost" size="icon" onClick={() => navigate('/rlm/processos')} className="text-zinc-400 hover:text-white hover:bg-white/5 shrink-0" data-testid="back-btn"><ArrowLeft className="h-5 w-5" /></Button>
+            <div className="min-w-0">
+              <p className="overline truncate">{proc.projeto}</p>
+              <h1 className="font-heading text-xl md:text-2xl font-semibold text-white truncate leading-tight" data-testid="processo-title">{proc.titulo || proc.projeto}</h1>
+              {proc.artistaPrincipal && <p className="text-sm text-zinc-400 truncate">{proc.artistaPrincipal}</p>}
+            </div>
+          </div>
+          <div className="flex items-center gap-4 shrink-0 pl-11 md:pl-0">
+            <div className="text-left md:text-right">
+              <p className="overline">Royalty da Faixa</p>
+              <p className={`font-heading text-2xl font-semibold ${(Number(proc.escritorio?.royaltyPorFaixa) || 0) > 0 ? 'text-emerald-400' : 'text-zinc-500'}`} data-testid="summary-total-percentage">{Number(proc.escritorio?.royaltyPorFaixa) || 0}%</p>
+            </div>
+            <div className="h-10 w-px bg-white/10" />
+            <div className="text-left md:text-right">
+              <p className="overline mb-1">Etapa Atual</p>
+              <Badge className={`${stageBadgeClass(proc.status)} text-xs`}>{cur.order}. {cur.label}</Badge>
+              <p className="text-[10px] text-zinc-500 mt-1">{cur.role}</p>
+            </div>
+          </div>
         </div>
       </motion.div>
 
