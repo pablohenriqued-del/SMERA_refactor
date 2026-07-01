@@ -9,7 +9,6 @@ import { Card, CardContent } from '../components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
 import { useCrud } from '../hooks/useCrud';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Label } from '../components/ui/label';
 import { ConfirmDeleteDialog } from '../components/ConfirmDeleteDialog';
 import { RlmTabs } from '../components/RlmTabs';
@@ -22,16 +21,12 @@ export const stageBadgeClass = (key) => {
   return 'badge-warning';
 };
 
-const NewProcessDialog = ({ open, onClose, onCreate, licensesIn }) => {
-  const [form, setForm] = useState({ projeto: '', titulo: '', artistaPrincipal: '', licenseInId: '' });
+const NewProcessDialog = ({ open, onClose, onCreate }) => {
+  const [form, setForm] = useState({ projeto: '', titulo: '', artistaPrincipal: '' });
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => { if (open) setForm({ projeto: '', titulo: '', artistaPrincipal: '', licenseInId: '' }); }, [open]);
+  useEffect(() => { if (open) setForm({ projeto: '', titulo: '', artistaPrincipal: '' }); }, [open]);
 
-  const pickLicense = (id) => {
-    const l = licensesIn.find((x) => x.id === id);
-    if (l) setForm({ projeto: l.projeto, titulo: l.titulo, artistaPrincipal: l.artista, licenseInId: l.id });
-  };
   const upd = (patch) => setForm((f) => ({ ...f, ...patch }));
 
   const submit = async (e) => {
@@ -45,21 +40,9 @@ const NewProcessDialog = ({ open, onClose, onCreate, licensesIn }) => {
       <DialogContent className="glass-dark border-white/10 text-white max-w-lg" data-testid="new-process-dialog">
         <DialogHeader>
           <DialogTitle className="font-heading uppercase tracking-wide text-lg">Novo Processo RLM</DialogTitle>
-          <DialogDescription className="text-zinc-500">Aproveite os dados de um contrato License In existente ou preencha manualmente.</DialogDescription>
+          <DialogDescription className="text-zinc-500">Inicie um novo processo da Fase 1.</DialogDescription>
         </DialogHeader>
         <form onSubmit={submit} className="space-y-4 mt-2">
-          <div>
-            <Label className="overline block mb-1.5">Baseado em License In (opcional)</Label>
-            <Select value={form.licenseInId || undefined} onValueChange={pickLicense}>
-              <SelectTrigger className="input-obsidian" data-testid="license-in-select"><SelectValue placeholder="Selecione um contrato License In..." /></SelectTrigger>
-              <SelectContent className="bg-sony-paper border-white/10 text-white max-h-72">
-                {licensesIn.map((l) => (
-                  <SelectItem key={l.id} value={l.id} className="text-zinc-300 focus:bg-white/5 focus:text-white">{l.projeto} — {l.titulo} · {l.artista}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {form.licenseInId && <p className="text-xs text-emerald-400 mt-1">Dados preenchidos a partir do License In. Você pode ajustar abaixo.</p>}
-          </div>
           <div><Label className="overline block mb-1.5">Projeto</Label><Input className="input-obsidian" required value={form.projeto} onChange={(e) => upd({ projeto: e.target.value })} data-testid="np-projeto" /></div>
           <div><Label className="overline block mb-1.5">Título / Faixa</Label><Input className="input-obsidian" value={form.titulo} onChange={(e) => upd({ titulo: e.target.value })} data-testid="np-titulo" /></div>
           <div><Label className="overline block mb-1.5">Artista Principal</Label><Input className="input-obsidian" value={form.artistaPrincipal} onChange={(e) => upd({ artistaPrincipal: e.target.value })} data-testid="np-artista" /></div>
@@ -80,14 +63,12 @@ const RLMProcessos = () => {
   const navigate = useNavigate();
   const { items, loading, create, remove } = useCrud('/rlm-processes', 'Processo');
   const [stages, setStages] = useState([]);
-  const [licensesIn, setLicensesIn] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [formOpen, setFormOpen] = useState(false);
   const [deleting, setDeleting] = useState(null);
 
   useEffect(() => {
     api.get('/rlm/stages').then(({ data }) => setStages(data)).catch(() => {});
-    api.get('/licenses-in').then(({ data }) => setLicensesIn(data)).catch(() => {});
   }, []);
 
   const stageMap = useMemo(() => Object.fromEntries(stages.map((s) => [s.key, s])), [stages]);
@@ -167,7 +148,7 @@ const RLMProcessos = () => {
         </CardContent></Card>
       </motion.div>
 
-      <NewProcessDialog open={formOpen} onClose={() => setFormOpen(false)} licensesIn={licensesIn} onCreate={async (d) => { const p = await create(d); if (p?.id) navigate(`/rlm/processos/${p.id}`); }} />
+      <NewProcessDialog open={formOpen} onClose={() => setFormOpen(false)} onCreate={async (d) => { const p = await create(d); if (p?.id) navigate(`/rlm/processos/${p.id}`); }} />
       <ConfirmDeleteDialog open={!!deleting} onClose={() => setDeleting(null)} onConfirm={() => { remove(deleting.id); setDeleting(null); }} itemName={deleting?.projeto} />
     </motion.div>
   );
