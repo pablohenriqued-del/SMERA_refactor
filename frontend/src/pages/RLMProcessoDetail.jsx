@@ -13,10 +13,11 @@ import api, { apiErrorMessage } from '../lib/api';
 import { validateDoc, formatCpfCnpj } from '../lib/validators';
 import { ParticipantesEditor, isAllocationValid } from '../components/ParticipantesEditor';
 import { WaitingBadge } from '../components/WaitingBadge';
+import { BankSelect } from '../components/BankSelect';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
 import { CallbackDocPreview, printCallbackDoc } from '../components/CallbackDocument';
 import { useAuth } from '../context/AuthContext';
-import { FileText, Printer, Upload, Paperclip } from 'lucide-react';
+import { FileText, Printer, Upload, Paperclip, Pencil, Plus, Trash2 } from 'lucide-react';
 
 const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.05 } } };
 const itemVariants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };
@@ -69,14 +70,27 @@ const StageSummary = ({ stageKey, proc }) => {
           {esc.submittedAt && <p className="text-xs text-emerald-400">Último preenchimento do escritório: {esc.submittedAt}</p>}
           {grid(<><SumItem label="Beneficiário" value={esc.artistaBeneficiario} /><SumItem label="CPF / CNPJ" value={esc.cpfCnpj} /><SumItem label="Banco / Ag / Conta" value={`${esc.banco || ''} ${esc.agencia || ''} ${esc.conta || ''}`.trim()} /><SumItem label="Royalty Total da Faixa" value={`${esc.royaltyPorFaixa || 0}%`} /></>)}
           <div className="card-obsidian p-3">
-            <p className="overline mb-2">Participantes ({(esc.participantes || []).length})</p>
+            <p className="overline mb-2">Participantes ({(esc.participantes || []).length}) — royalties e contas</p>
             {(esc.participantes || []).length === 0 ? <p className="text-xs text-zinc-600">Nenhum.</p> :
-              (esc.participantes || []).map((p, i) => (<div key={i} className="flex justify-between text-sm text-zinc-300 py-0.5"><span>{p.nome || '—'}</span><span className="text-zinc-400">{p.royalty || 0}%</span></div>))}
+              (esc.participantes || []).map((p, i) => (
+                <div key={i} className="py-1.5 border-b border-white/5 last:border-0">
+                  <div className="flex justify-between text-sm text-zinc-200"><span>{p.nome || '—'}</span><span className="text-zinc-400">{p.royalty || 0}%</span></div>
+                  <p className="text-xs text-zinc-500">{p.cpfCnpj || '—'} · {p.banco || '—'} · Ag {p.agencia || '—'} · Cc {p.conta || '—'}</p>
+                </div>
+              ))}
           </div>
         </div>
       );
-    case 'aguardando_isrc_label':
-      return grid(<><SumItem label="ISRC" value={proc.isrc} /><SumItem label="GRID" value={proc.grid} /></>);
+    case 'aguardando_isrc_label': {
+      const list = (proc.isrcs && proc.isrcs.length) ? proc.isrcs : ((proc.isrc || proc.grid) ? [{ isrc: proc.isrc, grid: proc.grid }] : []);
+      return (
+        <div className="card-obsidian p-3">
+          <p className="overline mb-2">ISRCs / GRIDs ({list.length})</p>
+          {list.length === 0 ? <p className="text-xs text-zinc-600">Nenhum.</p> :
+            list.map((x, i) => (<div key={i} className="flex justify-between text-sm text-zinc-300 py-0.5"><span>ISRC: {x.isrc || '—'}</span><span className="text-zinc-400">GRID: {x.grid || '—'}</span></div>))}
+        </div>
+      );
+    }
     case 'aguardando_vendor_ops':
       return (
         <div className="space-y-3">
@@ -87,7 +101,7 @@ const StageSummary = ({ stageKey, proc }) => {
     case 'aguardando_input_sistema':
       return grid(<><SumItem label="Vendor no sistema" value={proc.vendorInputDone ? 'Sim' : 'Não'} /><SumItem label="ISRCs no sistema" value={proc.isrcInputDone ? 'Sim' : 'Não'} /></>);
     case 'validacao_final':
-      return grid(<><SumItem label="Vendor" value={`${v.nomeFornecedor || '—'} (${v.cpfCnpj || '—'})`} /><SumItem label="ISRC / GRID" value={`${proc.isrc || '—'} / ${proc.grid || '—'}`} /></>);
+      return grid(<><SumItem label="Vendor" value={`${v.nomeFornecedor || '—'} (${v.cpfCnpj || '—'})`} /><SumItem label="ISRCs / GRIDs" value={`${(proc.isrcs?.length) || ((proc.isrc || proc.grid) ? 1 : 0)} item(ns)`} /></>);
     case 'pronto_royalties':
       return grid(<SumItem label="Cadastro de Royalties (Fase 2)" value={proc.royaltyRightId ? 'Criado' : 'Pendente'} />);
     default:
@@ -109,6 +123,7 @@ const RLMProcessoDetail = () => {
   const [sending, setSending] = useState(false);
   const [showDoc, setShowDoc] = useState(false);
   const [viewStage, setViewStage] = useState(null);
+  const [correcting, setCorrecting] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -155,7 +170,7 @@ const RLMProcessoDetail = () => {
     fd.append('file', file);
     setSaving(true);
     try {
-      const { data } = await api.post(`/rlm-processes/${id}/upload-signed`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+      const { data } = await api.post(`/rlm-processes/${id}/upload-signed`, fd);
       set({ signedDocFile: data, signedAt: proc.signedAt || todayStr() });
       toast.success('Documento assinado enviado');
     } catch (err) {
@@ -186,9 +201,11 @@ const RLMProcessoDetail = () => {
       const payload = {
         artistRoyaltyPercent: Number(proc.artistRoyaltyPercent) || 0,
         escritorio: proc.escritorio,
-        isrc: proc.isrc, grid: proc.grid,
+        isrc: proc.isrc, grid: proc.grid, isrcs: proc.isrcs || [],
         vendor: proc.vendor, callbackDoc: proc.callbackDoc,
         signedDocLink: proc.signedDocLink,
+        signedDocFile: proc.signedDocFile || {},
+        signedAt: proc.signedAt || '',
         envioExteriorDone: !!proc.envioExteriorDone,
         vendorInputDone: !!proc.vendorInputDone,
         isrcInputDone: !!proc.isrcInputDone,
@@ -229,6 +246,18 @@ const RLMProcessoDetail = () => {
   const viewIdx = stages.findIndex((s) => s.key === viewStage);
   const viewMeta = stages[viewIdx] || cur;
   const isViewingCurrent = viewStage === proc.status;
+  const EDITABLE_STAGES = ['aguardando_royalty_ar', 'aguardando_escritorio', 'aguardando_isrc_label', 'aguardando_vendor_ops', 'aguardando_input_sistema'];
+  const canCorrect = !isViewingCurrent && EDITABLE_STAGES.includes(viewStage);
+  const showStage = (k) => (isViewingCurrent && proc.status === k) || (correcting && viewStage === k);
+
+  const saveCorrection = async () => {
+    if (!(await save(true))) return;
+    try { await api.post(`/rlm-processes/${id}/log-correction`, { stage: viewStage }); } catch { /* ignore */ }
+    await load();
+    setCorrecting(false);
+    toast.success('Correção salva e registrada no histórico');
+  };
+  const cancelCorrection = async () => { setCorrecting(false); await load(); };
 
   const advanceBtn = (label = 'Avançar') => next && (
     <Button className="btn-sony" onClick={() => transition(next.key)} data-testid="advance-btn"><ChevronRight className="h-4 w-4 mr-1" />{label}</Button>
@@ -239,6 +268,10 @@ const RLMProcessoDetail = () => {
 
   const participantes = proc.escritorio?.participantes || [];
   const allocOk = isAllocationValid(participantes, proc.escritorio?.royaltyPorFaixa);
+  const isrcs = proc.isrcs || [];
+  const addIsrc = () => set({ isrcs: [...isrcs, { isrc: '', grid: '' }] });
+  const updIsrc = (idx, patch) => set({ isrcs: isrcs.map((x, i) => (i === idx ? { ...x, ...patch } : x)) });
+  const delIsrc = (idx) => set({ isrcs: isrcs.filter((_, i) => i !== idx) });
   const publicLink = `${window.location.origin}/form/escritorio/${proc.escritorioToken}`;
 
   const copyLink = () => {
@@ -275,8 +308,8 @@ const RLMProcessoDetail = () => {
       <motion.div variants={itemVariants} className="flex items-center gap-4">
         <Button variant="ghost" size="icon" onClick={() => navigate('/rlm/processos')} className="text-zinc-400 hover:text-white hover:bg-white/5" data-testid="back-btn"><ArrowLeft className="h-5 w-5" /></Button>
         <div>
-          <h1 className="heading-md text-white" data-testid="processo-title">{proc.projeto}</h1>
-          <p className="body-sm text-zinc-500">{proc.titulo} {proc.artistaPrincipal ? `• ${proc.artistaPrincipal}` : ''}</p>
+          <h1 className="heading-lg text-white" data-testid="processo-title">{proc.projeto}</h1>
+          <p className="text-base md:text-lg text-zinc-300 mt-0.5 font-medium">{proc.titulo}{proc.artistaPrincipal ? <span className="text-zinc-500"> • {proc.artistaPrincipal}</span> : ''}</p>
         </div>
       </motion.div>
 
@@ -319,32 +352,42 @@ const RLMProcessoDetail = () => {
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="font-heading text-white uppercase tracking-wide text-sm">Etapa {viewMeta.order}: {viewMeta.label}</CardTitle>
             <div className="flex items-center gap-2">
-              {!isViewingCurrent && <Badge className="badge-warning text-xs">Somente leitura</Badge>}
+              {correcting && <Badge className="badge-warning text-xs">Modo correção</Badge>}
+              {!isViewingCurrent && !correcting && <Badge className="badge-warning text-xs">Somente leitura</Badge>}
               <Badge className="badge-info text-xs">{viewMeta.role}</Badge>
             </div>
           </CardHeader>
           <CardContent className="space-y-5">
 
-            {!isViewingCurrent ? (
+            {(!isViewingCurrent && !correcting) ? (
               <>
                 <StageSummary stageKey={viewStage} proc={proc} />
-                <Button variant="outline" className="btn-sony-outline" onClick={() => setViewStage(proc.status)} data-testid="goto-current-btn"><ChevronRight className="h-4 w-4 mr-1" />Ir para a etapa atual</Button>
+                <div className="flex gap-2">
+                  {canCorrect && <Button className="btn-sony" onClick={() => setCorrecting(true)} data-testid="correct-btn"><Pencil className="h-4 w-4 mr-1" />Corrigir esta etapa</Button>}
+                  <Button variant="outline" className="btn-sony-outline" onClick={() => setViewStage(proc.status)} data-testid="goto-current-btn"><ChevronRight className="h-4 w-4 mr-1" />Ir para a etapa atual</Button>
+                </div>
               </>
             ) : (<>
+              {correcting && (
+                <div className="p-3 rounded-md bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300">
+                  Editando a Etapa {viewMeta.order} ({viewMeta.label}) sem alterar o status do processo. A alteração será registrada no histórico.
+                </div>
+              )}
 
-            {proc.status === 'aguardando_royalty_ar' && (
+            {showStage('aguardando_royalty_ar') && (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Field label="% de Royalties do Artista">
                     <Input type="number" className="input-obsidian" value={proc.artistRoyaltyPercent} onChange={(e) => set({ artistRoyaltyPercent: e.target.value })} data-testid="field-artist-royalty" />
                   </Field>
                 </div>
-                <div className="flex gap-2">{<Button variant="outline" className="btn-sony-outline" onClick={() => save()} disabled={saving} data-testid="save-btn"><Save className="h-4 w-4 mr-1" />Salvar</Button>}{advanceBtn('Enviar ao Escritório')}</div>
+                {isViewingCurrent && <div className="flex gap-2"><Button variant="outline" className="btn-sony-outline" onClick={() => save()} disabled={saving} data-testid="save-btn"><Save className="h-4 w-4 mr-1" />Salvar</Button>{advanceBtn('Enviar ao Escritório')}</div>}
               </>
             )}
 
-            {proc.status === 'aguardando_escritorio' && (
+            {showStage('aguardando_escritorio') && (
               <>
+                {isViewingCurrent && (
                 <div className="card-obsidian p-4 space-y-3" data-testid="send-escritorio-panel">
                   <Label className="overline flex items-center gap-2"><Send className="h-3.5 w-3.5 text-sony-red" />Enviar formulário ao Escritório<WaitingBadge item={proc} className="ml-2" /></Label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -360,30 +403,33 @@ const RLMProcessoDetail = () => {
                   {proc.escritorioEmail && <p className="text-xs text-emerald-400">Último envio para: {proc.escritorioNome} &lt;{proc.escritorioEmail}&gt;</p>}
                   {proc.escritorioSubmissionCount > 0 && <p className="text-xs text-amber-400">O escritório já devolveu o preenchimento {proc.escritorioSubmissionCount}x.</p>}
                 </div>
+                )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Field label="Nome do Artista"><Input className="input-obsidian" value={proc.escritorio.nomeArtista} onChange={(e) => setEsc({ nomeArtista: e.target.value })} data-testid="field-esc-nomeArtista" /></Field>
                   <Field label="Tipo de Contrato do Artista"><Input className="input-obsidian" value={proc.escritorio.tipoContratoArtista} onChange={(e) => setEsc({ tipoContratoArtista: e.target.value })} /></Field>
                   <Field label="Artista Beneficiário"><Input className="input-obsidian" value={proc.escritorio.artistaBeneficiario} onChange={(e) => setEsc({ artistaBeneficiario: e.target.value })} /></Field>
                   <Field label="CPF / CNPJ"><DocInput value={proc.escritorio.cpfCnpj} onChange={(v) => setEsc({ cpfCnpj: v })} testid="field-esc-cpfcnpj" /></Field>
-                  <Field label="Banco"><Input className="input-obsidian" value={proc.escritorio.banco} onChange={(e) => setEsc({ banco: e.target.value })} /></Field>
+                  <Field label="Banco"><BankSelect value={proc.escritorio.banco} onChange={(v) => setEsc({ banco: v })} testid="field-esc-banco" /></Field>
                   <Field label="Agência"><Input className="input-obsidian" value={proc.escritorio.agencia} onChange={(e) => setEsc({ agencia: e.target.value })} /></Field>
                   <Field label="Conta"><Input className="input-obsidian" value={proc.escritorio.conta} onChange={(e) => setEsc({ conta: e.target.value })} /></Field>
                   <Field label="Royalty Total da Faixa (%)"><Input type="number" className="input-obsidian" value={proc.escritorio.royaltyPorFaixa} onChange={(e) => setEsc({ royaltyPorFaixa: Number(e.target.value) })} data-testid="field-royalty-total" /></Field>
                   <Field label="Observações" full><Textarea className="input-obsidian min-h-[70px]" value={proc.escritorio.observacoes} onChange={(e) => setEsc({ observacoes: e.target.value })} /></Field>
                 </div>
 
-                <ParticipantesEditor participantes={participantes} royaltyTotal={proc.escritorio.royaltyPorFaixa} onChange={(arr) => setEsc({ participantes: arr })} />
+                <ParticipantesEditor participantes={participantes} royaltyTotal={proc.escritorio.royaltyPorFaixa} onChange={(arr) => setEsc({ participantes: arr })} artistName={proc.artistaPrincipal} />
 
+                {isViewingCurrent && (
                 <div className="flex gap-2">
                   <Button variant="outline" className="btn-sony-outline" onClick={() => save()} disabled={saving || !allocOk} data-testid="save-btn"><Save className="h-4 w-4 mr-1" />Salvar</Button>
                   <Button className="btn-sony" onClick={() => next && transition(next.key)} disabled={!allocOk} data-testid="advance-btn"><ChevronRight className="h-4 w-4 mr-1" />Enviar para Validação</Button>
                 </div>
-                {!allocOk && <p className="text-xs text-red-400">A soma dos participantes ultrapassa o total da faixa — ajuste antes de salvar/avançar.</p>}
+                )}
+                {!allocOk && <p className="text-xs text-red-400">A soma dos participantes ultrapassa o total da faixa — ajuste antes de salvar.</p>}
               </>
             )}
 
-            {proc.status === 'validacao_ar' && (
+            {isViewingCurrent && proc.status === 'validacao_ar' && (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                   <div className="card-obsidian p-3"><p className="overline mb-1">Beneficiário</p><p className="text-white">{proc.escritorio.artistaBeneficiario || '—'}</p></div>
@@ -396,28 +442,41 @@ const RLMProcessoDetail = () => {
               </>
             )}
 
-            {proc.status === 'aguardando_isrc_label' && (
+            {showStage('aguardando_isrc_label') && (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Field label="ISRC"><Input className="input-obsidian" value={proc.isrc} onChange={(e) => set({ isrc: e.target.value })} data-testid="field-isrc" /></Field>
-                  <Field label="GRID"><Input className="input-obsidian" value={proc.grid} onChange={(e) => set({ grid: e.target.value })} data-testid="field-grid" /></Field>
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <Label className="overline">ISRCs / GRIDs ({isrcs.length})</Label>
+                  <Button type="button" variant="outline" size="sm" className="btn-sony-outline !py-1 !px-3 text-xs" onClick={addIsrc} data-testid="add-isrc-btn"><Plus className="h-3 w-3 mr-1" />Adicionar ISRC/GRID</Button>
                 </div>
-                <div className="flex gap-2"><Button variant="outline" className="btn-sony-outline" onClick={() => save()} disabled={saving} data-testid="save-btn"><Save className="h-4 w-4 mr-1" />Salvar</Button>{advanceBtn('Concluir ISRC/GRID')}</div>
+                <div className="space-y-2">
+                  {isrcs.map((x, idx) => (
+                    <div key={idx} className="grid grid-cols-1 sm:grid-cols-2 gap-3 border border-white/10 rounded-md p-3" data-testid={`isrc-row-${idx}`}>
+                      <Field label={`ISRC #${idx + 1}`}><Input className="input-obsidian" value={x.isrc} onChange={(e) => updIsrc(idx, { isrc: e.target.value })} data-testid={`field-isrc-${idx}`} /></Field>
+                      <div className="flex gap-2 items-end">
+                        <div className="flex-1"><Field label="GRID"><Input className="input-obsidian" value={x.grid} onChange={(e) => updIsrc(idx, { grid: e.target.value })} data-testid={`field-grid-${idx}`} /></Field></div>
+                        <Button type="button" variant="ghost" size="icon" className="h-9 w-9 text-zinc-500 hover:text-red-400 mb-0.5" onClick={() => delIsrc(idx)} data-testid={`del-isrc-${idx}`}><Trash2 className="h-4 w-4" /></Button>
+                      </div>
+                    </div>
+                  ))}
+                  {isrcs.length === 0 && <p className="text-xs text-zinc-600">Nenhum ISRC/GRID adicionado. Clique em "Adicionar ISRC/GRID".</p>}
+                </div>
+                {isViewingCurrent && <div className="flex gap-2"><Button variant="outline" className="btn-sony-outline" onClick={() => save()} disabled={saving} data-testid="save-btn"><Save className="h-4 w-4 mr-1" />Salvar</Button>{advanceBtn('Concluir ISRC/GRID')}</div>}
               </>
             )}
 
-            {proc.status === 'aguardando_vendor_ops' && (
+            {showStage('aguardando_vendor_ops') && (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Field label="Nome do Fornecedor"><Input className="input-obsidian" value={proc.vendor.nomeFornecedor} onChange={(e) => setVendor({ nomeFornecedor: e.target.value })} data-testid="field-vendor-nome" /></Field>
                   <Field label="CPF / CNPJ do Fornecedor"><DocInput value={proc.vendor.cpfCnpj} onChange={(v) => setVendor({ cpfCnpj: v })} testid="field-vendor-cpfcnpj" /></Field>
-                  <Field label="Banco"><Input className="input-obsidian" value={proc.vendor.banco} onChange={(e) => setVendor({ banco: e.target.value })} /></Field>
+                  <Field label="Banco"><BankSelect value={proc.vendor.banco} onChange={(v) => setVendor({ banco: v })} testid="field-vendor-banco" /></Field>
                   <Field label="Agência"><Input className="input-obsidian" value={proc.vendor.agencia} onChange={(e) => setVendor({ agencia: e.target.value })} /></Field>
                   <Field label="Conta Corrente"><Input className="input-obsidian" value={proc.vendor.conta} onChange={(e) => setVendor({ conta: e.target.value })} /></Field>
                 </div>
                 {/* Callback document (Confirmação de dados bancários) */}
                 <div className="card-obsidian p-4 space-y-3">
                   <Label className="overline flex items-center gap-2"><FileText className="h-3.5 w-3.5 text-sony-red" />Documento de Callback — Confirmação de dados bancários</Label>
+                  <p className="text-xs text-zinc-500">Este é o <strong className="text-zinc-300">template padrão de Envio ao Exterior</strong>. Gere/imprima, colete a assinatura e anexe o documento assinado abaixo.</p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Field label="Data"><Input className="input-obsidian" placeholder="dd/mm/aaaa" value={proc.callbackDoc.data} onChange={(e) => setCb({ data: e.target.value })} data-testid="cb-data" /></Field>
                     <Field label="Solicitante (Sony)"><Input className="input-obsidian" value={proc.callbackDoc.solicitante} onChange={(e) => setCb({ solicitante: e.target.value })} data-testid="cb-solicitante" /></Field>
@@ -453,14 +512,16 @@ const RLMProcessoDetail = () => {
                   )}
                 </div>
 
+                {isViewingCurrent && (
                 <label className="flex items-center gap-2 text-sm text-zinc-300 cursor-pointer">
                   <input type="checkbox" checked={!!proc.envioExteriorDone} onChange={(e) => set({ envioExteriorDone: e.target.checked })} data-testid="envio-exterior-check" /> Envio ao exterior concluído
                 </label>
-                <div className="flex gap-2"><Button variant="outline" className="btn-sony-outline" onClick={() => save()} disabled={saving} data-testid="save-btn"><Save className="h-4 w-4 mr-1" />Salvar</Button>{advanceBtn('Avançar para Input no Sistema')}</div>
+                )}
+                {isViewingCurrent && <div className="flex gap-2"><Button variant="outline" className="btn-sony-outline" onClick={() => save()} disabled={saving} data-testid="save-btn"><Save className="h-4 w-4 mr-1" />Salvar</Button>{advanceBtn('Avançar para Input no Sistema')}</div>}
               </>
             )}
 
-            {proc.status === 'aguardando_input_sistema' && (
+            {showStage('aguardando_input_sistema') && (
               <>
                 <div className="space-y-3">
                   <label className="flex items-center gap-2 text-sm text-zinc-300 cursor-pointer">
@@ -470,25 +531,27 @@ const RLMProcessoDetail = () => {
                     <input type="checkbox" checked={!!proc.isrcInputDone} onChange={(e) => set({ isrcInputDone: e.target.checked })} data-testid="isrc-input-check" /> ISRCs inseridos no sistema (Label)
                   </label>
                 </div>
+                {isViewingCurrent && (
                 <div className="flex gap-2">
                   <Button variant="outline" className="btn-sony-outline" onClick={() => save()} disabled={saving} data-testid="save-btn"><Save className="h-4 w-4 mr-1" />Salvar</Button>
                   <Button className="btn-sony" disabled={!(proc.vendorInputDone && proc.isrcInputDone)} onClick={() => transition(next.key)} data-testid="advance-btn"><ChevronRight className="h-4 w-4 mr-1" />Avançar para Validação Final</Button>
                 </div>
+                )}
               </>
             )}
 
-            {proc.status === 'validacao_final' && (
+            {isViewingCurrent && proc.status === 'validacao_final' && (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                   <div className="card-obsidian p-3"><p className="overline mb-1">Vendor</p><p className="text-white">{proc.vendor.nomeFornecedor || '—'} ({proc.vendor.cpfCnpj || '—'})</p></div>
-                  <div className="card-obsidian p-3"><p className="overline mb-1">ISRC / GRID</p><p className="text-white">{proc.isrc || '—'} / {proc.grid || '—'}</p></div>
+                  <div className="card-obsidian p-3"><p className="overline mb-1">ISRCs / GRIDs</p><p className="text-white">{(proc.isrcs?.length) || ((proc.isrc || proc.grid) ? 1 : 0)} item(ns)</p></div>
                 </div>
                 <Field label="Comentário (opcional)" full><Textarea className="input-obsidian min-h-[70px]" value={note} onChange={(e) => setNote(e.target.value)} data-testid="note-input" /></Field>
                 <div className="flex gap-2">{returnBtn('aguardando_input_sistema', 'Devolver')}{advanceBtn('Aprovar e Liberar Royalties')}</div>
               </>
             )}
 
-            {proc.status === 'pronto_royalties' && (
+            {isViewingCurrent && proc.status === 'pronto_royalties' && (
               <div className="text-center py-8">
                 <CheckCircle2 className="h-14 w-14 text-emerald-400 mx-auto mb-3" />
                 <p className="font-heading text-xl text-white mb-1">Processo concluído</p>
@@ -508,6 +571,12 @@ const RLMProcessoDetail = () => {
                   {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                   {proc.royaltyRightId ? 'Abrir Cadastro de Royalties (Fase 2)' : 'Criar Cadastro de Royalties (Fase 2)'}
                 </Button>
+              </div>
+            )}
+            {correcting && (
+              <div className="flex gap-2 pt-2 border-t border-white/5">
+                <Button variant="outline" className="btn-sony-outline" onClick={cancelCorrection} disabled={saving} data-testid="cancel-correction-btn">Cancelar</Button>
+                <Button className="btn-sony" onClick={saveCorrection} disabled={saving || !allocOk} data-testid="save-correction-btn">{saving ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Save className="h-4 w-4 mr-1" />}Salvar correção</Button>
               </div>
             )}
             </>)}

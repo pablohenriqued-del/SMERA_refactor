@@ -11,6 +11,7 @@ import { Textarea } from '../components/ui/textarea';
 import { Toaster } from '../components/ui/sonner';
 import { SonyLogo } from '../components/SonyLogo';
 import { ParticipantesEditor, isAllocationValid } from '../components/ParticipantesEditor';
+import { BankSelect } from '../components/BankSelect';
 import { validateDoc, formatCpfCnpj } from '../lib/validators';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
@@ -96,8 +97,8 @@ const EscritorioForm = () => {
         ) : (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
             <div className="card-obsidian p-5">
-              <h1 className="font-heading text-2xl text-white">{info.projeto}</h1>
-              <p className="text-zinc-500 text-sm mt-1">{info.titulo} {info.artistaPrincipal ? `• ${info.artistaPrincipal}` : ''}</p>
+              <h1 className="font-heading text-3xl sm:text-4xl font-semibold text-white">{info.projeto}</h1>
+              <p className="text-zinc-300 text-base sm:text-lg mt-1 font-medium">{info.titulo} {info.artistaPrincipal ? <span className="text-zinc-500">• {info.artistaPrincipal}</span> : ''}</p>
               <p className="text-sm text-zinc-400 mt-3">Royalty do artista principal: <strong className="text-white">{info.artistRoyaltyPercent}%</strong>. Preencha abaixo os percentuais e dados dos vendors. {info.submissionCount > 0 && <span className="text-amber-400">(já enviado {info.submissionCount}x)</span>}</p>
             </div>
 
@@ -110,7 +111,7 @@ const EscritorioForm = () => {
                   <Input className={`input-obsidian ${esc.cpfCnpj && !docOk ? '!border-red-500' : docOk && esc.cpfCnpj ? '!border-emerald-500' : ''}`} value={esc.cpfCnpj} onChange={(e) => set({ cpfCnpj: formatCpfCnpj(e.target.value) })} placeholder="CPF ou CNPJ" data-testid="f-cpfcnpj" />
                   {esc.cpfCnpj && <p className={`text-xs mt-1 ${docOk ? 'text-emerald-400' : 'text-red-400'}`}>{docRes.type || 'Documento'} {docOk ? 'válido' : 'inválido'}</p>}
                 </Field>
-                <Field label="Banco"><Input className="input-obsidian" value={esc.banco} onChange={(e) => set({ banco: e.target.value })} /></Field>
+                <Field label="Banco"><BankSelect value={esc.banco} onChange={(v) => set({ banco: v })} testid="f-banco" /></Field>
                 <Field label="Agência"><Input className="input-obsidian" value={esc.agencia} onChange={(e) => set({ agencia: e.target.value })} /></Field>
                 <Field label="Conta"><Input className="input-obsidian" value={esc.conta} onChange={(e) => set({ conta: e.target.value })} /></Field>
                 <Field label="Royalty Total da Faixa (%)"><Input type="number" className="input-obsidian" value={esc.royaltyPorFaixa} onChange={(e) => set({ royaltyPorFaixa: Number(e.target.value) })} data-testid="f-royalty-total" /></Field>
@@ -119,7 +120,7 @@ const EscritorioForm = () => {
             </div>
 
             <div className="card-obsidian p-5">
-              <ParticipantesEditor participantes={esc.participantes} royaltyTotal={esc.royaltyPorFaixa} onChange={(arr) => set({ participantes: arr })} />
+              <ParticipantesEditor participantes={esc.participantes} royaltyTotal={esc.royaltyPorFaixa} onChange={(arr) => set({ participantes: arr })} artistName={info.artistaPrincipal} />
             </div>
 
             <Button className="btn-sony w-full" onClick={submit} disabled={saving || !allocOk || !docOk} data-testid="escritorio-submit-btn">

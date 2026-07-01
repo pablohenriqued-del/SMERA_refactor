@@ -8,7 +8,7 @@ module.exports = {
   theme: {
         extend: {
                 fontFamily: {
-                        heading: ['Outfit', 'sans-serif'],
+                        heading: ['Sora', 'sans-serif'],
                         body: ['Plus Jakarta Sans', 'sans-serif'],
                         mono: ['JetBrains Mono', 'monospace'],
                 },

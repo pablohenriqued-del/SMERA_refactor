@@ -96,6 +96,10 @@ def _id():
 class Participante(BaseModel):
     nome: str = ""
     royalty: float = 0
+    cpfCnpj: str = ""
+    banco: str = ""
+    agencia: str = ""
+    conta: str = ""
 
 
 class EscritorioData(BaseModel):
@@ -149,6 +153,7 @@ class RlmProcess(RlmProcessBase):
     escritorioSubmissionCount: int = 0
     isrc: str = ""
     grid: str = ""
+    isrcs: List[dict] = Field(default_factory=list)
     vendor: VendorData = Field(default_factory=VendorData)
     callbackDoc: CallbackDoc = Field(default_factory=CallbackDoc)
     signedDocLink: str = ""
@@ -180,6 +185,11 @@ class SendEscritorioRequest(BaseModel):
     reminder: bool = False
 
 
+class CorrectionRequest(BaseModel):
+    stage: str
+    note: str = ""
+
+
 def _validate_participantes(esc: dict):
     """Sum of participant royalties must not exceed the track total (royaltyPorFaixa)."""
     if not esc:
@@ -199,7 +209,7 @@ def _validate_participantes(esc: dict):
 # fields the generic update accepts
 _UPDATABLE = {
     "projeto", "titulo", "artistaPrincipal", "licenseInId",
-    "artistRoyaltyPercent", "escritorio", "isrc", "grid",
+    "artistRoyaltyPercent", "escritorio", "isrc", "grid", "isrcs",
     "vendor", "callbackDoc", "signedDocLink", "signedDocFile", "signedAt", "envioExteriorDone",
     "vendorInputDone", "isrcInputDone",
 }
@@ -319,6 +329,21 @@ async def update_process(pid: str, payload: dict = Body(...)):
     await db.rlm_processes.update_one({"id": pid}, {"$set": update})
     merged = {**existing, **update}
     return RlmProcess(**merged)
+
+
+@router.post("/{pid}/log-correction", response_model=RlmProcess)
+async def log_correction(pid: str, payload: CorrectionRequest, current=Depends(get_current_user)):
+    existing = await db.rlm_processes.find_one({"id": pid}, {"_id": 0})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Processo não encontrado")
+    meta = STAGE_META.get(payload.stage, {})
+    note = f"Correção na etapa {meta.get('order', '')}: {meta.get('label', payload.stage)}"
+    if payload.note:
+        note += f" — {payload.note}"
+    entry = {"from": existing.get("status"), "to": existing.get("status"), "note": note, "by": current.get("nome", ""), "at": _now_iso()}
+    history = existing.get("history", []) + [entry]
+    await db.rlm_processes.update_one({"id": pid}, {"$set": {"history": history, "updatedAt": _now_iso()}})
+    return RlmProcess(**{**existing, "history": history})
 
 
 @router.post("/{pid}/transition", response_model=RlmProcess)

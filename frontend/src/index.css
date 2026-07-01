@@ -2,8 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* SMERA Design System Fonts — Outfit (headings) + Plus Jakarta Sans (body) */
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+/* SMERA Design System Fonts — Sora (headings) + Plus Jakarta Sans (body) */
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 @layer base {
     :root {
@@ -190,8 +190,7 @@
     
     /* Sony Red Gradient Glow */
     .sony-glow-top {
-        background: linear-gradient(180deg, rgba(230, 0, 18, 0.12) 0%, rgba(0, 0, 0, 0) 100%);
-        border-top: 1px solid rgba(230, 0, 18, 0.4);
+        background: linear-gradient(180deg, rgba(230, 0, 18, 0.10) 0%, rgba(0, 0, 0, 0) 100%);
     }
     
     /* Text Gradient */
@@ -260,7 +259,7 @@
 
 .recharts-tooltip-label {
     color: #fff !important;
-    font-family: 'Outfit', sans-serif !important;
+    font-family: 'Sora', sans-serif !important;
     font-weight: 600 !important;
     letter-spacing: 0.02em !important;
 }
