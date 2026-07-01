@@ -1,122 +1,81 @@
 {
   "project_context": {
-    "name": "SMERA",
-    "domain": "Music Licensing SaaS",
-    "theme_archetype": "Luxury & Swiss High-Contrast Hybrid (Dark Mode)",
-    "core_vibe": "Cinematic, authoritative, sleek, perfect contrasts"
-  },
-  "typography": {
-    "import_url": "https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap",
-    "heading_font": "Outfit, sans-serif",
-    "body_font": "Plus Jakarta Sans, sans-serif",
-    "hierarchy": {
-      "h1": "text-4xl sm:text-5xl tracking-tight font-heading font-semibold text-white",
-      "h2": "text-2xl sm:text-3xl tracking-tight font-heading font-medium text-white",
-      "h3": "text-xl sm:text-2xl tracking-tight font-heading font-medium",
-      "h4": "text-lg sm:text-xl font-heading font-medium text-zinc-100",
-      "body_lg": "text-base sm:text-lg font-body leading-relaxed text-zinc-300",
-      "body_md": "text-sm sm:text-base font-body leading-relaxed text-zinc-300",
-      "body_sm": "text-xs sm:text-sm font-body leading-relaxed text-zinc-400",
-      "overline": "text-[10px] sm:text-xs font-heading font-semibold tracking-[0.2em] uppercase text-zinc-500"
-    },
-    "rules": [
-      "Avoid standard bold (700) for large headings; prefer medium (500) or semibold (600) with tight tracking.",
-      "Remove uppercase from large headings (heading-xl, heading-lg, heading-md) to make it look more premium. Use uppercase strictly for overlines, labels, and table headers.",
-      "Use Plus Jakarta Sans for tabular data as it has excellent numeral legibility."
-    ]
+    "name": "SMERA - Sony Music Licensing Platform",
+    "focus": "RLM Fase 1 - Detalhe do Processo Workflow",
+    "theme": "Dark (Obsidian)",
+    "archetype": "Swiss & High-Contrast / Corporate Luxury"
   },
   "colors": {
-    "brand": {
-      "sony_red": "#E60012",
-      "sony_red_hover": "#FF1A2C",
-      "pure_white": "#FFFFFF",
-      "obsidian_bg": "#050505",
-      "obsidian_surface": "#0E0E11",
-      "obsidian_subtle": "#16161A"
-    },
-    "css_variables_update": {
-      "--background": "0 0% 2%",
-      "--foreground": "0 0% 100%",
-      "--card": "240 3% 6%",
-      "--card-foreground": "0 0% 98%",
-      "--popover": "240 3% 6%",
-      "--popover-foreground": "0 0% 98%",
-      "--primary": "355 100% 45%",
-      "--primary-foreground": "0 0% 100%",
-      "--secondary": "240 4% 10%",
-      "--secondary-foreground": "0 0% 98%",
-      "--muted": "240 4% 10%",
-      "--muted-foreground": "240 5% 65%",
-      "--accent": "240 4% 16%",
-      "--accent-foreground": "0 0% 98%",
-      "--border": "0 0% 12%",
-      "--input": "0 0% 12%",
-      "--ring": "355 100% 45%"
-    }
+    "sony_red": "#E60012",
+    "sony_red_hover": "#FF1A2D",
+    "obsidian_bg": "#050505",
+    "card_bg": "#121212",
+    "card_border": "#27272A",
+    "text_primary": "#FFFFFF",
+    "text_secondary": "#A1A1AA",
+    "success": "#10B981"
   },
-  "spacing_and_layout": {
-    "bento_grid": "Use Mode B: Control Room Grid for the dashboard. Base grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 with tight gaps (gap-4 or gap-6). Ensure all cards stretch to h-full.",
-    "padding": "Use generous padding inside containers. Cards must have p-6 or p-8.",
-    "sidebar": "Refine the left sidebar to use a deep obsidian background, border-r border-white/5, and soft active states (bg-white/5) instead of harsh colors.",
-    "table_layout": "Keep tables dense but readable. Use optical alignment: left-align headers, center-align badges, right-align monetary values/actions."
+  "typography": {
+    "fonts": {
+      "heading": "Sora, sans-serif",
+      "body": "Plus Jakarta Sans, sans-serif"
+    },
+    "classes": {
+      "heading_lg": "font-sora text-3xl md:text-4xl font-semibold tracking-tight text-white",
+      "heading_md": "font-sora text-xl md:text-2xl font-semibold tracking-tight text-white",
+      "overline": "font-sora text-[10px] md:text-xs uppercase tracking-[0.2em] text-zinc-400 font-medium",
+      "body": "font-jakarta text-sm md:text-base text-zinc-300 leading-relaxed"
+    }
   },
   "components": {
-    "card-obsidian": "Update class to: bg-[#0E0E11] border border-white/5 rounded-xl shadow-2xl shadow-black/50 overflow-hidden relative",
-    "card-obsidian-interactive": "Add to base card: transition-all duration-300 cursor-pointer hover:border-sony-red/30 hover:shadow-[0_0_30px_-10px_rgba(230,0,18,0.2)] hover:-translate-y-1",
-    "btn-sony": "Update class to: bg-sony-red text-white font-body font-semibold px-6 py-2.5 rounded-md transition-all duration-300 hover:bg-sony-red-hover hover:shadow-[0_0_20px_-5px_rgba(230,0,18,0.4)] active:scale-[0.98] flex items-center justify-center gap-2",
-    "btn-sony-outline": "Update class to: bg-transparent text-white border border-white/15 font-body font-semibold px-6 py-2.5 rounded-md transition-all duration-300 hover:bg-white/5 hover:border-white/30 active:scale-[0.98]",
-    "glass-dark": "Update class to: bg-black/40 backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)]",
-    "table-header": "Update class to: font-heading text-[10px] uppercase tracking-[0.15em] text-zinc-500 bg-[#16161A] py-3",
-    "badges": {
-      "success": "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-body text-xs font-medium px-2.5 py-0.5 rounded-full",
-      "warning": "bg-amber-500/10 text-amber-400 border border-amber-500/20 font-body text-xs font-medium px-2.5 py-0.5 rounded-full",
-      "info": "bg-blue-500/10 text-blue-400 border border-blue-500/20 font-body text-xs font-medium px-2.5 py-0.5 rounded-full",
-      "error": "bg-red-500/10 text-red-400 border border-red-500/20 font-body text-xs font-medium px-2.5 py-0.5 rounded-full"
+    "sticky_summary_header": {
+      "layout": "Fixed header pinned to the top of the workflow detail view.",
+      "container_classes": "sticky top-0 z-50 w-full glass-dark border-b border-white/10 px-6 py-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4",
+      "glass_dark": "bg-[#050505]/70 backdrop-blur-2xl backdrop-saturate-150",
+      "content_left": "Uses Flex column. Overline: Project Name. Heading: Track Title (Sora, text-2xl, white). Subtext: Artist Name (Jakarta, text-zinc-400). Badges: ISRC/GRID IDs.",
+      "content_right": "Uses Flex row. Displays Total % Allocation (Large, tracking-tight, Sora) - color codes green if 100%, amber if under. Stage Badge showing current active stage and responsible role."
     },
-    "glow-effects": {
-      "sony-glow-top": "background: linear-gradient(180deg, rgba(230,0,18,0.12) 0%, transparent 100%); border-top: 1px solid rgba(230,0,18,0.4);"
+    "stepper": {
+      "layout": "Horizontal scrollable stepper representing 8 stages.",
+      "container_classes": "flex items-center w-full overflow-x-auto py-6 gap-2 hide-scrollbar",
+      "node_classes": "relative flex flex-col items-center gap-3 shrink-0 min-w-[80px] cursor-pointer",
+      "circle_classes": "w-8 h-8 rounded-full flex items-center justify-center text-sm font-jakarta font-medium transition-all duration-300 z-10",
+      "states": {
+        "completed": "bg-emerald-500 text-white border-none shadow-[0_0_10px_rgba(16,185,129,0.2)]",
+        "current": "bg-[#E60012] text-white shadow-[0_0_15px_rgba(230,0,18,0.4)] ring-2 ring-offset-2 ring-offset-[#050505] ring-[#E60012]/50",
+        "future": "bg-zinc-900 border border-zinc-700 text-zinc-500",
+        "viewed": "If a user is viewing a step different from 'current', add: ring-2 ring-offset-2 ring-offset-[#050505] ring-white/60 to the circle."
+      },
+      "connecting_line": "flex-1 h-[1px] bg-zinc-800 min-w-[40px] absolute top-4 left-[50%] right-[-50%] -z-0"
+    },
+    "cards_and_spacing": {
+      "card_obsidian": "bg-[#121212] border border-zinc-800 rounded-xl p-6 md:p-8 shadow-lg shadow-black/50 transition-colors duration-300 hover:border-zinc-700",
+      "section_spacing": "gap-8 or gap-12 between main vertical sections (e.g., Stepper -> Stage Panel -> History).",
+      "density_grouping": "Instead of floating form inputs, wrap related inputs in subtle sub-panels (bg-[#1A1A1A] rounded-lg p-5 border border-zinc-800/50) with their own eyebrows/overlines."
+    },
+    "custom_ui": {
+      "allocation_bar": "w-full h-2 md:h-3 rounded-full bg-zinc-800 overflow-hidden flex. Main artist gets bg-[#E60012], other participants get distinct subtle colors (zinc-500, zinc-600).",
+      "btn_sony": "bg-[#E60012] hover:bg-[#FF1A2D] text-white font-jakarta text-sm px-6 py-2.5 rounded-md transition-all shadow-md shadow-[#E60012]/20 active:scale-95 focus:ring-2 focus:ring-[#E60012]/50",
+      "btn_sony_outline": "bg-transparent border border-[#E60012] text-[#E60012] hover:bg-[#E60012]/10 font-jakarta text-sm px-6 py-2.5 rounded-md transition-all active:scale-95 focus:ring-2 focus:ring-[#E60012]/50",
+      "input_obsidian": "bg-[#0A0A0A] border border-zinc-700 rounded-md px-4 py-2.5 text-white focus:border-[#E60012] focus:ring-1 focus:ring-[#E60012] transition-colors font-jakarta text-sm",
+      "table_header": "font-sora text-xs uppercase tracking-wider text-zinc-400 bg-[#1A1A1A] border-b border-zinc-800 px-4 py-3 text-left"
     }
   },
-  "motion_and_interactions": {
-    "animations": "Use Framer Motion for page transitions and staggering lists. Use pure CSS for button/hover states.",
-    "page_load": "Fade in with a slight upward slide: initial={{opacity: 0, y: 10}}, animate={{opacity: 1, y: 0}}, transition={{duration: 0.4, ease: 'easeOut'}}",
-    "stagger_children": "For dashboard KPI cards and table rows, use staggerChildren: 0.05"
+  "interactions": {
+    "framer_motion": {
+      "page_load": "initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: 'easeOut' }}",
+      "stagger_children": "variants={{ hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1 } } }}",
+      "item_fade_up": "variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }}",
+      "stepper_line_fill": "Use motion.div for the connecting line to animate width from 0% to 100% when a step is completed."
+    }
   },
-  "media": {
-    "image_urls": [
-      {
-        "url": "https://images.unsplash.com/photo-1596865249308-2472dc5807d7?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzNTl8MHwxfHNlYXJjaHwyfHxkYXJrJTIwYWJzdHJhY3QlMjB0ZXh0dXJlfGVufDB8fHx8MTc4MjIzODE0MXww&ixlib=rb-4.1.0&q=85",
-        "description": "Dark abstract texture",
-        "category": "login_background",
-        "instructions": "Use this as the hero background for the Login page. Overlay it with a bg-black/60 to bg-black/80 gradient so the login card is perfectly legible."
-      },
-      {
-        "url": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Nzh8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBwb3J0cmFpdHxlbnwwfHx8fDE3ODI0MDA5NDZ8MA&ixlib=rb-4.1.0&q=85",
-        "description": "Professional male portrait",
-        "category": "user_avatar",
-        "instructions": "Use this as the logged-in user avatar in the top header and within the Acesso (user management) table."
-      },
-      {
-        "url": "https://images.unsplash.com/photo-1580489944761-15a19d654956?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Nzh8MHwxfHNlYXJjaHwyfHxwcm9mZXNzaW9uYWwlMjBwb3J0cmFpdHxlbnwwfHx8fDE3ODI0MDA5NDZ8MA&ixlib=rb-4.1.0&q=85",
-        "description": "Professional female portrait",
-        "category": "user_avatar",
-        "instructions": "Use this as secondary avatar placeholders in the Acesso user management table."
-      }
+  "testing_attributes": {
+    "rule": "All interactive elements MUST include a data-testid attribute in kebab-case.",
+    "examples": [
+      "data-testid='stepper-node-3'",
+      "data-testid='summary-total-percentage'",
+      "data-testid='btn-submit-office'",
+      "data-testid='input-vendor-cnpj'"
     ]
-  },
-  "testing": {
-    "attributes": [
-      "All buttons, navigation links, and actionable icons must include a data-testid attribute in kebab-case based on their role.",
-      "Example: data-testid='login-submit-button', data-testid='sidebar-nav-dashboard', data-testid='kpi-card-active-licenses'."
-    ]
-  },
-  "instructions_to_main_agent": [
-    "Refactor frontend/src/index.css to replace Barlow Condensed and Manrope with Outfit and Plus Jakarta Sans. Ensure the @import url is updated.",
-    "Update frontend/tailwind.config.js to map 'heading' to Outfit and 'body' to Plus Jakarta Sans. Ensure to retain existing custom colors (e.g., sony-red) while refining the HSL variables in index.css as provided.",
-    "Redesign the Dashboard layout using the 'Control Room Grid' approach. Make sure charts use the new fonts in their tooltips (.recharts-tooltip-label).",
-    "Replace all heavy standard borders in the UI with subtle border-white/5 or border-white/10.",
-    "Ensure the entire app remains in Portuguese.",
-    "In the Login page, use the provided dark abstract texture as the background image with a deep black vignette/overlay.",
-    "For typography in index.css, remove 'uppercase' from the .heading-xl, .heading-lg, .heading-md classes to make it feel more modern and premium. Keep uppercase ONLY on .overline, .table-header, and small buttons."
-  ]
+  }
 }
