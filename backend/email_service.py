@@ -34,7 +34,8 @@ async def send_email(to: str, subject: str, html: str) -> dict:
         return {"sent": False, "reason": str(e)}
 
 
-def invite_html(projeto: str, link: str, artist_pct) -> str:
+def invite_html(projeto: str, link: str, artist_pct, titulo: str = "") -> str:
+    faixa_line = f'<p style="color:#b3b3b3;line-height:1.6;margin-top:4px;">Faixa: <strong style="color:#fff;">{titulo}</strong></p>' if titulo else ""
     return f"""
     <div style="font-family:Arial,sans-serif;background:#0b0b0c;padding:24px;color:#fff;">
       <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;background:#141417;border-radius:12px;overflow:hidden;border:1px solid #222;">
@@ -45,8 +46,8 @@ def invite_html(projeto: str, link: str, artist_pct) -> str:
           <h2 style="margin:0 0 8px;color:#fff;">Preenchimento de Vendors / Royalties</h2>
           <p style="color:#b3b3b3;line-height:1.6;">Olá, você foi designado(a) para preencher os percentuais e dados dos vendors do projeto
           <strong style="color:#fff;">{projeto}</strong>.</p>
-          <p style="color:#b3b3b3;line-height:1.6;">Royalty do artista principal: <strong style="color:#fff;">{artist_pct}%</strong>.
-          A soma dos royalties dos participantes não pode ultrapassar o total da faixa.</p>
+          {faixa_line}
+          <p style="color:#b3b3b3;line-height:1.6;">Royalty do artista principal: <strong style="color:#fff;">{artist_pct}%</strong>. A soma dos royalties dos participantes não pode ultrapassar o total da faixa.</p>
           <p style="margin:24px 0;">
             <a href="{link}" style="background:#E60012;color:#fff;text-decoration:none;padding:12px 24px;border-radius:6px;font-weight:bold;display:inline-block;">Abrir formulário</a>
           </p>

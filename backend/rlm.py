@@ -398,7 +398,7 @@ async def send_escritorio(pid: str, payload: SendEscritorioRequest, current=Depe
 
     prefix = "Lembrete: " if payload.reminder else ""
     subject = f"[SMERA] {prefix}Preenchimento de Vendors — {p.get('projeto')}"
-    email_result = await send_email(payload.email, subject, invite_html(p.get("projeto", ""), link, p.get("artistRoyaltyPercent", 0)))
+    email_result = await send_email(payload.email, subject, invite_html(p.get("projeto", ""), link, p.get("artistRoyaltyPercent", 0), p.get("titulo", "")))
     return {"link": link, "email": email_result, "emailConfigured": is_configured()}
 
 

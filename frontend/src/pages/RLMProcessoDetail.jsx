@@ -297,7 +297,7 @@ const RLMProcessoDetail = () => {
         const link = data.link || publicLink;
         const subject = encodeURIComponent(`[SMERA] ${reminder ? 'Lembrete: ' : ''}Preenchimento de Vendors — ${proc.projeto}`);
         const body = encodeURIComponent(
-          `Olá ${escNome || ''},\n\n${reminder ? 'Lembrete: ainda aguardamos o preenchimento dos percentuais e dados dos vendors' : 'Por favor, preencha os percentuais e dados dos vendors'} do projeto "${proc.projeto}" no formulário abaixo:\n\n${link}\n\nObrigado,\nSony Music`
+          `Olá ${escNome || ''},\n\n${reminder ? 'Lembrete: ainda aguardamos o preenchimento dos percentuais e dados dos vendors' : 'Por favor, preencha os percentuais e dados dos vendors'} do projeto "${proc.projeto}"${proc.titulo ? ` (faixa: "${proc.titulo}")` : ''} no formulário abaixo:\n\n${link}\n\nObrigado,\nSony Music`
         );
         window.location.href = `mailto:${escEmail}?subject=${subject}&body=${body}`;
         toast.message('Abrindo seu e-mail com o link', { description: 'Ou use "Copiar link" para enviar manualmente.' });
